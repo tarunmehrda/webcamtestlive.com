@@ -1,0 +1,26 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "webcamtestlive",
+  "compatibility_date": "2026-08-21",
+
+  // Static-only Worker: Astro prerenders every route (including /sitemap.xml)
+  // to dist/, so there is no `main` script and therefore no ASSETS `binding` —
+  // that field is only valid alongside `main`.
+  "assets": {
+    "directory": "./dist",
+    // Pages auto-detected 404.html; Workers requires it to be explicit, or an
+    // unknown path returns a bare 404 instead of src/pages/404.astro.
+    "not_found_handling": "404-page",
+    // Astro builds directory-style output (dist/about/index.html), and the
+    // default "auto-trailing-slash" answers /about with a 307 to /about/.
+    // Every internal link and every <link rel="canonical"> here uses the
+    // non-slash form, so that default put a redirect hop in front of each
+    // navigation and pointed canonicals at redirecting URLs. Drop the slash
+    // instead: /about is served 200 and /about/ redirects to it.
+    "html_handling": "drop-trailing-slash"
+  },
+
+  "observability": {
+    "enabled": true
+  }
+}
