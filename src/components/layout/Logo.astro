@@ -1,0 +1,32 @@
+---
+interface Props {
+  /** Sizing / positioning classes for the mark, e.g. "size-7". */
+  class?: string;
+}
+
+const { class: className = 'size-7' } = Astro.props;
+
+// Geometry lifted from the 600×600 source: 128px corner radius, camera glyph
+// scaled to 467px (24-unit Lucide viewBox × 19.4583) and centred at 66.5px.
+---
+
+<svg
+  viewBox="0 0 600 600"
+  class:list={[className]}
+  role="img"
+  aria-hidden="true"
+  focusable="false"
+>
+  <rect width="600" height="600" rx="128" class="fill-primary" />
+  <g
+    transform="translate(66.5 66.5) scale(19.4583)"
+    fill="none"
+    stroke-width="2.38"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    class="stroke-on-primary"
+  >
+    <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" />
+    <circle cx="12" cy="13" r="3" />
+  </g>
+</svg>

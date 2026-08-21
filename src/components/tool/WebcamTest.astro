@@ -1,0 +1,735 @@
+---
+import SpecItem from '../ui/SpecItem.astro';
+import SpeakerTest from './SpeakerTest.astro';
+import CallPreview from './CallPreview.astro';
+import CameraControls from './CameraControls.astro';
+
+interface Props {
+  /** Which dimension to emphasize on focused sub-tool pages. */
+  focus?: 'full' | 'resolution' | 'fps';
+}
+const { focus = 'full' } = Astro.props;
+
+const iconBtn =
+  'inline-flex size-11 shrink-0 items-center justify-center rounded-full border border-hairline bg-canvas text-ink transition-colors hover:bg-canvas-soft-2 disabled:opacity-40 aria-pressed:bg-primary aria-pressed:text-on-primary sm:size-9';
+---
+
+<!--
+  Layout note: the two columns are `items-start`, not stretched. With stretch the
+  shorter column's card was padded out to match the taller one, leaving a large
+  dead area under the device selects.
+-->
+<section class="relative z-10 w-full" data-webcam-tool data-focus={focus}>
+  <div class="grid items-start gap-6 lg:grid-cols-[1.6fr_1fr]">
+    <!-- ================= Left column ================= -->
+    <div class="flex flex-col gap-6">
+      <!-- Preview -->
+      <div class="rounded-xl border border-hairline bg-canvas p-3 elev-3">
+        <div class="relative aspect-video w-full overflow-hidden rounded-lg bg-stage" data-stage>
+          <video
+            data-video
+            class="size-full object-cover [transform:scaleX(-1)]"
+            autoplay
+            muted
+            playsinline
+          ></video>
+
+          <!-- framing guides (rule of thirds + eye line) -->
+          <div data-grid-overlay class="pointer-events-none absolute inset-0 hidden">
+            <div class="absolute inset-y-0 left-1/3 w-px bg-white/25"></div>
+            <div class="absolute inset-y-0 left-2/3 w-px bg-white/25"></div>
+            <div class="absolute inset-x-0 top-1/3 h-px bg-white/40"></div>
+            <div class="absolute inset-x-0 top-2/3 h-px bg-white/25"></div>
+            <span
+              class="caption absolute left-1/2 top-1/3 -translate-x-1/2 -translate-y-[calc(100%+6px)] rounded-xs bg-black/55 px-1.5 py-0.5 text-white/90"
+            >
+              eye line
+            </span>
+          </div>
+
+          <!-- idle overlay -->
+          <!--
+            The stage is 16:9, so on a ~320px viewport it is only ~142px tall and the
+            full-size overlay content (156px) was clipped. Below 400px everything steps
+            down a size so it still fits inside the frame.
+          -->
+          <div data-idle class="absolute inset-0 grid place-items-center bg-stage text-center">
+            <div class="px-4 sm:px-6">
+              <div class="mx-auto grid size-14 place-items-center rounded-full bg-white/10 text-white max-[400px]:size-10">
+                <svg class="size-[26px] max-[400px]:size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m22 8-6 4 6 4V8Z" /><rect width="14" height="12" x="2" y="6" rx="2" ry="2" />
+                </svg>
+              </div>
+              <p class="body-md mt-4 font-medium text-white max-[400px]:body-sm max-[400px]:mt-2">Your camera preview appears here</p>
+              <p class="caption mt-1 text-white/60">Nothing is uploaded — the test runs on your device.</p>
+            </div>
+          </div>
+
+          <!-- error overlay -->
+          <!-- Error text is variable-length, so this one also scrolls rather than clipping. -->
+          <div data-error class="absolute inset-0 hidden place-items-center overflow-y-auto bg-stage p-6 text-center max-[400px]:p-3">
+            <div class="max-w-sm">
+              <div class="mx-auto grid size-12 place-items-center rounded-full bg-error/15 text-error max-[400px]:size-9">
+                <svg class="size-6 max-[400px]:size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10" /><line x1="12" x2="12" y1="8" y2="12" /><line x1="12" x2="12.01" y1="16" y2="16" />
+                </svg>
+              </div>
+              <p data-error-msg class="body-sm mt-4 text-white/90 max-[400px]:mt-2"></p>
+              <a href="/troubleshooting" class="body-sm mt-4 inline-flex text-link hover:text-link-deep max-[400px]:mt-2">
+                How to fix this →
+              </a>
+            </div>
+          </div>
+
+          <!-- live badge -->
+          <div
+            data-live-badge
+            class="absolute left-3 top-3 hidden items-center gap-1.5 rounded-full bg-black/50 px-2.5 py-1 backdrop-blur-sm"
+          >
+            <span class="size-1.5 animate-pulse rounded-full bg-[#ff4d4d]"></span>
+            <span class="caption font-medium text-white">LIVE</span>
+          </div>
+
+          <!-- recording badge -->
+          <div
+            data-rec-badge
+            class="absolute right-3 top-3 hidden items-center gap-1.5 rounded-full bg-error/85 px-2.5 py-1"
+          >
+            <span class="size-1.5 animate-pulse rounded-full bg-white"></span>
+            <span data-rec-time class="caption font-medium text-white">REC 0.0s</span>
+          </div>
+        </div>
+
+        <!--
+          controls
+          On phones the primary action and the five icon buttons could not share a
+          row: `ml-auto` pushed the icons hard against the right edge and the start
+          pill sat orphaned on the left. Below sm they stack — the CTA takes the
+          full width, the icons get their own evenly-spread row.
+        -->
+        <div class="mt-3 grid gap-2 sm:flex sm:flex-wrap sm:items-center">
+          <button
+            data-start
+            class="inline-flex w-full items-center justify-center gap-2 rounded-pill bg-primary px-5 py-3 text-on-primary transition-opacity hover:opacity-90 sm:w-auto sm:justify-start sm:py-2.5"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m22 8-6 4 6 4V8Z" /><rect width="14" height="12" x="2" y="6" rx="2" ry="2" />
+            </svg>
+            <span class="body-sm font-medium">Start test</span>
+          </button>
+
+          <button
+            data-stop
+            class="hidden w-full items-center justify-center gap-2 rounded-pill border border-hairline bg-canvas px-5 py-3 text-ink transition-colors hover:bg-canvas-soft-2 sm:w-auto sm:justify-start sm:py-2.5"
+          >
+            <span class="body-sm font-medium">Stop</span>
+          </button>
+
+          <!--
+            Centred, not `justify-between`: spread edge-to-edge under a full-width
+            CTA the five circles read as five unrelated buttons rather than one
+            control cluster, and the pressed state on the leftmost one looked
+            stranded. At sm they rejoin the CTA's row on the right.
+          -->
+          <div class="flex items-center justify-center gap-2 sm:ml-auto sm:justify-start sm:gap-2">
+            <button data-mirror aria-pressed="true" class={iconBtn} title="Mirror preview" aria-label="Mirror preview">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3v18" /><path d="M16 7l4 5-4 5" /><path d="M8 7l-4 5 4 5" />
+              </svg>
+            </button>
+            <button data-grid aria-pressed="false" class={iconBtn} title="Framing guides" aria-label="Toggle framing guides">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="18" height="18" x="3" y="3" rx="2" /><path d="M9 3v18M15 3v18M3 9h18M3 15h18" />
+              </svg>
+            </button>
+            <button data-record disabled class={iconBtn} title="Record a short clip" aria-label="Record a short clip">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="4" fill="currentColor" />
+              </svg>
+            </button>
+            <button data-snapshot disabled class={iconBtn} title="Take snapshot" aria-label="Take snapshot">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3Z" /><circle cx="12" cy="13" r="3" />
+              </svg>
+            </button>
+            <button data-fullscreen disabled class={iconBtn} title="Fullscreen" aria-label="Fullscreen">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M8 3H5a2 2 0 0 0-2 2v3" /><path d="M21 8V5a2 2 0 0 0-2-2h-3" /><path d="M3 16v3a2 2 0 0 0 2 2h3" /><path d="M16 21h3a2 2 0 0 0 2-2v-3" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- device selectors -->
+        <div class="mt-3 grid gap-3 sm:grid-cols-2">
+          <label class="flex flex-col gap-1">
+            <span class="caption-mono uppercase text-mute">Camera</span>
+            <select data-camera-select class="body-sm h-11 rounded-sm border border-hairline bg-canvas px-3 text-ink sm:h-10">
+              <option value="">Default camera</option>
+            </select>
+          </label>
+          <label class="flex flex-col gap-1">
+            <span class="caption-mono uppercase text-mute">Microphone</span>
+            <select data-mic-select class="body-sm h-11 rounded-sm border border-hairline bg-canvas px-3 text-ink sm:h-10">
+              <option value="">Default microphone</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <CallPreview />
+
+      <!-- Playback of a recorded clip -->
+      <div data-rec-panel class="hidden rounded-xl border border-hairline bg-canvas p-4 elev-2 sm:p-5">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 class="display-sm text-ink">See what others see</h2>
+            <p class="caption mt-1 text-mute">Played back from your device. Never uploaded.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button
+              data-rec-download
+              class="body-sm inline-flex items-center gap-1.5 rounded-pill border border-hairline bg-canvas px-4 py-3 font-medium text-ink transition-colors hover:bg-canvas-soft-2 sm:py-2"
+            >
+              Download
+            </button>
+            <button
+              data-rec-discard
+              class="body-sm inline-flex items-center gap-1.5 rounded-pill border border-hairline bg-canvas px-4 py-3 font-medium text-body transition-colors hover:text-ink sm:py-2"
+            >
+              Discard
+            </button>
+          </div>
+        </div>
+        <video data-rec-video controls playsinline class="mt-4 aspect-video w-full rounded-lg bg-stage"></video>
+      </div>
+
+      <!-- Health checks -->
+      <div class="rounded-xl border border-hairline bg-canvas p-4 elev-2 sm:p-5">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <h2 class="display-sm text-ink">Health checks</h2>
+          <button
+            data-copy-report
+            class="body-sm inline-flex items-center gap-1.5 rounded-pill border border-hairline bg-canvas px-3 py-3 font-medium text-body transition-colors hover:text-ink sm:py-1.5"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="14" height="14" x="8" y="8" rx="2" /><path d="M4 16V4a2 2 0 0 1 2-2h10" />
+            </svg>
+            <span data-copy-label>Copy report</span>
+          </button>
+        </div>
+        <ul data-health class="mt-4 space-y-2">
+          <li class="body-sm text-mute">Start the test to run automatic checks.</li>
+        </ul>
+        <!-- Shown only when the clipboard is unavailable, so the report is never trapped. -->
+        <textarea
+          data-report-out
+          readonly
+          rows="10"
+          aria-label="Diagnostics report"
+          class="code-font mt-4 hidden w-full resize-y rounded-sm border border-hairline bg-canvas-soft p-3 text-ink"
+        ></textarea>
+      </div>
+    </div>
+
+    <!-- ================= Right column ================= -->
+    <div class="flex flex-col gap-6">
+      <div class="rounded-xl border border-hairline bg-canvas p-4 elev-2 sm:p-5">
+        <h2 class="display-sm text-ink">Camera</h2>
+        <div class="mt-3">
+          <SpecItem label="Device" id="spec-camera" />
+          <SpecItem label="Resolution" id="spec-resolution" />
+          <SpecItem label="Max supported" id="spec-maxres" />
+          <SpecItem label="Frame rate" id="spec-fps" />
+          <SpecItem label="Aspect ratio" id="spec-aspect" />
+          <SpecItem label="Megapixels" id="spec-mp" />
+          <SpecItem label="Bitrate" id="spec-bitrate" />
+          <SpecItem label="Quality" id="spec-quality" />
+        </div>
+      </div>
+
+      <div class="rounded-xl border border-hairline bg-canvas p-4 elev-2 sm:p-5">
+        <h2 class="display-sm text-ink">Image</h2>
+        <div class="mt-3">
+          <SpecItem label="Brightness" id="spec-brightness" />
+          <SpecItem label="Contrast" id="spec-contrast" />
+          <SpecItem label="Saturation" id="spec-saturation" />
+          <SpecItem label="Colours" id="spec-colors" />
+        </div>
+      </div>
+
+      <CameraControls />
+
+      <div class="rounded-xl border border-hairline bg-canvas p-4 elev-2 sm:p-5">
+        <div class="flex items-center justify-between gap-3">
+          <h2 class="display-sm text-ink">Microphone</h2>
+          <span data-mic-status class="caption-mono text-mute">Off</span>
+        </div>
+        <div class="mt-4 h-3 w-full overflow-hidden rounded-full bg-canvas-soft-2">
+          <div
+            data-mic-level
+            class="h-full w-0 rounded-full bg-gradient-to-r from-success via-warning to-error transition-[width] duration-75"
+          ></div>
+        </div>
+        <p class="caption mt-2 text-mute">Speak to see your input level. Starts with the camera test.</p>
+      </div>
+
+      <SpeakerTest />
+    </div>
+  </div>
+</section>
+
+<script>
+  import { startWebcam, detectMaxResolution, type WebcamSession } from '../../lib/webcam';
+  import { startMic, type MicSession } from '../../lib/mic';
+  import { listDevices, queryPermission, onDeviceChange, isSecureMediaContext } from '../../lib/devices';
+  import { runHealthChecks } from '../../lib/diagnostics';
+  import { sampleImageStats, type ImageStats } from '../../lib/imagestats';
+  import { captureSnapshot, downloadCanvas } from '../../lib/snapshot';
+  import { record, probeBitrate, canRecord, type Recording, type RecorderHandle } from '../../lib/record';
+  import { readEnvironment, buildReport, copyText } from '../../lib/report';
+  import { $, setText, formatAspectRatio, formatMegapixels, formatFps, formatResolution } from '../../lib/dom';
+  import type { HealthCheck, MediaError, PermissionState } from '../../lib/types';
+
+  const root = document.querySelector<HTMLElement>('[data-webcam-tool]');
+  if (root) init(root);
+
+  function init(root: HTMLElement) {
+    const focus = root.dataset.focus ?? 'full';
+    const video = $<HTMLVideoElement>('[data-video]', root)!;
+    const idle = $('[data-idle]', root)!;
+    const errorBox = $('[data-error]', root)!;
+    const errorMsg = $('[data-error-msg]', root)!;
+    const liveBadge = $('[data-live-badge]', root)!;
+    const startBtn = $<HTMLButtonElement>('[data-start]', root)!;
+    const stopBtn = $<HTMLButtonElement>('[data-stop]', root)!;
+    const mirrorBtn = $<HTMLButtonElement>('[data-mirror]', root)!;
+    const gridBtn = $<HTMLButtonElement>('[data-grid]', root)!;
+    const gridOverlay = $('[data-grid-overlay]', root)!;
+    const recordBtn = $<HTMLButtonElement>('[data-record]', root)!;
+    const snapshotBtn = $<HTMLButtonElement>('[data-snapshot]', root)!;
+    const fullscreenBtn = $<HTMLButtonElement>('[data-fullscreen]', root)!;
+    const cameraSelect = $<HTMLSelectElement>('[data-camera-select]', root)!;
+    const micSelect = $<HTMLSelectElement>('[data-mic-select]', root)!;
+    const healthList = $('[data-health]', root)!;
+    const stage = $('[data-stage]', root)!;
+    const recBadge = $('[data-rec-badge]', root)!;
+    const recTime = $('[data-rec-time]', root)!;
+    const recPanel = $('[data-rec-panel]', root)!;
+    const recVideo = $<HTMLVideoElement>('[data-rec-video]', root)!;
+    const recDownload = $<HTMLButtonElement>('[data-rec-download]', root)!;
+    const recDiscard = $<HTMLButtonElement>('[data-rec-discard]', root)!;
+    const copyBtn = $<HTMLButtonElement>('[data-copy-report]', root)!;
+    const copyLabel = $('[data-copy-label]', root)!;
+    const reportOut = $<HTMLTextAreaElement>('[data-report-out]', root)!;
+    const micLevelEl = $<HTMLElement>('[data-mic-level]', root);
+    const micStatusEl = $('[data-mic-status]', root);
+
+    let session: WebcamSession | null = null;
+    let mic: MicSession | null = null;
+    let stopFps: (() => void) | null = null;
+    let stopMeter: (() => void) | null = null;
+    let measuredFps: number | null = null;
+    let mirror = true;
+    let maxRes: { width: number; height: number } | null = null;
+    let stats: ImageStats | null = null;
+    let kbps: number | null = null;
+    let checks: HealthCheck[] = [];
+    let recorder: RecorderHandle | null = null;
+    let clip: Recording | null = null;
+    let tickTimer: number | undefined;
+    let ticks = 0;
+
+    // ---- rendering ----------------------------------------------------------
+    function renderIdle() {
+      idle.classList.remove('hidden');
+      errorBox.classList.remove('grid');
+      errorBox.classList.add('hidden');
+    }
+
+    function renderError(err: MediaError) {
+      idle.classList.add('hidden');
+      errorBox.classList.remove('hidden');
+      errorBox.classList.add('grid');
+      setText(errorMsg, err.message);
+      liveBadge.classList.add('hidden');
+      liveBadge.classList.remove('flex');
+    }
+
+    function renderLive() {
+      idle.classList.add('hidden');
+      errorBox.classList.add('hidden');
+      errorBox.classList.remove('grid');
+      liveBadge.classList.remove('hidden');
+      liveBadge.classList.add('flex');
+    }
+
+    function updateSpecs() {
+      if (!session) return;
+      const s = session.getSettings();
+      setText($('#spec-camera'), s.deviceLabel || 'Camera');
+      setText($('#spec-resolution'), formatResolution(s.width, s.height));
+      setText(
+        $('#spec-maxres'),
+        maxRes ? formatResolution(maxRes.width, maxRes.height) : 'Detecting…',
+      );
+      setText($('#spec-fps'), formatFps(measuredFps ?? s.frameRate));
+      setText($('#spec-aspect'), formatAspectRatio(s.width, s.height));
+      setText($('#spec-mp'), formatMegapixels(s.width, s.height));
+      setText($('#spec-bitrate'), kbps ? `${kbps.toLocaleString()} kbps` : 'Measuring…');
+    }
+
+    function updateImageSpecs() {
+      setText($('#spec-brightness'), stats ? `${stats.brightness}%` : '—');
+      setText($('#spec-contrast'), stats ? `${stats.contrast}%` : '—');
+      setText($('#spec-saturation'), stats ? `${stats.saturation}%` : '—');
+      setText($('#spec-colors'), stats ? stats.colors.toLocaleString() : '—');
+    }
+
+    function renderHealth() {
+      if (!session) return;
+      const s = session.getSettings();
+      checks = runHealthChecks({
+        settings: s,
+        permission: 'granted',
+        deviceCount: countDevices(cameraSelect),
+        measuredFps,
+        luminance: stats?.luminance ?? null,
+        secure: isSecureMediaContext(),
+      });
+
+      const fails = checks.filter((c) => c.status === 'fail').length;
+      const warns = checks.filter((c) => c.status === 'warn').length;
+      setText($('#spec-quality'), fails ? 'Needs attention' : warns ? 'Good' : 'Excellent');
+
+      healthList.innerHTML = '';
+      for (const c of checks) healthList.appendChild(renderCheck(c));
+    }
+
+    function renderCheck(c: HealthCheck): HTMLElement {
+      const tone = { pass: 'text-success', warn: 'text-warning-deep', fail: 'text-error' }[c.status];
+      const dot = { pass: 'bg-success', warn: 'bg-warning', fail: 'bg-error' }[c.status];
+      const li = document.createElement('li');
+      li.className = 'flex items-start gap-3';
+      li.innerHTML = `
+        <span class="mt-1.5 size-2 shrink-0 rounded-full ${dot}"></span>
+        <span class="min-w-0">
+          <span class="body-sm font-medium ${tone}">${escapeHtml(c.label)}</span>
+          ${c.hint ? `<span class="body-sm block text-mute">${escapeHtml(c.hint)}</span>` : ''}
+        </span>`;
+      return li;
+    }
+
+    function escapeHtml(s: string): string {
+      const d = document.createElement('div');
+      d.textContent = s;
+      return d.innerHTML;
+    }
+
+    /** Options carrying a real deviceId — the placeholder has an empty value. */
+    function countDevices(select: HTMLSelectElement): number {
+      return Array.from(select.options).filter((o) => o.value).length || 1;
+    }
+
+    // ---- device population ---------------------------------------------------
+    async function populateDevices() {
+      const [cams, mics] = await Promise.all([listDevices('videoinput'), listDevices('audioinput')]);
+      fillSelect(cameraSelect, cams, 'Default camera', 'No camera found');
+      fillSelect(micSelect, mics, 'Default microphone', 'No microphone found');
+    }
+
+    function fillSelect(
+      select: HTMLSelectElement,
+      devices: { deviceId: string; label: string }[],
+      fallback: string,
+      empty: string,
+    ) {
+      const current = select.value;
+      select.innerHTML = '';
+      if (!devices.length) {
+        select.appendChild(new Option(empty, ''));
+        return;
+      }
+      for (const d of devices) {
+        // Labels are blank until permission is granted once; never render an
+        // option with no text or the control looks broken.
+        select.appendChild(new Option(d.label || fallback, d.deviceId));
+      }
+      if (current && Array.from(select.options).some((o) => o.value === current)) {
+        select.value = current;
+      }
+    }
+
+    // ---- lifecycle -----------------------------------------------------------
+    async function start(deviceId?: string) {
+      teardownStreams();
+      startBtn.classList.add('hidden');
+      startBtn.classList.remove('inline-flex');
+      try {
+        session = await startWebcam({ deviceId });
+        await session.attach(video);
+        renderLive();
+
+        stopBtn.classList.remove('hidden');
+        stopBtn.classList.add('inline-flex');
+        snapshotBtn.disabled = false;
+        fullscreenBtn.disabled = false;
+        recordBtn.disabled = !canRecord();
+
+        // Real device labels become available only after the grant.
+        await populateDevices();
+        const s = session.getSettings();
+        if (s.deviceLabel) {
+          const match = Array.from(cameraSelect.options).find((o) => o.text === s.deviceLabel);
+          if (match) cameraSelect.value = match.value;
+        }
+
+        detectMaxResolution(cameraSelect.value || undefined)
+          .then((r) => {
+            maxRes = r;
+            updateSpecs();
+          })
+          .catch(() => {});
+
+        // Encode a short sample to report a real bitrate rather than a guess.
+        const stream = session.stream;
+        if (stream) {
+          probeBitrate(stream)
+            .then((v) => {
+              kbps = v;
+              if (!kbps) setText($('#spec-bitrate'), 'Unavailable');
+              else updateSpecs();
+            })
+            .catch(() => setText($('#spec-bitrate'), 'Unavailable'));
+        }
+
+        // Let the decoupled panels (call preview, camera controls) attach.
+        document.dispatchEvent(
+          new CustomEvent('webcam:stream', {
+            detail: { stream, width: s.width, height: s.height },
+          }),
+        );
+
+        startMicMeter(micSelect.value || undefined);
+
+        stopFps = session.measureFps(video, (fps) => {
+          measuredFps = fps;
+          updateSpecs();
+        });
+
+        updateSpecs();
+        tick();
+        tickTimer = window.setInterval(tick, 1500);
+      } catch (e) {
+        renderError(e as MediaError);
+        resetStartButton();
+      }
+    }
+
+    /** One sampling pass: image stats every tick, health checks every other. */
+    function tick() {
+      stats = sampleImageStats(video);
+      updateImageSpecs();
+      if (ticks++ % 2 === 0) renderHealth();
+    }
+
+    async function startMicMeter(deviceId?: string) {
+      try {
+        mic = await startMic(deviceId);
+        setText(micStatusEl, 'Listening');
+        micStatusEl?.classList.remove('text-mute');
+        micStatusEl?.classList.add('text-success');
+        stopMeter = mic.meter((level) => {
+          if (micLevelEl) micLevelEl.style.width = `${Math.round(level * 100)}%`;
+        });
+      } catch {
+        // The mic is optional on the webcam page.
+        setText(micStatusEl, 'Unavailable');
+      }
+    }
+
+    function teardownStreams() {
+      document.dispatchEvent(new CustomEvent('webcam:stop'));
+      window.clearInterval(tickTimer);
+      recorder?.cancel();
+      recorder = null;
+      stopFps?.();
+      stopFps = null;
+      stopMeter?.();
+      stopMeter = null;
+      session?.stop();
+      session = null;
+      mic?.stop();
+      mic = null;
+    }
+
+    function stop() {
+      teardownStreams();
+      measuredFps = null;
+      maxRes = null;
+      stats = null;
+      kbps = null;
+      checks = [];
+      ticks = 0;
+      video.srcObject = null;
+      renderIdle();
+      updateImageSpecs();
+      ['#spec-camera', '#spec-resolution', '#spec-maxres', '#spec-fps', '#spec-aspect', '#spec-mp', '#spec-bitrate', '#spec-quality']
+        .forEach((sel) => setText($(sel), '—'));
+      if (micLevelEl) micLevelEl.style.width = '0%';
+      setText(micStatusEl, 'Off');
+      micStatusEl?.classList.add('text-mute');
+      micStatusEl?.classList.remove('text-success');
+      liveBadge.classList.add('hidden');
+      liveBadge.classList.remove('flex');
+      stopBtn.classList.add('hidden');
+      stopBtn.classList.remove('inline-flex');
+      snapshotBtn.disabled = true;
+      fullscreenBtn.disabled = true;
+      recordBtn.disabled = true;
+      setRecording(false);
+      resetStartButton();
+      healthList.innerHTML = '<li class="body-sm text-mute">Start the test to run automatic checks.</li>';
+    }
+
+    function resetStartButton() {
+      startBtn.classList.remove('hidden');
+      startBtn.classList.add('inline-flex');
+    }
+
+    // ---- recording -----------------------------------------------------------
+    function setRecording(on: boolean) {
+      recBadge.classList.toggle('hidden', !on);
+      recBadge.classList.toggle('flex', on);
+      recordBtn.setAttribute('aria-pressed', String(on));
+      recordBtn.title = on ? 'Stop recording' : 'Record a short clip';
+    }
+
+    function discardClip() {
+      if (clip) URL.revokeObjectURL(clip.url);
+      clip = null;
+      recVideo.removeAttribute('src');
+      recVideo.load();
+      recPanel.classList.add('hidden');
+    }
+
+    function toggleRecord() {
+      if (recorder) {
+        recorder.stop();
+        recorder = null;
+        return;
+      }
+      const stream = session?.stream;
+      if (!stream) return;
+      discardClip();
+      setRecording(true);
+      setText(recTime, 'REC 0.0s');
+      recorder = record(stream, {
+        maxMs: 6000,
+        onProgress: (ms) => setText(recTime, `REC ${(ms / 1000).toFixed(1)}s`),
+        onDone: (rec) => {
+          recorder = null;
+          setRecording(false);
+          clip = rec;
+          kbps = rec.kbps || kbps;
+          updateSpecs();
+          recVideo.src = rec.url;
+          recPanel.classList.remove('hidden');
+          recPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        },
+        onError: () => {
+          recorder = null;
+          setRecording(false);
+        },
+      });
+      if (!recorder) setRecording(false);
+    }
+
+    // ---- events --------------------------------------------------------------
+    startBtn.addEventListener('click', () => start(cameraSelect.value || undefined));
+    stopBtn.addEventListener('click', stop);
+
+    cameraSelect.addEventListener('change', () => {
+      if (session) start(cameraSelect.value || undefined);
+    });
+    micSelect.addEventListener('change', () => {
+      if (mic) {
+        stopMeter?.();
+        mic.stop();
+        mic = null;
+        startMicMeter(micSelect.value || undefined);
+      }
+    });
+
+    mirrorBtn.addEventListener('click', () => {
+      mirror = !mirror;
+      mirrorBtn.setAttribute('aria-pressed', String(mirror));
+      video.style.transform = mirror ? 'scaleX(-1)' : 'none';
+    });
+
+    gridBtn.addEventListener('click', () => {
+      const on = gridBtn.getAttribute('aria-pressed') !== 'true';
+      gridBtn.setAttribute('aria-pressed', String(on));
+      gridOverlay.classList.toggle('hidden', !on);
+    });
+
+    recordBtn.addEventListener('click', toggleRecord);
+    recDiscard.addEventListener('click', discardClip);
+    recDownload.addEventListener('click', () => {
+      if (!clip) return;
+      const a = document.createElement('a');
+      a.href = clip.url;
+      a.download = `webcam-clip-${Date.now()}.${clip.mimeType.includes('mp4') ? 'mp4' : 'webm'}`;
+      a.click();
+    });
+
+    snapshotBtn.addEventListener('click', () => {
+      if (!session) return;
+      downloadCanvas(captureSnapshot(video, mirror), `webcam-${Date.now()}.png`);
+    });
+
+    fullscreenBtn.addEventListener('click', () => {
+      if (document.fullscreenElement) document.exitFullscreen();
+      else stage.requestFullscreen?.();
+    });
+
+    copyBtn.addEventListener('click', async () => {
+      const report = buildReport({
+        env: readEnvironment(countDevices(cameraSelect), countDevices(micSelect)),
+        settings: session?.getSettings() ?? null,
+        measuredFps,
+        maxRes,
+        stats,
+        kbps,
+        checks,
+        url: location.href,
+      });
+      const ok = await copyText(report);
+      if (ok) {
+        reportOut.classList.add('hidden');
+        setText(copyLabel, 'Copied');
+      } else {
+        // Clipboard refused — surface the text so it can still be copied by hand.
+        reportOut.value = report;
+        reportOut.classList.remove('hidden');
+        reportOut.select();
+        setText(copyLabel, 'Select and copy');
+      }
+      window.setTimeout(() => setText(copyLabel, 'Copy report'), 2500);
+    });
+
+    // Cleanup — the camera light must never linger.
+    window.addEventListener('pagehide', teardownStreams);
+    window.addEventListener('beforeunload', teardownStreams);
+    document.addEventListener('astro:before-swap', teardownStreams);
+
+    populateDevices();
+    onDeviceChange(populateDevices);
+
+    if (focus !== 'full') {
+      queryPermission('camera').then((p: PermissionState) => {
+        if (p === 'granted') start();
+      });
+    }
+  }
+</script>

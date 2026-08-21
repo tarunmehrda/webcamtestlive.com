@@ -1,0 +1,329 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Container from '../components/layout/Container.astro';
+import Hero from '../components/layout/Hero.astro';
+import WebcamTest from '../components/tool/WebcamTest.astro';
+import Accordion from '../components/ui/Accordion.astro';
+import Card from '../components/ui/Card.astro';
+import { TROUBLESHOOTING_FAQS } from '../data/faqs';
+import { breadcrumbs } from '../lib/seo';
+import { SITE } from '../data/site';
+
+/** The quick checklist — rendered on the page and emitted as HowTo structured data. */
+const steps = [
+  {
+    name: 'Close every other app using the camera',
+    text: 'Zoom, Teams, Meet, Slack, Discord and OBS all claim the camera exclusively on most systems. Quit them completely — including windows minimised to the system tray or menu bar — then reload this page.',
+  },
+  {
+    name: 'Check the permission prompt',
+    text: 'Look for a camera icon at the left of your address bar. If it shows a red slash, access is blocked. Click it, choose Allow, and reload. Browsers never grant camera access silently, so if you saw no prompt, the answer was remembered from an earlier visit.',
+  },
+  {
+    name: 'Uncover the lens',
+    text: 'Laptops increasingly ship with a physical privacy shutter, and a surprising number of black-screen reports are a sliding cover or a strip of tape. If the camera light is on but the picture is black, this is almost certainly the cause.',
+  },
+  {
+    name: 'Select the right camera',
+    text: 'Docking stations, capture cards and virtual cameras from conferencing software all appear as camera devices. Use the camera dropdown in the test above to step through them until you see yourself.',
+  },
+  {
+    name: 'Reconnect and reload',
+    text: 'For an external webcam, unplug it, plug it directly into the computer rather than a hub, and wait a few seconds for the system to detect it. Then reload the page and start the test again.',
+  },
+];
+
+const errors = [
+  {
+    code: 'NotAllowedError',
+    shown: 'Camera access was blocked.',
+    cause: 'You declined the permission prompt, or your browser remembers a previous refusal for this site.',
+    fix: 'Click the camera icon in the address bar, set it to Allow, and reload the page.',
+  },
+  {
+    code: 'NotFoundError',
+    shown: 'No camera was found.',
+    cause: 'No camera device is connected, or the system has it disabled at the hardware level.',
+    fix: 'Connect a webcam, or enable the built-in camera in Device Manager on Windows. Then reload.',
+  },
+  {
+    code: 'NotReadableError',
+    shown: 'The camera is already in use.',
+    cause: 'Another application holds the camera, or a driver has locked it after a crash.',
+    fix: 'Quit all other video apps. If the error persists, restart your computer to release the device.',
+  },
+  {
+    code: 'OverconstrainedError',
+    shown: 'The requested settings are not supported.',
+    cause: 'The camera cannot deliver the resolution or frame rate that was requested of it.',
+    fix: 'Try a different camera from the dropdown, or run the standard test rather than a focused one.',
+  },
+];
+
+const browsers = [
+  {
+    name: 'Chrome, Edge, Brave & Opera',
+    path: 'Click the camera or padlock icon at the left of the address bar → set Camera to “Allow” → reload. To reset a site you have blocked permanently, open Settings → Privacy and security → Site settings → Camera and remove this site from the Blocked list.',
+  },
+  {
+    name: 'Firefox',
+    path: 'Click the padlock icon → find “Use the Camera” under Permissions → click the × next to “Blocked Temporarily” or “Blocked” to clear it → reload the page and accept the prompt when it reappears.',
+  },
+  {
+    name: 'Safari (macOS)',
+    path: 'Open Safari → Settings → Websites → Camera, find this site in the list and set it to “Allow”. Safari also requires the site to be open in the active tab while the camera is running.',
+  },
+  {
+    name: 'Android (Chrome)',
+    path: 'Tap the padlock icon next to the address → Permissions → Camera → Allow. If the camera is missing from the list, check Android Settings → Apps → Chrome → Permissions → Camera.',
+  },
+  {
+    name: 'iPhone & iPad (Safari)',
+    path: 'Tap the “ᴀA” button in the address bar → Website Settings → Camera → Allow. Then confirm iOS Settings → Safari → Camera is set to Ask or Allow rather than Deny.',
+  },
+];
+
+const os = [
+  {
+    name: 'Windows 11 and 10',
+    path: 'Settings → Privacy & security → Camera. Turn on “Camera access” and “Let apps access your camera”, then scroll to “Let desktop apps access your camera” and make sure it is on — browsers are counted as desktop apps, and this second switch is the one people miss.',
+  },
+  {
+    name: 'macOS',
+    path: 'System Settings → Privacy & Security → Camera. Enable the switch next to your browser. macOS requires the browser to restart completely after you change this, so quit it fully rather than just closing the window.',
+  },
+  {
+    name: 'ChromeOS',
+    path: 'Settings → Privacy and security → Site settings → Camera. Confirm that “Sites can ask to use your camera” is selected and that this site has not been added to the block list.',
+  },
+];
+
+const quality = [
+  {
+    title: 'Light your face, not your background',
+    body: 'This is the single biggest improvement available to you, and it is free. Face a window or place a lamp behind your monitor pointing at you. When a bright window sits behind you, the camera exposes for the window and renders you as a silhouette.',
+  },
+  {
+    title: 'Raise the camera to eye level',
+    body: 'A laptop on a desk points up at you from below, which is unflattering and shows the ceiling. Stack a few books under the laptop until the lens sits level with your eyes, and leave a small gap of headroom above you in the frame.',
+  },
+  {
+    title: 'Clean the lens',
+    body: 'Webcam lenses collect dust and fingerprints and are rarely cleaned. A soft cloth wipe often removes a permanent-looking haze that people otherwise blame on the camera hardware.',
+  },
+  {
+    title: 'Give the sensor a chance at a steady frame rate',
+    body: 'If the FPS test reports under 20 fps, add light before you change any setting. Then close background applications and plug the camera in directly rather than through a hub. Dropping from 1080p to 720p also frees up headroom on older machines.',
+  },
+  {
+    title: 'Check what your conferencing app is doing',
+    body: 'A camera that tests perfectly here can still look poor on a call, because platforms compress video hard when bandwidth is tight. Look for an “Enable HD” setting, and prefer a wired connection when the picture matters.',
+  },
+];
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: 'How to fix a webcam that is not working',
+    description:
+      'A step-by-step checklist to get a webcam working again in your browser, covering permissions, conflicting applications, device selection and hardware.',
+    totalTime: 'PT5M',
+    step: steps.map((s, i) => ({
+      '@type': 'HowToStep',
+      position: i + 1,
+      name: s.name,
+      text: s.text,
+      url: `${SITE.url}/troubleshooting#step-${i + 1}`,
+    })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: TROUBLESHOOTING_FAQS.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  },
+  breadcrumbs([{ name: 'Webcam Not Working', href: '/troubleshooting' }]),
+];
+---
+
+<Layout
+  rawTitle="Webcam Not Working? How to Fix It (Windows 10, Mac, Chrome)"
+  description="Webcam not working? Unblock camera permissions in Chrome, Firefox and Safari, fix “camera in use” errors, and check Windows 10 and macOS settings."
+  jsonLd={jsonLd}
+>
+  <Hero
+    eyebrow="Troubleshooting guide"
+    title="Webcam not working? Start here."
+    subtitle="Most camera problems come down to four things: a permission, another app holding the device, the wrong camera selected, or a covered lens. Work through the checklist below and test as you go."
+  />
+
+  <Container class="-mt-8 pb-6 md:-mt-12">
+    <WebcamTest focus="full" />
+  </Container>
+
+  <!-- Quick checklist -->
+  <Container class="py-12 sm:py-16">
+    <div class="mx-auto max-w-3xl">
+      <p class="caption-mono uppercase text-mute">Step by step</p>
+      <h2 class="display-lg mt-3 text-ink">The 60-second checklist</h2>
+      <p class="body-md mt-4 text-body">
+        Run through these in order and start the test again after each one. In our experience
+        the first two resolve the large majority of cases.
+      </p>
+
+      <ol class="mt-8 space-y-4">
+        {
+          steps.map((s, i) => (
+            <li id={`step-${i + 1}`}>
+              <Card class="flex gap-5 p-6" elevation={2}>
+                <span
+                  class="grid size-9 shrink-0 place-items-center rounded-full bg-primary text-on-primary"
+                  aria-hidden="true"
+                >
+                  <span class="body-sm font-semibold">{i + 1}</span>
+                </span>
+                <div>
+                  <h3 class="display-sm text-ink">{s.name}</h3>
+                  <p class="body-md mt-2 text-body">{s.text}</p>
+                </div>
+              </Card>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </Container>
+
+  <!-- Browser permissions -->
+  <Container class="py-12 sm:py-16" id="permissions">
+    <div class="mx-auto max-w-3xl">
+      <p class="caption-mono uppercase text-mute">Permissions</p>
+      <h2 class="display-lg mt-3 text-ink">How to allow camera access in your browser</h2>
+      <p class="body-md mt-4 text-body">
+        Browsers remember your answer per site. If you dismissed or blocked the prompt once,
+        it will not appear again on its own — you have to clear the decision by hand. Here is
+        where that setting lives.
+      </p>
+
+      <div class="mt-8 space-y-3">
+        {
+          browsers.map((b) => (
+            <Card class="p-6" elevation={2}>
+              <h3 class="display-sm text-ink">{b.name}</h3>
+              <p class="body-md mt-2 text-body">{b.path}</p>
+            </Card>
+          ))
+        }
+      </div>
+
+      <div class="mt-8 rounded-lg border border-hairline bg-canvas-soft p-6">
+        <p class="body-sm text-body">
+          <strong class="text-ink">One requirement you cannot work around:</strong> browsers
+          only grant camera access to pages served over HTTPS. If you are testing a site on
+          plain <span class="code-font">http://</span>, the camera will never start, no matter
+          which permission you grant. This site runs on HTTPS, which is why the test works here.
+        </p>
+      </div>
+    </div>
+  </Container>
+
+  <!-- OS settings -->
+  <Container class="py-12 sm:py-16">
+    <div class="mx-auto max-w-3xl">
+      <p class="caption-mono uppercase text-mute">System settings</p>
+      <h2 class="display-lg mt-3 text-ink">When the operating system is blocking it</h2>
+      <p class="body-md mt-4 text-body">
+        If your camera works in one application but not in any browser, the block is happening
+        one level below the browser. Windows and macOS both keep their own camera permission
+        list, and the browser cannot override it.
+      </p>
+
+      <div class="mt-8 space-y-3">
+        {
+          os.map((o) => (
+            <Card class="p-6" elevation={2}>
+              <h3 class="display-sm text-ink">{o.name}</h3>
+              <p class="body-md mt-2 text-body">{o.path}</p>
+            </Card>
+          ))
+        }
+      </div>
+    </div>
+  </Container>
+
+  <!-- Error decoder -->
+  <Container class="py-12 sm:py-16">
+    <div class="mx-auto max-w-3xl">
+      <p class="caption-mono uppercase text-mute">Error messages</p>
+      <h2 class="display-lg mt-3 text-ink">What the error on screen actually means</h2>
+      <p class="body-md mt-4 text-body">
+        When a camera fails to start, the browser reports one of a handful of standard errors.
+        Each one points at a different cause, so the message is worth reading rather than
+        dismissing.
+      </p>
+
+      <div class="mt-8 space-y-3">
+        {
+          errors.map((e) => (
+            <Card class="p-6" elevation={2}>
+              <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                <span class="code-font text-ink">{e.code}</span>
+                <span class="body-sm text-mute">“{e.shown}”</span>
+              </div>
+              <p class="body-md mt-3 text-body">
+                <strong class="text-ink">Cause: </strong>{e.cause}
+              </p>
+              <p class="body-md mt-1 text-body">
+                <strong class="text-ink">Fix: </strong>{e.fix}
+              </p>
+            </Card>
+          ))
+        }
+      </div>
+    </div>
+  </Container>
+
+  <!-- Quality -->
+  <Container class="py-12 sm:py-16" id="quality">
+    <div class="mx-auto max-w-3xl">
+      <p class="caption-mono uppercase text-mute">Image quality</p>
+      <h2 class="display-lg mt-3 text-ink">Your camera works — it just looks bad</h2>
+      <p class="body-md mt-4 text-body">
+        A working camera and a good-looking picture are different problems. If the test passes
+        but you are unhappy with the result, these five changes will do more than replacing the
+        hardware.
+      </p>
+
+      <div class="mt-8 space-y-3">
+        {
+          quality.map((q) => (
+            <Card class="p-6" elevation={2}>
+              <h3 class="display-sm text-ink">{q.title}</h3>
+              <p class="body-md mt-2 text-body">{q.body}</p>
+            </Card>
+          ))
+        }
+      </div>
+
+      <p class="body-md mt-8 text-body">
+        Once you have made a change, run the <a class="text-link hover:text-link-deep" href="/resolution">resolution test</a>{' '}
+        and the <a class="text-link hover:text-link-deep" href="/fps">frame rate test</a> again to
+        see it measured rather than guessed.
+      </p>
+    </div>
+  </Container>
+
+  <!-- FAQ -->
+  <Container class="py-12 sm:py-16">
+    <div class="mx-auto max-w-3xl">
+      <h2 class="display-lg text-ink">Troubleshooting FAQ</h2>
+      <div class="mt-8">
+        <Accordion items={TROUBLESHOOTING_FAQS} />
+      </div>
+    </div>
+  </Container>
+</Layout>

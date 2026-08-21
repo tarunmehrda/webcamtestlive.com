@@ -1,0 +1,160 @@
+---
+interface Props {
+  standalone?: boolean;
+}
+const { standalone = true } = Astro.props;
+---
+
+<section class="relative z-10 w-full" data-mic-tool>
+  <div class="rounded-xl border border-hairline bg-canvas p-6 elev-3">
+    <div class="flex items-center justify-between gap-4">
+      <div>
+        <h2 class="display-sm text-ink">Microphone level</h2>
+        <p class="body-sm mt-1 text-body">Speak and watch the bar respond. Audio is analysed on your device only.</p>
+      </div>
+      <span
+        data-mic-status
+        class="caption-mono rounded-full border border-hairline bg-canvas-soft px-2.5 py-1 text-mute"
+        >Idle</span
+      >
+    </div>
+
+    <!-- meter -->
+    <div class="mt-6">
+      <div class="h-4 w-full overflow-hidden rounded-full bg-canvas-soft-2">
+        <div
+          data-mic-level
+          class="h-full w-0 rounded-full bg-gradient-to-r from-success via-warning to-error transition-[width] duration-75"
+        ></div>
+      </div>
+      <div class="mt-2 flex justify-between">
+        <span class="caption-mono text-mute">Silent</span>
+        <span class="caption-mono text-mute">Loud</span>
+      </div>
+    </div>
+
+    <div class="mt-6 flex flex-wrap items-center gap-3">
+      <button
+        data-mic-start
+        class="inline-flex items-center gap-2 rounded-pill bg-primary px-5 py-3 sm:py-2.5 text-on-primary transition-opacity hover:opacity-90"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" /><path d="M19 10v2a7 7 0 0 1-14 0v-2" /><line x1="12" x2="12" y1="19" y2="22" />
+        </svg>
+        <span class="body-sm font-medium">Test microphone</span>
+      </button>
+      <button
+        data-mic-stop
+        class="hidden items-center gap-2 rounded-pill border border-hairline bg-canvas px-5 py-3 sm:py-2.5 text-ink transition-colors hover:bg-canvas-soft-2"
+      >
+        <span class="body-sm font-medium">Stop</span>
+      </button>
+
+      <label class="ml-auto flex items-center gap-2">
+        <span class="caption-mono uppercase text-mute">Mic</span>
+        <select
+          data-mic-select
+          class="body-sm h-11 rounded-sm border border-hairline bg-canvas px-3 text-ink sm:h-10"
+        >
+          <option value="">Default microphone</option>
+        </select>
+      </label>
+    </div>
+
+    <p data-mic-error class="body-sm mt-4 hidden text-error"></p>
+  </div>
+</section>
+
+<script>
+  import { startMic, type MicSession } from '../../lib/mic';
+  import { listDevices, onDeviceChange } from '../../lib/devices';
+  import { $, setText } from '../../lib/dom';
+  import type { MediaError } from '../../lib/types';
+
+  const root = document.querySelector<HTMLElement>('[data-mic-tool]');
+  if (root) init(root);
+
+  function init(root: HTMLElement) {
+    const startBtn = $<HTMLButtonElement>('[data-mic-start]', root)!;
+    const stopBtn = $<HTMLButtonElement>('[data-mic-stop]', root)!;
+    const levelEl = $<HTMLElement>('[data-mic-level]', root)!;
+    const statusEl = $('[data-mic-status]', root)!;
+    const select = $<HTMLSelectElement>('[data-mic-select]', root)!;
+    const errorEl = $('[data-mic-error]', root)!;
+
+    let mic: MicSession | null = null;
+    let stopMeter: (() => void) | null = null;
+
+    async function populate() {
+      const mics = await listDevices('audioinput');
+      const current = select.value;
+      select.innerHTML = '';
+      if (!mics.length) {
+        select.innerHTML = '<option value="">Default microphone</option>';
+        return;
+      }
+      for (const d of mics) {
+        const opt = document.createElement('option');
+        opt.value = d.deviceId;
+        opt.textContent = d.label;
+        select.appendChild(opt);
+      }
+      if (current) select.value = current;
+    }
+
+    async function start() {
+      teardown();
+      errorEl.classList.add('hidden');
+      try {
+        mic = await startMic(select.value || undefined);
+        await populate();
+        setText(statusEl, 'Listening');
+        statusEl.classList.remove('text-mute');
+        statusEl.classList.add('text-success');
+        startBtn.classList.add('hidden');
+        startBtn.classList.remove('inline-flex');
+        stopBtn.classList.remove('hidden');
+        stopBtn.classList.add('inline-flex');
+        stopMeter = mic.meter((level) => {
+          levelEl.style.width = `${Math.round(level * 100)}%`;
+        });
+      } catch (e) {
+        const err = e as MediaError;
+        errorEl.textContent = err.message;
+        errorEl.classList.remove('hidden');
+      }
+    }
+
+    function teardown() {
+      stopMeter?.();
+      stopMeter = null;
+      mic?.stop();
+      mic = null;
+    }
+
+    function stop() {
+      teardown();
+      levelEl.style.width = '0%';
+      setText(statusEl, 'Idle');
+      statusEl.classList.add('text-mute');
+      statusEl.classList.remove('text-success');
+      stopBtn.classList.add('hidden');
+      stopBtn.classList.remove('inline-flex');
+      startBtn.classList.remove('hidden');
+      startBtn.classList.add('inline-flex');
+    }
+
+    startBtn.addEventListener('click', start);
+    stopBtn.addEventListener('click', stop);
+    select.addEventListener('change', () => {
+      if (mic) start();
+    });
+
+    window.addEventListener('pagehide', teardown);
+    window.addEventListener('beforeunload', teardown);
+    document.addEventListener('astro:before-swap', teardown);
+
+    populate();
+    onDeviceChange(populate);
+  }
+</script>

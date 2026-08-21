@@ -1,0 +1,76 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Container from '../components/layout/Container.astro';
+import Hero from '../components/layout/Hero.astro';
+import Accordion from '../components/ui/Accordion.astro';
+import { FAQ_GROUPS, ALL_FAQ_ITEMS } from '../data/faq-page';
+import { breadcrumbs } from '../lib/seo';
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: ALL_FAQ_ITEMS.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  },
+  breadcrumbs([{ name: 'Webcam Test FAQ', href: '/faq' }]),
+];
+---
+
+<Layout
+  rawTitle="Webcam Test FAQ — How to Test Your Webcam"
+  description="How to test a webcam on Windows 11, Windows 10, Mac, PC or laptop, check what your camera sees, find which app is using it, and fix it when it will not start."
+  jsonLd={jsonLd}
+>
+  <Hero
+    eyebrow="Questions & answers"
+    title="Webcam test FAQ"
+    subtitle="How to test a webcam on any device, what the results mean, and what to do when the camera will not start."
+  />
+
+  <Container class="py-12 sm:py-16">
+    <div class="mx-auto max-w-3xl">
+      <!-- On-page contents: helps readers, and gives search engines the shape of the page. -->
+      <nav aria-label="Contents" class="rounded-lg border border-hairline bg-canvas-soft p-6">
+        <p class="caption-mono uppercase text-mute">On this page</p>
+        <ul class="mt-4 grid gap-x-6 gap-y-2 sm:grid-cols-2">
+          {
+            FAQ_GROUPS.map((g) => (
+              <li>
+                <a class="body-sm inline-block py-3 text-link sm:py-1 hover:text-link-deep" href={`#${g.id}`}>
+                  {g.title}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      {
+        FAQ_GROUPS.map((group) => (
+          <section id={group.id} class="mt-14 scroll-mt-24">
+            <h2 class="display-md text-ink">{group.title}</h2>
+            {group.intro && <p class="body-md mt-3 text-body">{group.intro}</p>}
+            <div class="mt-6">
+              <Accordion items={group.items} />
+            </div>
+          </section>
+        ))
+      }
+
+      <div class="mt-12 rounded-xl border border-hairline bg-canvas p-6 elev-2 sm:mt-16 sm:p-8">
+        <h2 class="display-md text-ink">Still stuck?</h2>
+        <p class="body-md mt-3 text-body">
+          Run the <a class="text-link hover:text-link-deep" href="/">free webcam test</a> to see
+          exactly what your browser reports, or work through the{' '}
+          <a class="text-link hover:text-link-deep" href="/troubleshooting">troubleshooting guide</a>,
+          which covers permissions, “camera in use” errors and the settings path for every major
+          browser and operating system.
+        </p>
+      </div>
+    </div>
+  </Container>
+</Layout>

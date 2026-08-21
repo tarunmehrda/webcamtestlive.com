@@ -1,0 +1,177 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Container from '../components/layout/Container.astro';
+import Hero from '../components/layout/Hero.astro';
+import WebcamTest from '../components/tool/WebcamTest.astro';
+import Accordion from '../components/ui/Accordion.astro';
+import Card from '../components/ui/Card.astro';
+import { FPS_FAQS } from '../data/faqs';
+import { breadcrumbs } from '../lib/seo';
+
+const bands = [
+  {
+    range: '60 fps',
+    verdict: 'Streaming territory',
+    body: 'Visibly smoother for fast movement and worth having if you record or stream. On a video call it is almost always wasted, because platforms cap and re-encode at 30.',
+  },
+  {
+    range: '30 fps',
+    verdict: 'The target',
+    body: 'The standard for video calls and the number nearly every conferencing platform aims for. Movement looks natural and nobody notices the frame rate, which is the goal.',
+  },
+  {
+    range: '24 fps',
+    verdict: 'Perfectly fine',
+    body: 'The frame rate cinema has used for a century. Slightly softer on fast motion, entirely acceptable for a person sitting and talking.',
+  },
+  {
+    range: '15–20 fps',
+    verdict: 'Noticeable',
+    body: 'Movement begins to stutter and gestures smear. Usually a symptom of low light or a loaded CPU rather than a limitation of the camera itself.',
+  },
+  {
+    range: 'Below 15 fps',
+    verdict: 'A problem worth fixing',
+    body: 'Distractingly choppy, and it reads as a bad connection to the people watching. Add light first, then look at what else is competing for the processor.',
+  },
+];
+
+const causes = [
+  {
+    title: 'Low light',
+    body: 'By far the most common cause. To gather enough light, the camera holds the shutter open longer for each frame — and a longer exposure mathematically limits how many frames fit into a second. A lamp facing you often takes a camera from 15 fps back to 30 with no other change.',
+  },
+  {
+    title: 'A busy processor',
+    body: 'Decoding video is real work. Browser tabs running video, a compile in the background, or a virus scan mid-sweep all steal the headroom the camera pipeline needs, and the browser responds by dropping frames.',
+  },
+  {
+    title: 'USB bandwidth',
+    body: 'An external webcam pushing uncompressed frames needs a lot of bus bandwidth. Sharing a hub with an external drive or a second camera starves it. Plug the camera directly into the machine, and prefer a port that is not shared with a heavy device.',
+  },
+  {
+    title: 'Resolution set too high',
+    body: 'Frame rate and resolution trade against each other. Many cameras that manage 30 fps at 720p can only sustain 15 fps at 1080p. If smoothness matters more than sharpness, the lower resolution is the better call.',
+  },
+  {
+    title: 'Driver or software processing',
+    body: 'Background blur, auto-framing and beauty filters from your webcam utility or conferencing app all cost frames. Turning them off is a quick way to find out how much they were costing you.',
+  },
+];
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: FPS_FAQS.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  },
+  breadcrumbs([{ name: 'Webcam FPS Test', href: '/fps' }]),
+];
+---
+
+<Layout
+  rawTitle="Webcam FPS Test — Measure Your Camera Frame Rate Online"
+  description="Free online webcam FPS test. We count the frames your browser actually presents for a real frame rate reading, and show you how to fix a low one."
+  jsonLd={jsonLd}
+>
+  <Hero
+    eyebrow="Frame rate test"
+    title="How many frames per second does your webcam deliver?"
+    subtitle="We measure the frames your browser actually presents, so you get a real frame rate — not just the number printed on the box."
+  />
+
+  <Container class="-mt-8 pb-6 md:-mt-12">
+    <WebcamTest focus="fps" />
+  </Container>
+
+  <!-- Bands -->
+  <Container class="py-12 sm:py-16">
+    <div class="mx-auto max-w-3xl">
+      <p class="caption-mono uppercase text-mute">The basics</p>
+      <h2 class="display-lg mt-3 text-ink">What frame rate do you actually need?</h2>
+      <p class="body-md mt-4 text-body">
+        Frame rate is how many images your camera produces each second. Higher is smoother, but
+        the returns flatten quickly — the gap between 15 and 30 fps is obvious to everyone,
+        while the gap between 30 and 60 is invisible on a video call.
+      </p>
+
+      <div class="mt-8 space-y-3">
+        {
+          bands.map((b) => (
+            <Card class="p-6" elevation={2}>
+              <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                <h3 class="display-sm text-ink">{b.range}</h3>
+                <span class="caption-mono uppercase text-mute">{b.verdict}</span>
+              </div>
+              <p class="body-md mt-2 text-body">{b.body}</p>
+            </Card>
+          ))
+        }
+      </div>
+    </div>
+  </Container>
+
+  <!-- Why measured -->
+  <Container class="py-12 sm:py-16">
+    <div class="mx-auto max-w-3xl">
+      <p class="caption-mono uppercase text-mute">Method</p>
+      <h2 class="display-lg mt-3 text-ink">Measured, not quoted</h2>
+      <p class="body-md mt-4 text-body">
+        A camera advertised as “1080p at 30 fps” is describing its best case: bright light, a
+        direct connection, and nothing else competing for resources. What matters on a real call
+        is what actually arrives. This test counts the video frames your browser presents over
+        rolling one-second windows, so the number on screen is the delivered frame rate under
+        the conditions you are sitting in right now.
+      </p>
+      <p class="body-md mt-4 text-body">
+        Expect the reading to settle over the first few seconds while auto-exposure finds its
+        level, and to move by a frame or two after that. A steady number in the high twenties is
+        a healthy result.
+      </p>
+    </div>
+  </Container>
+
+  <!-- Causes -->
+  <Container class="py-12 sm:py-16">
+    <div class="mx-auto max-w-3xl">
+      <p class="caption-mono uppercase text-mute">Diagnosis</p>
+      <h2 class="display-lg mt-3 text-ink">Why your frame rate is low — and how to raise it</h2>
+      <p class="body-md mt-4 text-body">
+        These are the five causes worth checking, roughly in the order they are likely to be
+        responsible.
+      </p>
+
+      <div class="mt-8 space-y-3">
+        {
+          causes.map((c) => (
+            <Card class="p-6" elevation={2}>
+              <h3 class="display-sm text-ink">{c.title}</h3>
+              <p class="body-md mt-2 text-body">{c.body}</p>
+            </Card>
+          ))
+        }
+      </div>
+
+      <p class="body-md mt-8 text-body">
+        Frame rate and sharpness trade against each other, so check the{' '}
+        <a class="text-link hover:text-link-deep" href="/resolution">resolution test</a> too, and
+        see the <a class="text-link hover:text-link-deep" href="/troubleshooting#quality">quality guide</a>{' '}
+        for the lighting changes that improve both at once.
+      </p>
+    </div>
+  </Container>
+
+  <!-- FAQ -->
+  <Container class="py-12 sm:py-16">
+    <div class="mx-auto max-w-3xl">
+      <h2 class="display-lg text-ink">Frame rate FAQ</h2>
+      <div class="mt-8">
+        <Accordion items={FPS_FAQS} />
+      </div>
+    </div>
+  </Container>
+</Layout>

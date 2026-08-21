@@ -1,0 +1,39 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Container from '../components/layout/Container.astro';
+import { NAV } from '../data/site';
+
+const suggestions = NAV.filter((item) => item.href !== '/');
+---
+
+<Layout title="Page not found" description="The page you are looking for could not be found." noindex>
+  <Container class="py-24">
+    <div class="mx-auto max-w-lg text-center">
+      <p class="caption-mono uppercase text-mute">404</p>
+      <h1 class="display-xl mt-3 text-ink">Page not found.</h1>
+      <p class="body-md mt-4 text-body">
+        The page you are looking for does not exist or has moved. The webcam test itself is
+        still exactly where you left it.
+      </p>
+      <a href="/" class="mt-8 inline-flex items-center gap-2 rounded-pill bg-primary px-6 py-3 text-on-primary transition-opacity hover:opacity-90">
+        <span class="body-sm font-medium">Back to the webcam test</span>
+      </a>
+
+      <p class="caption-mono mt-12 uppercase text-mute">Or try one of these</p>
+      <ul class="mt-4 flex flex-wrap justify-center gap-2">
+        {
+          suggestions.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                class="body-sm inline-flex rounded-full border border-hairline bg-canvas px-4 py-3 text-body sm:py-2 transition-colors hover:text-ink"
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </Container>
+</Layout>

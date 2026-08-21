@@ -1,0 +1,31 @@
+---
+import type { Faq } from '../../data/faqs';
+interface Props {
+  items: Faq[];
+}
+const { items } = Astro.props;
+---
+
+<div class="divide-y divide-hairline overflow-hidden rounded-lg border border-hairline bg-canvas">
+  {
+    items.map((item) => (
+      <details class="group">
+        <summary class="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 [&::-webkit-details-marker]:hidden">
+          <span class="body-md font-medium text-ink">{item.q}</span>
+          <svg
+            class="size-4 shrink-0 text-mute transition-transform group-open:rotate-45"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          >
+            <line x1="12" x2="12" y1="5" y2="19" />
+            <line x1="5" x2="19" y1="12" y2="12" />
+          </svg>
+        </summary>
+        <p class="body-sm px-5 pb-5 text-body">{item.a}</p>
+      </details>
+    ))
+  }
+</div>

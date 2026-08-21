@@ -1,0 +1,213 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Container from '../components/layout/Container.astro';
+import Hero from '../components/layout/Hero.astro';
+import MicMeter from '../components/tool/MicMeter.astro';
+import SpeakerTest from '../components/tool/SpeakerTest.astro';
+import Accordion from '../components/ui/Accordion.astro';
+import Card from '../components/ui/Card.astro';
+import { MIC_FAQS } from '../data/faqs';
+import { breadcrumbs } from '../lib/seo';
+import { SITE } from '../data/site';
+
+const steps = [
+  {
+    name: 'Start the microphone test',
+    text: 'Press start and allow microphone access when your browser asks. The prompt appears at the top of the window, near the address bar.',
+  },
+  {
+    name: 'Pick the right input',
+    text: 'Choose your microphone from the dropdown. Headsets, webcams, docking stations and virtual audio devices all appear here, and the default is often not the one you mean to use.',
+  },
+  {
+    name: 'Speak at your normal call volume',
+    text: 'Say a couple of sentences at the volume and distance you would use on a real call. Watch the meter rather than listening for playback.',
+  },
+  {
+    name: 'Read the level',
+    text: 'The bar should move well into the middle of its range and peak toward the upper third. Barely moving means too little gain; pinned at the top means clipping.',
+  },
+];
+
+const problems = [
+  {
+    title: 'The meter does not move at all',
+    body: 'Work through the obvious causes in order: the wrong device selected in the dropdown, a mute switch on the headset cable or the microphone body, a muted input in your operating system’s sound settings, and finally another application holding the microphone exclusively.',
+  },
+  {
+    title: 'You sound quiet or far away',
+    body: 'Move to within 15–30 cm of the microphone and raise the input gain in your system sound settings. A microphone lying flat on the desk also picks up more keyboard noise than voice — raise it, or clip it to your collar.',
+  },
+  {
+    title: 'Your voice sounds harsh or distorted',
+    body: 'The signal is clipping. Lower the input gain until normal speech peaks below the top of the meter, and back away slightly. Turning off any “microphone boost” option usually resolves it in one step.',
+  },
+  {
+    title: 'Callers hear echo',
+    body: 'Echo comes from your speakers feeding back into your microphone. Headphones eliminate it completely. If you must use speakers, lower their volume and keep the microphone pointed away from them.',
+  },
+  {
+    title: 'There is a constant hum or hiss',
+    body: 'Steady hiss usually means the gain is set too high for a quiet microphone. A low hum often traces to a USB port sharing power with other devices — try a different port, and keep the cable away from power adapters.',
+  },
+];
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: 'How to test your microphone online',
+    description:
+      'Test a microphone in your browser using a live input level meter, with no downloads and no recording.',
+    totalTime: 'PT1M',
+    step: steps.map((s, i) => ({
+      '@type': 'HowToStep',
+      position: i + 1,
+      name: s.name,
+      text: s.text,
+      url: `${SITE.url}/mic-test#setup`,
+    })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: MIC_FAQS.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  },
+  breadcrumbs([{ name: 'Mic and Webcam Test', href: '/mic-test' }]),
+];
+---
+
+<Layout
+  rawTitle="Mic and Webcam Test — Free Online Microphone Test"
+  description="Free online mic and webcam test. Check your microphone with a live level meter and your speakers with a test tone. No download, nothing uploaded."
+  jsonLd={jsonLd}
+>
+  <Hero
+    eyebrow="Microphone test"
+    title="Is your microphone working?"
+    subtitle="Allow access and speak — the level meter moves with your voice. Audio is analysed on your device only and is never recorded or uploaded."
+  />
+
+  <Container class="-mt-8 pb-6 md:-mt-12">
+    <MicMeter />
+    <div class="mt-6 grid gap-6 md:grid-cols-2">
+      <SpeakerTest />
+      <div class="rounded-xl border border-hairline bg-canvas p-4 elev-2 sm:p-5">
+        <h2 class="display-sm text-ink">Hearing yourself</h2>
+        <p class="body-sm mt-2 text-body">
+          A microphone that registers on the meter and speakers that play the test tone are the
+          two halves of a working call. Check both before you join — and use headphones if you
+          can, because speakers feeding back into the microphone are the usual cause of echo.
+        </p>
+      </div>
+    </div>
+  </Container>
+
+  <!-- How to use it -->
+  <Container class="py-12 sm:py-16" id="setup">
+    <div class="mx-auto max-w-3xl">
+      <p class="caption-mono uppercase text-mute">Setup</p>
+      <h2 class="display-lg mt-3 text-ink">How to test your microphone</h2>
+      <p class="body-md mt-4 text-body">
+        The whole check takes under a minute, and unlike joining a call to ask “can you hear
+        me?”, nobody has to be on the other end.
+      </p>
+
+      <ol class="mt-8 space-y-4">
+        {
+          steps.map((s, i) => (
+            <li>
+              <Card class="flex gap-5 p-6" elevation={2}>
+                <span class="grid size-9 shrink-0 place-items-center rounded-full bg-primary text-on-primary" aria-hidden="true">
+                  <span class="body-sm font-semibold">{i + 1}</span>
+                </span>
+                <div>
+                  <h3 class="display-sm text-ink">{s.name}</h3>
+                  <p class="body-md mt-2 text-body">{s.text}</p>
+                </div>
+              </Card>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </Container>
+
+  <!-- Reading the meter -->
+  <Container class="py-12 sm:py-16">
+    <div class="mx-auto max-w-3xl">
+      <p class="caption-mono uppercase text-mute">Reading the meter</p>
+      <h2 class="display-lg mt-3 text-ink">What a healthy level looks like</h2>
+      <p class="body-md mt-4 text-body">
+        The meter shows the strength of the signal your computer is receiving right now. There
+        is a useful band to aim for, and both edges of it cause problems.
+      </p>
+
+      <div class="mt-8 space-y-3">
+        <Card class="p-6" elevation={2}>
+          <h3 class="display-sm text-ink">Too low</h3>
+          <p class="body-md mt-2 text-body">
+            The bar twitches near the bottom while you speak normally. Callers will strain to
+            hear you, and any noise reduction in your conferencing app may mistake your voice
+            for background noise and cut it off mid-sentence.
+          </p>
+        </Card>
+        <Card class="p-6" elevation={2}>
+          <h3 class="display-sm text-ink">Just right</h3>
+          <p class="body-md mt-2 text-body">
+            Normal speech sits around the middle and peaks into the upper third, dropping back
+            toward the bottom when you stop talking. That gap between speech and silence is what
+            makes you sound clear rather than buried in room noise.
+          </p>
+        </Card>
+        <Card class="p-6" elevation={2}>
+          <h3 class="display-sm text-ink">Too high</h3>
+          <p class="body-md mt-2 text-body">
+            The bar sits at the top and stays there. The signal is clipping, which sounds harsh
+            and crackly to everyone else and cannot be repaired after the fact — it has to be
+            fixed at the input.
+          </p>
+        </Card>
+      </div>
+    </div>
+  </Container>
+
+  <!-- Common problems -->
+  <Container class="py-12 sm:py-16">
+    <div class="mx-auto max-w-3xl">
+      <p class="caption-mono uppercase text-mute">Common problems</p>
+      <h2 class="display-lg mt-3 text-ink">Fixing the five usual complaints</h2>
+
+      <div class="mt-8 space-y-3">
+        {
+          problems.map((p) => (
+            <Card class="p-6" elevation={2}>
+              <h3 class="display-sm text-ink">{p.title}</h3>
+              <p class="body-md mt-2 text-body">{p.body}</p>
+            </Card>
+          ))
+        }
+      </div>
+
+      <p class="body-md mt-8 text-body">
+        Checking your camera as well? The <a class="text-link hover:text-link-deep" href="/">webcam test</a>{' '}
+        covers both at once, and the <a class="text-link hover:text-link-deep" href="/troubleshooting">troubleshooting guide</a>{' '}
+        handles permission problems in more depth.
+      </p>
+    </div>
+  </Container>
+
+  <!-- FAQ -->
+  <Container class="py-12 sm:py-16">
+    <div class="mx-auto max-w-3xl">
+      <h2 class="display-lg text-ink">Microphone FAQ</h2>
+      <div class="mt-8">
+        <Accordion items={MIC_FAQS} />
+      </div>
+    </div>
+  </Container>
+</Layout>

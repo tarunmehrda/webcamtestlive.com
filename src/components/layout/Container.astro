@@ -1,0 +1,14 @@
+---
+interface Props {
+  class?: string;
+  as?: string;
+  /** Anything else (id, aria-*, data-*) is forwarded to the rendered element. */
+  [key: string]: unknown;
+}
+const { class: className = '', as = 'div', ...rest } = Astro.props;
+const Tag = as as any;
+---
+
+<Tag class:list={['container-px mx-auto w-full max-w-[1200px]', className]} {...rest}>
+  <slot />
+</Tag>

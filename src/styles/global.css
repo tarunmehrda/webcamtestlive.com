@@ -1,0 +1,336 @@
+@import "tailwindcss";
+
+/* Manual (class-based) dark mode: `.dark` on <html> toggles the dark variant. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Self-hosted fonts (Geist substitutes per DESIGN.md) */
+@import "@fontsource-variable/inter";
+@import "@fontsource/jetbrains-mono/400.css";
+@import "@fontsource/jetbrains-mono/500.css";
+
+/* ---------------------------------------------------------------------------
+   Design tokens — mapped from DESIGN.md (Vercel-inspired system).
+   Tailwind v4 is CSS-first: theme lives here, NOT in a tailwind.config.js.
+--------------------------------------------------------------------------- */
+@theme {
+  /* Colors → generate bg-*, text-*, border-* utilities */
+  --color-primary: #171717;
+  --color-on-primary: #ffffff;
+  --color-ink: #171717;
+  --color-body: #4d4d4d;
+  --color-mute: #888888;
+  --color-hairline: #ebebeb;
+  --color-hairline-strong: #a1a1a1;
+  --color-canvas: #ffffff;
+  --color-canvas-soft: #fafafa;
+  --color-canvas-soft-2: #f5f5f5;
+  --color-stage: #0d0d0d; /* video preview surface — always dark in both themes */
+
+  /* Elevation tints. Black rings are invisible on a dark canvas, so .dark
+     re-points these at translucent white instead of restating every elev-*. */
+  --shadow-ring: #00000014;
+  --shadow-key: #0000000a;
+  --shadow-soft: #00000005;
+  --shadow-deep: #0000000f;
+
+  --color-link: #0070f3;
+  --color-link-deep: #0761d1;
+  --color-link-bg-soft: #d3e5ff;
+
+  --color-success: #0aa66e;
+  --color-error: #ee0000;
+  --color-error-soft: #f7d4d6;
+  --color-error-deep: #c50000;
+  --color-warning: #f5a623;
+  --color-warning-soft: #ffefcf;
+  --color-warning-deep: #ab570a;
+
+  --color-violet: #7928ca;
+  --color-cyan: #50e3c2;
+  --color-highlight-pink: #ff0080;
+
+  /* Mesh-gradient stops (hero scale only) */
+  --color-grad-develop-start: #007cf0;
+  --color-grad-develop-end: #00dfd8;
+  --color-grad-preview-start: #7928ca;
+  --color-grad-preview-end: #ff0080;
+  --color-grad-ship-start: #ff4d4d;
+  --color-grad-ship-end: #f9cb28;
+
+  /* Spacing: use Tailwind's numeric scale (4px base), which already expresses the
+     design system's steps exactly — p-1 4px, p-2 8px, p-4 16px, p-6 24px, p-8 32px,
+     p-12 48px, p-16 64px, p-24 96px, p-32 128px, p-48 192px.
+     Do NOT add named --spacing-* keys (xs, lg, 3xl...): Tailwind resolves max-w-*
+     against that namespace, so `--spacing-3xl: 48px` silently turns max-w-3xl into
+     48px instead of 48rem and collapses every centred column on the site. */
+
+  /* Radius → rounded-* utilities */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-pill-sm: 64px;
+  --radius-pill: 100px;
+  --radius-full: 9999px;
+
+  /* Fonts */
+  --font-sans: "Inter Variable", "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+
+  /* Container */
+  --container-page: 1200px;
+}
+
+/* ---------------------------------------------------------------------------
+   Typography presets — bundle size + line-height + weight + tracking.
+   (@utility so they compose with Tailwind variants.)
+--------------------------------------------------------------------------- */
+/* The display sizes are fluid, not stepped. A hard sm breakpoint made the type
+   visibly snap while resizing (and DevTools drag showed the jump mid-frame), so
+   each preset interpolates with clamp() between its phone size at 360px and its
+   DESIGN.md size at 640px — the ends are the same, the middle no longer jumps.
+   line-height is unitless so it scales with the fluid font-size, and tracking
+   uses em for the same reason. */
+@utility display-xl {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  /* 36px @ 360px → 48px @ 640px */
+  font-size: clamp(36px, 20.57px + 4.29vw, 48px);
+  line-height: 1.05;
+  letter-spacing: -0.045em;
+}
+@utility display-lg {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  /* 26px @ 360px → 32px @ 640px */
+  font-size: clamp(26px, 18.29px + 2.14vw, 32px);
+  line-height: 1.22;
+  letter-spacing: -0.038em;
+}
+@utility display-md {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  /* 21px @ 360px → 24px @ 640px */
+  font-size: clamp(21px, 17.14px + 1.07vw, 24px);
+  line-height: 1.33;
+  letter-spacing: -0.036em;
+}
+@utility display-sm {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  /* 18px @ 360px → 20px @ 640px */
+  font-size: clamp(18px, 15.43px + 0.71vw, 20px);
+  line-height: 1.4;
+  letter-spacing: -0.028em;
+}
+@utility body-lg {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  /* 16px @ 360px → 18px @ 640px */
+  font-size: clamp(16px, 13.43px + 0.71vw, 18px);
+  line-height: 1.58;
+}
+@utility body-md {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+}
+@utility body-sm {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: -0.28px;
+}
+@utility caption {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+}
+@utility caption-mono {
+  font-family: var(--font-mono);
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+}
+@utility code-font {
+  font-family: var(--font-mono);
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 20px;
+}
+
+/* ---------------------------------------------------------------------------
+   Elevation — stacked subtle shadows + inset hairline (DESIGN.md).
+--------------------------------------------------------------------------- */
+@utility elev-1 {
+  box-shadow: 0 0 0 1px var(--shadow-ring) inset;
+}
+@utility elev-2 {
+  box-shadow:
+    0 0 0 1px var(--shadow-ring) inset,
+    0 1px 1px var(--shadow-soft),
+    0 2px 2px var(--shadow-key);
+}
+@utility elev-3 {
+  box-shadow:
+    0 0 0 1px var(--shadow-ring) inset,
+    0 2px 2px var(--shadow-key),
+    0 8px 8px -8px var(--shadow-key);
+}
+@utility elev-4 {
+  box-shadow:
+    0 0 0 1px var(--shadow-ring) inset,
+    0 2px 2px var(--shadow-key),
+    0 8px 16px -4px var(--shadow-key);
+}
+@utility elev-5 {
+  box-shadow:
+    0 0 0 1px var(--shadow-ring) inset,
+    0 1px 1px var(--shadow-soft),
+    0 8px 16px -4px var(--shadow-key),
+    0 24px 32px -8px var(--shadow-deep);
+}
+
+/* Mesh gradient — hero scale only */
+@utility mesh-hero {
+  background-image:
+    radial-gradient(60% 80% at 15% 10%, color-mix(in srgb, var(--color-grad-develop-start) 42%, transparent), transparent 60%),
+    radial-gradient(55% 75% at 85% 15%, color-mix(in srgb, var(--color-grad-preview-end) 38%, transparent), transparent 60%),
+    radial-gradient(60% 80% at 75% 85%, color-mix(in srgb, var(--color-grad-ship-end) 34%, transparent), transparent 60%),
+    radial-gradient(50% 70% at 25% 90%, color-mix(in srgb, var(--color-grad-develop-end) 30%, transparent), transparent 60%);
+}
+
+/* ---------------------------------------------------------------------------
+   Base
+--------------------------------------------------------------------------- */
+/* These MUST live in @layer base. Tailwind puts its utilities in @layer utilities,
+   and unlayered rules beat layered ones no matter the specificity — so an unlayered
+   `a { color: inherit }` silently overrides text-link / text-on-primary / text-ink on
+   every anchor on the site. */
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  /* Dark theme — override the theme CSS variables so every bg-canvas / text-ink /
+     border-hairline utility adapts automatically. `primary` flips to a light fill so
+     ink CTAs and polarity bands invert cleanly (Vercel-style). `stage` is not
+     overridden — the video preview stays dark in both themes. */
+  .dark {
+    color-scheme: dark;
+
+    --color-primary: #ededed;
+    --color-on-primary: #0a0a0a;
+    --color-ink: #ededed;
+    --color-body: #a1a1a1;
+    --color-mute: #707070;
+    --color-hairline: #262626;
+    --color-hairline-strong: #3a3a3a;
+    /* Same relationship as light mode: the card surface is lighter than the page,
+       not darker. Previously canvas (#0a0a0a) was darker than the body
+       (canvas-soft #0f0f0f), so every card read as a hole with no edge. */
+    --color-canvas: #151515;
+    --color-canvas-soft: #0a0a0a;
+    --color-canvas-soft-2: #202020;
+
+    --shadow-ring: #ffffff1a;
+    --shadow-key: #00000040;
+    --shadow-soft: #00000030;
+    --shadow-deep: #00000060;
+
+    --color-link: #3d9bff;
+    --color-link-deep: #62abff;
+
+    --color-success: #3ecf8e;
+    --color-warning: #f5a623;
+    --color-warning-deep: #f7b955;
+    --color-error: #ff6166;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  /* The header is sticky, so anchor targets must clear it or they land underneath. */
+  [id] {
+    scroll-margin-top: 5rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  body {
+    margin: 0;
+    min-height: 100%;
+    /* `clip` rather than `hidden`: it stops a stray wide child from creating a
+       horizontal scrollbar on phones without making the body a scroll container,
+       which would break `position: sticky` on the header. */
+    overflow-x: clip;
+    background: var(--color-canvas-soft);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: #171717;
+    color: #f2f2f2;
+  }
+
+  a {
+    color: inherit;
+  }
+
+  *:focus-visible {
+    outline: 2px solid var(--color-link);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Container gutter — honours the notch.
+   BaseHead sets viewport-fit=cover, so on notched phones (landscape especially)
+   the viewport extends under the cutout. Full-bleed section backgrounds should
+   still reach the edge, so the inset is applied to the centred column's padding
+   rather than to <body>. max() keeps the normal gutter wherever there is no inset.
+--------------------------------------------------------------------------- */
+@layer base {
+  .container-px {
+    /* Small phones only have ~360px to spend and the cards inside add another
+       20-24px of their own padding, so the gutter starts at 16px and widens once
+       there is width to give away. */
+    --gutter: 1rem;
+    padding-left: max(var(--gutter), env(safe-area-inset-left));
+    padding-right: max(var(--gutter), env(safe-area-inset-right));
+  }
+
+  @media (min-width: 480px) {
+    .container-px {
+      --gutter: 1.5rem;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .container-px {
+      --gutter: 2rem;
+    }
+  }
+}

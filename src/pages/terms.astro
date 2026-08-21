@@ -1,0 +1,76 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Container from '../components/layout/Container.astro';
+import { SITE } from '../data/site';
+
+const updated = 'August 2026';
+---
+
+<Layout
+  title="Terms of Use"
+  description="The terms of use for Webcam Test — a free, browser-based camera and microphone testing tool."
+>
+  <Container class="py-12 sm:py-16">
+    <div class="mx-auto max-w-3xl">
+      <p class="caption-mono uppercase text-mute">Terms</p>
+      <h1 class="display-xl mt-3 text-ink">Terms of use</h1>
+      <p class="body-lg mt-6 text-body">
+        {SITE.name} is a free tool provided as-is. These terms describe what you can expect from
+        it and what we ask of you in return. Using the site means you accept them.
+      </p>
+
+      <h2 class="display-md mt-12 text-ink">Using the service</h2>
+      <p class="body-md mt-4 text-body">
+        You may use this site for any lawful purpose, personal or commercial, at no cost and
+        without creating an account. You agree not to attempt to disrupt the service, to probe or
+        attack the infrastructure that hosts it, or to use it in a way that breaks the law where
+        you live.
+      </p>
+
+      <h2 class="display-md mt-10 text-ink">No warranty</h2>
+      <p class="body-md mt-4 text-body">
+        The tools here are provided without warranty of any kind. The measurements they report —
+        resolution, frame rate, aspect ratio, audio level — depend on your hardware, drivers,
+        browser and operating system, all of which we do not control. They are intended as a
+        practical guide, not as a certified instrument, and we do not guarantee that the site
+        will be available, uninterrupted, or free of errors.
+      </p>
+
+      <h2 class="display-md mt-10 text-ink">Limitation of liability</h2>
+      <p class="body-md mt-4 text-body">
+        To the fullest extent permitted by law, we are not liable for any loss or damage arising
+        from your use of this site, including any missed meeting, interview, stream or
+        opportunity. Test your equipment with enough time to fix what you find.
+      </p>
+
+      <h2 class="display-md mt-10 text-ink">Your camera and microphone</h2>
+      <p class="body-md mt-4 text-body">
+        Access to your camera and microphone is granted by you, through your browser, and can be
+        withdrawn by you at any time. All processing happens on your device, as described in our{' '}
+        <a class="text-link hover:text-link-deep" href="/privacy">privacy policy</a>, which forms
+        part of these terms.
+      </p>
+
+      <h2 class="display-md mt-10 text-ink">Intellectual property</h2>
+      <p class="body-md mt-4 text-body">
+        The design, text and code of this site belong to its operators. Any snapshot you capture
+        is yours — it is created on your device from your own camera, and we claim no rights over
+        it whatsoever.
+      </p>
+
+      <h2 class="display-md mt-10 text-ink">Changes</h2>
+      <p class="body-md mt-4 text-body">
+        These terms may be updated from time to time. The current version always lives on this
+        page, with the revision date shown below.
+      </p>
+
+      <h2 class="display-md mt-10 text-ink">Contact</h2>
+      <p class="body-md mt-4 text-body">
+        Questions about these terms can be sent to{' '}
+        <a class="text-link hover:text-link-deep" href={`mailto:${SITE.email}`}>{SITE.email}</a>.
+      </p>
+
+      <p class="caption mt-12 text-mute">Last updated: {updated}</p>
+    </div>
+  </Container>
+</Layout>

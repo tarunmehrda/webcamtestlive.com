@@ -1,0 +1,18 @@
+---
+interface Props {
+  label: string;
+  value?: string;
+  id?: string;
+}
+const { label, value = '—', id } = Astro.props;
+---
+
+<!--
+  Device names are long and unpredictable ("HD Pro Webcam C920 (046d:08e5)"), so the
+  value column gets min-w-0 + wrapping and the label is pinned. Without it the value
+  pushed the row past the card edge on phones and the two sides stopped lining up.
+-->
+<div class="flex items-baseline justify-between gap-3 border-b border-hairline py-3 last:border-b-0">
+  <span class="caption-mono shrink-0 uppercase text-mute">{label}</span>
+  <span class="body-sm min-w-0 break-words text-right font-medium text-ink" data-spec={id} id={id}>{value}</span>
+</div>

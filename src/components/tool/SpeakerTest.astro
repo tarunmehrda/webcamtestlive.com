@@ -1,0 +1,53 @@
+---
+interface Props {
+  /** Extra classes for the wrapping card. */
+  class?: string;
+}
+const { class: className = '' } = Astro.props;
+
+const btn =
+  'body-sm rounded-sm border border-hairline bg-canvas py-3 font-medium text-ink transition-colors hover:bg-canvas-soft-2 sm:py-2';
+---
+
+<div
+  data-speaker-tool
+  class:list={['rounded-xl border border-hairline bg-canvas p-4 elev-2 sm:p-5', className]}
+>
+  <div class="flex items-center justify-between gap-3">
+    <h2 class="display-sm text-ink">Speakers</h2>
+    <span data-tone-status class="caption-mono text-mute">Idle</span>
+  </div>
+  <p class="caption mt-2 text-mute">
+    Play a test tone to check each side is working. Wear headphones to tell left from right.
+  </p>
+  <div class="mt-3 grid grid-cols-3 gap-2">
+    <button data-tone="left" class={btn}>Left</button>
+    <button data-tone="both" class={btn}>Both</button>
+    <button data-tone="right" class={btn}>Right</button>
+  </div>
+</div>
+
+<script>
+  import { playTone, closeTone, type ToneChannel } from '../../lib/tone';
+  import { setText } from '../../lib/dom';
+
+  // Astro hoists this script once per page, so bind every instance on the page.
+  document.querySelectorAll<HTMLElement>('[data-speaker-tool]').forEach((root) => {
+    const status = root.querySelector('[data-tone-status]');
+    root.querySelectorAll<HTMLButtonElement>('[data-tone]').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const channel = (btn.dataset.tone ?? 'both') as ToneChannel;
+        setText(status, channel === 'both' ? 'Playing both' : `Playing ${channel}`);
+        status?.classList.remove('text-mute');
+        status?.classList.add('text-success');
+        await playTone(channel);
+        setText(status, 'Idle');
+        status?.classList.add('text-mute');
+        status?.classList.remove('text-success');
+      });
+    });
+  });
+
+  window.addEventListener('pagehide', closeTone);
+  document.addEventListener('astro:before-swap', closeTone);
+</script>

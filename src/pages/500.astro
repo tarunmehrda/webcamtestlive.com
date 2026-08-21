@@ -1,0 +1,60 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Container from '../components/layout/Container.astro';
+import { NAV } from '../data/site';
+
+const suggestions = NAV.filter((item) => item.href !== '/');
+---
+
+<Layout title="Something went wrong" description="An unexpected error occurred while loading this page." noindex>
+  <Container class="py-24">
+    <div class="mx-auto max-w-lg text-center">
+      <p class="caption-mono uppercase text-mute">500</p>
+      <h1 class="display-xl mt-3 text-ink">Something went wrong.</h1>
+      <p class="body-md mt-4 text-body">
+        This one is on us, not on your camera. Reloading usually clears it — and because every
+        test runs inside your browser, nothing you were checking was affected.
+      </p>
+      <div class="mt-8 flex flex-wrap justify-center gap-3">
+        <button
+          type="button"
+          data-reload
+          class="inline-flex items-center gap-2 rounded-pill bg-primary px-6 py-3 text-on-primary transition-opacity hover:opacity-90"
+        >
+          <span class="body-sm font-medium">Reload the page</span>
+        </button>
+        <a
+          href="/"
+          class="inline-flex items-center gap-2 rounded-pill border border-hairline bg-canvas px-6 py-3 text-body transition-colors hover:text-ink"
+        >
+          <span class="body-sm font-medium">Back to the webcam test</span>
+        </a>
+      </div>
+
+      <p class="body-sm mt-8 text-body">
+        Still broken? <a class="text-link hover:text-link-deep" href="/contact">Tell us</a> and we
+        will look into it.
+      </p>
+
+      <p class="caption-mono mt-12 uppercase text-mute">Or try one of these</p>
+      <ul class="mt-4 flex flex-wrap justify-center gap-2">
+        {
+          suggestions.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                class="body-sm inline-flex rounded-full border border-hairline bg-canvas px-4 py-3 text-body sm:py-2 transition-colors hover:text-ink"
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </Container>
+</Layout>
+
+<script>
+  document.querySelector('[data-reload]')?.addEventListener('click', () => location.reload());
+</script>

@@ -1,0 +1,162 @@
+---
+// Long-form homepage guide. Written to be genuinely readable first and
+// keyword-complete second — the target terms all appear because the topic
+// demands them, not because they were sprinkled in.
+import Container from '../layout/Container.astro';
+---
+
+<Container class="py-12 sm:py-16" as="section" id="guide">
+  <div class="mx-auto max-w-3xl">
+    <p class="caption-mono uppercase text-mute">The complete guide</p>
+    <h2 class="display-lg mt-3 text-ink">Webcam test: everything the tool checks, and why it matters</h2>
+
+    <div class="mt-6 space-y-4">
+      <p class="body-md text-body">
+        A free webcam test is the quickest way to answer a question that costs people meetings
+        every day: does my camera actually work, and do I look the way I think I do? Running a free
+        webcam test here takes about a minute, needs no download and no account, and gives you a
+        real answer before an interview, a lesson, a telehealth appointment or a stream — rather
+        than five awkward minutes at the start of a call while everyone waits.
+      </p>
+
+      <h3 class="display-sm mt-10 text-ink">What an online webcam test actually does</h3>
+      <p class="body-md text-body">
+        When you press start, your browser asks for permission and then hands the camera feed
+        straight to this page. The preview you see is the live stream from your device. Every
+        number reported next to it — resolution, frame rate, aspect ratio, bitrate, brightness,
+        contrast, saturation and colour count — is calculated in your browser from frames that
+        never leave your computer. That is the important difference between a webcam test online
+        and an app you install: there is no upload, no server-side processing, and nothing to
+        uninstall afterwards.
+      </p>
+      <p class="body-md text-body">
+        Most people only need the first ten seconds of this. If your face appears, the camera
+        works. The rest of the test exists for the harder question — whether the picture is good
+        enough that nobody on the call is quietly distracted by it.
+      </p>
+
+      <h3 class="display-sm mt-10 text-ink">How to run the webcam test</h3>
+      <ol class="body-md space-y-3 text-body">
+        <li>
+          <strong class="text-ink">1. Press “Start test”.</strong> Nothing installs. The button
+          triggers the same browser API that Zoom, Teams and Google Meet use in the browser.
+        </li>
+        <li>
+          <strong class="text-ink">2. Allow camera access.</strong> Your browser will ask, every
+          time, for every site — that prompt is a protection, not a warning about this page. If no
+          prompt appears, you have answered before and the browser remembered.
+        </li>
+        <li>
+          <strong class="text-ink">3. Pick the right device.</strong> Laptops with a docking
+          station, a capture card, or software like OBS often expose several cameras. Use the
+          dropdown to step through them until you see yourself.
+        </li>
+        <li>
+          <strong class="text-ink">4. Read the results.</strong> Health checks flag anything that
+          would look poor on a call and tell you what to change, rather than leaving you with a
+          number and no context.
+        </li>
+      </ol>
+
+      <h3 class="display-sm mt-10 text-ink">Resolution, frame rate and bitrate</h3>
+      <p class="body-md text-body">
+        Three numbers decide how sharp and how smooth you look. <strong class="text-ink"
+          >Resolution</strong
+        > is detail: 720p is the practical minimum for a call that looks crisp, 1080p is excellent,
+        and anything under 480p looks soft on a large monitor. We report both the resolution you are
+        getting right now and the maximum your camera supports, because browsers and conferencing
+        apps routinely negotiate a lower one to save bandwidth.
+      </p>
+      <p class="body-md text-body">
+        <strong class="text-ink">Frame rate</strong> is smoothness. 30 fps is the standard;
+        below 15 fps your movements visibly stutter. We count the frames your browser actually
+        presents rather than repeating the figure printed on the box, so the reading reflects your
+        real conditions — including the lighting in the room you are sitting in.
+        <strong class="text-ink">Bitrate</strong> is measured by encoding a short sample of your
+        own stream, which is the only honest way to produce that number in a browser.
+      </p>
+
+      <h3 class="display-sm mt-10 text-ink">A combined mic and webcam test</h3>
+      <p class="body-md text-body">
+        Video is only half of a call. A mic and webcam test in one place saves you checking two
+        sites, so the microphone level meter starts alongside the camera: speak normally and the
+        bar should move well into the middle of its range. If it barely twitches, your input gain
+        is too low or the wrong device is selected. If it sits pinned at the top, the signal is
+        clipping and you will sound harsh to everyone else.
+      </p>
+      <p class="body-md text-body">
+        Speakers are the half that people forget entirely, which is why a call sometimes starts
+        with someone saying they cannot hear anything. The speaker panel plays a short tone through
+        the left channel, the right channel, or both, so you can confirm your output and your
+        headphones before you join. There is a dedicated
+        <a class="text-link hover:text-link-deep" href="/mic-test">microphone test</a> if audio is
+        the only thing you need to check.
+      </p>
+
+      <h3 class="display-sm mt-10 text-ink">Webcam test Windows 10 and Windows 11 users can run in any browser</h3>
+      <p class="body-md text-body">
+        A webcam test on Windows 10 works exactly as it does anywhere else — the browser does the
+        work, so there is no driver or app to install — but Windows keeps its own camera permission list underneath the browser, and that is
+        where most Windows-specific failures come from. Open
+        <span class="code-font">Settings → Privacy &amp; security → Camera</span> and confirm three
+        switches: “Camera access” is on, “Let apps access your camera” is on, and — the one almost
+        everyone misses — “Let desktop apps access your camera” is on as well. Browsers count as
+        desktop apps, so a camera that works in the Windows Camera app can still fail in Chrome
+        while that third switch is off. Windows 11 uses the same path with slightly different
+        wording.
+      </p>
+      <p class="body-md text-body">
+        On macOS the equivalent lives in
+        <span class="code-font">System Settings → Privacy &amp; Security → Camera</span>, and macOS
+        requires you to quit the browser completely before the change takes effect. Chromebooks,
+        Android phones and iPhones all work without any of this, provided the page is on HTTPS.
+      </p>
+
+      <h3 class="display-sm mt-10 text-ink">Which browsers and devices work</h3>
+      <p class="body-md text-body">
+        Every current browser supports camera access: Chrome, Edge, Firefox, Safari, Opera and
+        Brave, across Windows, macOS, Linux, ChromeOS, Android and iOS. The one hard requirement is
+        a secure connection — browsers refuse camera access to any page served over plain
+        <span class="code-font">http://</span>, which is why a local development site never shows a
+        preview no matter which permission you grant.
+      </p>
+
+      <h3 class="display-sm mt-10 text-ink">What makes this webcam test site different</h3>
+      <p class="body-md text-body">
+        Most tools stop at “your camera works”. This one shows you the two things a large mirrored
+        preview actively hides. The call preview renders your feed at the sizes a real meeting uses
+        — speaker view, gallery tile and thumbnail — and un-mirrored, which is how everyone except
+        you sees your face. The recording panel captures a few seconds and plays it back, because
+        watching yourself move is the only reliable way to judge lighting and framing.
+      </p>
+      <p class="body-md text-body">
+        Where your camera and browser allow it, the camera controls go further still and adjust the
+        hardware itself: zoom, brightness, exposure and focus, changed live so you can fix a dim
+        picture instead of only being told it is dim. Rule-of-thirds framing guides help you place
+        your eyes on the upper line, and a one-click diagnostics report collects your browser, OS
+        and every measurement into text you can paste into a support ticket.
+      </p>
+
+      <h3 class="display-sm mt-10 text-ink">If the camera does not appear</h3>
+      <p class="body-md text-body">
+        Four causes explain nearly every failure: a blocked permission, another application holding
+        the camera, the wrong device selected, or a privacy shutter over the lens. Close Zoom,
+        Teams, Meet and OBS completely — including windows minimised to the system tray — then
+        reload. Our <a class="text-link hover:text-link-deep" href="/troubleshooting">troubleshooting guide</a>
+        covers each one with the exact settings path for every major browser and operating system,
+        and decodes the specific error your browser reports.
+      </p>
+
+      <h3 class="display-sm mt-10 text-ink">Privacy</h3>
+      <p class="body-md text-body">
+        A free webcam test should not cost you your privacy. This site is a set of static files
+        with no endpoint that could receive video, so your feed is never uploaded, and snapshots
+        and recordings are created on your device and stay there unless you choose to download
+        them. Pressing stop releases the camera immediately and your indicator light goes out —
+        your own independent confirmation. The
+        <a class="text-link hover:text-link-deep" href="/privacy">privacy page</a> sets out the
+        detail in plain language.
+      </p>
+    </div>
+  </div>
+</Container>

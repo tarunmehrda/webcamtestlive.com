@@ -1,0 +1,148 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Container from '../components/layout/Container.astro';
+import Hero from '../components/layout/Hero.astro';
+import WebcamTest from '../components/tool/WebcamTest.astro';
+import Accordion from '../components/ui/Accordion.astro';
+import Card from '../components/ui/Card.astro';
+import { RESOLUTION_FAQS } from '../data/faqs';
+import { breadcrumbs } from '../lib/seo';
+
+const resolutions = [
+  {
+    name: '360p',
+    pixels: '640 × 360',
+    verdict: 'Fallback only',
+    body: 'Used when bandwidth collapses or a camera is very old. Faces are recognisable but detail is gone, and text held up to the camera will be unreadable.',
+  },
+  {
+    name: '480p',
+    pixels: '640 × 480',
+    verdict: 'Standard definition',
+    body: 'Workable on a small window, noticeably soft when someone views you full-screen. This is the 4:3 shape, so widescreen apps will crop or pillarbox it.',
+  },
+  {
+    name: '720p',
+    pixels: '1280 × 720',
+    verdict: 'The practical minimum',
+    body: 'Genuine HD and the sweet spot for most cameras and connections. Sharp enough for interviews and meetings, cheap enough that frame rate rarely suffers.',
+  },
+  {
+    name: '1080p',
+    pixels: '1920 × 1080',
+    verdict: 'Full HD',
+    body: 'Looks excellent when the room is well lit. In dim light the extra pixels mostly capture extra noise, so lighting is the prerequisite for the upgrade paying off.',
+  },
+  {
+    name: '4K',
+    pixels: '3840 × 2160',
+    verdict: 'Beyond most calls',
+    body: 'Supported by higher-end cameras and valuable for recording or cropping in. Nearly every conferencing platform downscales it before your video reaches anyone.',
+  },
+];
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: RESOLUTION_FAQS.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  },
+  breadcrumbs([{ name: 'Webcam Resolution Test', href: '/resolution' }]),
+];
+---
+
+<Layout
+  rawTitle="Webcam Resolution Test — Check Your Camera Resolution Online"
+  description="Free online webcam resolution test. Check your current and maximum camera resolution — 720p, 1080p or 4K — instantly in your browser."
+  jsonLd={jsonLd}
+>
+  <Hero
+    eyebrow="Resolution test"
+    title="What resolution is your webcam?"
+    subtitle="Start the test to see your live resolution and the maximum quality your camera supports. Everything runs privately in your browser."
+  />
+
+  <Container class="-mt-8 pb-6 md:-mt-12">
+    <WebcamTest focus="resolution" />
+  </Container>
+
+  <!-- Explainer -->
+  <Container class="py-12 sm:py-16">
+    <div class="mx-auto max-w-3xl">
+      <p class="caption-mono uppercase text-mute">The basics</p>
+      <h2 class="display-lg mt-3 text-ink">Understanding webcam resolution</h2>
+      <p class="body-md mt-4 text-body">
+        Resolution is the number of pixels your camera captures, written as width × height.
+        More pixels means more detail is available — but only if there is enough light for the
+        sensor to resolve that detail in the first place. Two numbers matter here: the
+        resolution you are getting right now, and the maximum your camera is capable of. The
+        test above reports both, because they are frequently not the same.
+      </p>
+
+      <div class="mt-8 space-y-3">
+        {
+          resolutions.map((r) => (
+            <Card class="p-6" elevation={2}>
+              <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                <h3 class="display-sm text-ink">
+                  {r.name} <span class="code-font text-mute">{r.pixels}</span>
+                </h3>
+                <span class="caption-mono uppercase text-mute">{r.verdict}</span>
+              </div>
+              <p class="body-md mt-2 text-body">{r.body}</p>
+            </Card>
+          ))
+        }
+      </div>
+    </div>
+  </Container>
+
+  <!-- Current vs max -->
+  <Container class="py-12 sm:py-16">
+    <div class="mx-auto max-w-3xl">
+      <p class="caption-mono uppercase text-mute">Reading your result</p>
+      <h2 class="display-lg mt-3 text-ink">Why your live resolution may be lower than your maximum</h2>
+      <p class="body-md mt-4 text-body">
+        It is normal for a 1080p camera to hand the browser a 720p stream. There are three
+        common reasons, and none of them mean the camera is faulty:
+      </p>
+      <ul class="body-md mt-4 space-y-3 text-body">
+        <li>
+          — <strong class="text-ink">The application asked for less.</strong> Browsers and
+          conferencing apps negotiate a resolution that balances quality against bandwidth and
+          CPU. Many default to 720p and only go higher if you enable an HD option.
+        </li>
+        <li>
+          — <strong class="text-ink">The light is low.</strong> Cameras trade resolution and frame
+          rate for exposure. Add light in front of you and the reported numbers often rise on
+          their own, with no setting changed.
+        </li>
+        <li>
+          — <strong class="text-ink">The connection is limited.</strong> A webcam sharing a USB hub
+          with other devices, or running through a long unpowered cable, may not have the
+          bandwidth for its top mode. Plugging directly into the computer usually fixes it.
+        </li>
+      </ul>
+      <p class="body-md mt-6 text-body">
+        Resolution is also only half of image quality. Run the{' '}
+        <a class="text-link hover:text-link-deep" href="/fps">frame rate test</a> to see how
+        smoothly those pixels are being delivered, and the{' '}
+        <a class="text-link hover:text-link-deep" href="/troubleshooting#quality">quality guide</a>{' '}
+        for the changes that make the biggest visible difference.
+      </p>
+    </div>
+  </Container>
+
+  <!-- FAQ -->
+  <Container class="py-12 sm:py-16">
+    <div class="mx-auto max-w-3xl">
+      <h2 class="display-lg text-ink">Resolution FAQ</h2>
+      <div class="mt-8">
+        <Accordion items={RESOLUTION_FAQS} />
+      </div>
+    </div>
+  </Container>
+</Layout>

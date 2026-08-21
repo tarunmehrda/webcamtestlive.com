@@ -1,0 +1,80 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Container from '../components/layout/Container.astro';
+import { SITE } from '../data/site';
+---
+
+<Layout
+  rawTitle="About This Free Webcam Test Site"
+  description="About Webcam Test — a fast, free, privacy-first tool to check your camera and microphone directly in your browser."
+>
+  <Container class="py-12 sm:py-16">
+    <div class="mx-auto max-w-3xl">
+      <p class="caption-mono uppercase text-mute">About</p>
+      <h1 class="display-xl mt-3 text-ink">A webcam test that respects you.</h1>
+      <p class="body-lg mt-6 text-body">
+        {SITE.name} is a free tool for confirming that your camera and microphone work before an
+        important call, interview, or stream. It is built to be fast, honest, and completely
+        private — no account, no download, and nothing uploaded.
+      </p>
+
+      <h2 class="display-md mt-12 text-ink">Why it exists</h2>
+      <p class="body-md mt-4 text-body">
+        The usual way to check a camera is to join a call early and ask whether people can see
+        you. That works, but it puts you on display while you fiddle with settings, and it tells
+        you nothing about why the picture looks poor. Meanwhile most “webcam test” sites bury a
+        small preview under advertising, and a few ask you to install something first — for a
+        task the browser can already do on its own.
+      </p>
+      <p class="body-md mt-4 text-body">
+        This site takes the opposite approach. The preview is the largest thing on the page, the
+        measurements are real, and the whole check is over in about a minute.
+      </p>
+
+      <h2 class="display-md mt-10 text-ink">How it works</h2>
+      <p class="body-md mt-4 text-body">
+        The test uses standard browser APIs — <span class="code-font">getUserMedia</span> for the
+        camera and the Web Audio API for the microphone — to access your devices{' '}
+        <em>locally</em>. Your browser asks for permission, streams the feed to a preview on this
+        page, and every measurement is computed on your device from frames that never travel
+        anywhere. It is the same mechanism your video-conferencing app uses, with nothing sitting
+        between you and the result.
+      </p>
+
+      <h2 class="display-md mt-10 text-ink">What makes it different</h2>
+      <ul class="body-md mt-4 space-y-2 text-body">
+        <li>— Live-measured frame rate and bitrate, counted from real frames rather than the spec sheet.</li>
+        <li>— Record a few seconds and play it back, because a mirror preview hides what a call shows.</li>
+        <li>— Camera, microphone <em>and</em> speakers in one place, plus focused tools for each dimension.</li>
+        <li>— Rule-of-thirds framing guides, so you can fix your framing rather than guess at it.</li>
+        <li>— Automatic health checks that flag a problem and tell you how to fix it.</li>
+        <li>— A one-click diagnostics report to paste into a support ticket.</li>
+        <li>— A troubleshooting guide with the exact settings path for each browser and OS.</li>
+        <li>— No ads over your preview, no account, no downloads, no dark patterns.</li>
+      </ul>
+
+      <h2 class="display-md mt-10 text-ink">Who it is for</h2>
+      <p class="body-md mt-4 text-body">
+        Anyone about to be seen on camera: candidates before an interview, teachers before a
+        lesson, clinicians before a telehealth appointment, streamers checking a new setup, and
+        support teams who need to walk someone else through a camera problem over the phone.
+      </p>
+
+      <h2 class="display-md mt-10 text-ink">Privacy</h2>
+      <p class="body-md mt-4 text-body">
+        Your video and audio never leave your device. There is no server that receives your feed
+        and no way for us to see it. The full detail is on our{' '}
+        <a class="text-link hover:text-link-deep" href="/privacy">privacy page</a>, and the{' '}
+        <a class="text-link hover:text-link-deep" href="/terms">terms of use</a> cover the rest.
+      </p>
+
+      <h2 class="display-md mt-10 text-ink">Get in touch</h2>
+      <p class="body-md mt-4 text-body">
+        Found a bug, or a camera that behaves strangely? Tell us at{' '}
+        <a class="text-link hover:text-link-deep" href={`mailto:${SITE.email}`}>{SITE.email}</a>, or
+        see the <a class="text-link hover:text-link-deep" href="/contact">contact page</a>.
+        Reports that include your browser, operating system and camera model are the most useful.
+      </p>
+    </div>
+  </Container>
+</Layout>

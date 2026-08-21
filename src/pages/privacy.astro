@@ -1,0 +1,103 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Container from '../components/layout/Container.astro';
+import { SITE } from '../data/site';
+
+const updated = 'August 2026';
+---
+
+<Layout
+  title="Privacy"
+  description="Privacy at Webcam Test: your camera and microphone feeds are processed entirely in your browser and are never uploaded or transmitted."
+>
+  <Container class="py-12 sm:py-16">
+    <div class="mx-auto max-w-3xl">
+      <p class="caption-mono uppercase text-mute">Privacy</p>
+      <h1 class="display-xl mt-3 text-ink">Your feed stays on your device.</h1>
+      <p class="body-lg mt-6 text-body">
+        {SITE.name} is built so that your camera and microphone data never leaves your computer
+        or phone. This page explains exactly what happens, in plain language and without the
+        usual hedging.
+      </p>
+
+      <div class="mt-10 rounded-lg border border-hairline bg-canvas-soft p-6">
+        <p class="caption-mono uppercase text-mute">The short version</p>
+        <ul class="body-md mt-4 space-y-2 text-body">
+          <li>— Your video and audio are processed in your browser and are never uploaded.</li>
+          <li>— We do not operate a server that receives media, so we could not see it if we tried.</li>
+          <li>— No account, no email address, and no personal details are ever requested.</li>
+          <li>— Snapshots and recorded clips are created locally and stay on your device.</li>
+        </ul>
+      </div>
+
+      <h2 class="display-md mt-12 text-ink">Camera and microphone</h2>
+      <p class="body-md mt-4 text-body">
+        When you start a test, your browser asks for permission and then hands the media stream
+        directly to the page. The preview you see and every measurement we report — resolution,
+        frame rate, aspect ratio, audio level — are computed in your browser on frames that
+        exist only in your device’s memory. Nothing is uploaded, recorded, stored, or
+        transmitted, and this site is a set of static files with no media endpoint to receive
+        such data.
+      </p>
+
+      <h2 class="display-md mt-10 text-ink">Snapshots</h2>
+      <p class="body-md mt-4 text-body">
+        If you capture a snapshot, the image is drawn from the live video in your browser and
+        downloaded straight to your device. It is never sent anywhere, and we retain no copy.
+      </p>
+
+      <h2 class="display-md mt-10 text-ink">Recordings</h2>
+      <p class="body-md mt-4 text-body">
+        The optional “see what others see” clip is recorded by your browser into memory on
+        your own device and played back from there. It is not uploaded, and it is discarded
+        as soon as you press Discard, start another recording, stop the test, or close the
+        tab. It is only ever written to disk if you choose Download.
+      </p>
+
+      <h2 class="display-md mt-10 text-ink">Permissions</h2>
+      <p class="body-md mt-4 text-body">
+        Access lasts only while you are testing. Pressing “Stop”, closing the tab, or navigating
+        away releases the camera and microphone immediately — your camera indicator light turns
+        off, which is your own independent confirmation. You can withdraw permission at any time
+        from your browser’s site settings, described in our{' '}
+        <a class="text-link hover:text-link-deep" href="/troubleshooting#permissions">permissions guide</a>.
+      </p>
+
+      <h2 class="display-md mt-10 text-ink">What we store in your browser</h2>
+      <p class="body-md mt-4 text-body">
+        One item: your light or dark theme choice, saved in your browser’s local storage so the
+        site does not flash the wrong colours on your next visit. It stays on your device, is
+        not a tracking identifier, and is removed when you clear site data. We do not use
+        advertising or tracking cookies.
+      </p>
+
+      <h2 class="display-md mt-10 text-ink">Analytics</h2>
+      <p class="body-md mt-4 text-body">
+        We may collect anonymous, aggregate statistics about the website itself — page views and
+        which tools are used — to understand what to improve. This never includes your camera or
+        microphone content, and it is never used to build a profile of you.
+      </p>
+
+      <h2 class="display-md mt-10 text-ink">Children</h2>
+      <p class="body-md mt-4 text-body">
+        This site is a general-purpose utility and is not directed at children. Because we do not
+        collect personal information from anyone, we hold no personal information about children.
+      </p>
+
+      <h2 class="display-md mt-10 text-ink">Changes to this policy</h2>
+      <p class="body-md mt-4 text-body">
+        If this policy changes, the revised version will be posted on this page with a new date
+        below. Any change that affects how your data is handled will be described in plain terms
+        rather than buried in a revision.
+      </p>
+
+      <h2 class="display-md mt-10 text-ink">Contact</h2>
+      <p class="body-md mt-4 text-body">
+        Questions about privacy can be sent to{' '}
+        <a class="text-link hover:text-link-deep" href={`mailto:${SITE.email}`}>{SITE.email}</a>.
+      </p>
+
+      <p class="caption mt-12 text-mute">Last updated: {updated}</p>
+    </div>
+  </Container>
+</Layout>

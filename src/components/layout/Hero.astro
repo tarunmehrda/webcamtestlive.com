@@ -1,0 +1,30 @@
+---
+import Container from './Container.astro';
+import Badge from '../ui/Badge.astro';
+
+interface Props {
+  eyebrow?: string;
+  title: string;
+  subtitle?: string;
+}
+const { eyebrow, title, subtitle } = Astro.props;
+---
+
+<section class="relative overflow-hidden border-b border-hairline bg-canvas">
+  <div class="mesh-hero pointer-events-none absolute inset-0 opacity-70"></div>
+  <div class="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent to-canvas"></div>
+  <Container class="relative py-14 sm:py-20 md:py-28">
+    <div class="mx-auto max-w-3xl text-center">
+      {eyebrow && <div class="mb-4 flex justify-center sm:mb-5"><Badge tone="live">{eyebrow}</Badge></div>}
+      <!-- Fluid continuation of display-xl: 48px @ 768px (exactly where the md
+           variant kicks in, so there is no snap at the boundary) → 56px @ 1024px. -->
+      <h1 class="display-xl text-balance text-ink md:text-[clamp(48px,24px+3.125vw,56px)] md:leading-[1.0] md:tracking-[-0.05em]">
+        {title}
+      </h1>
+      {subtitle && <p class="body-lg mx-auto mt-4 max-w-2xl text-pretty text-body sm:mt-6 sm:text-balance">{subtitle}</p>}
+      <div class="mt-6 sm:mt-8">
+        <slot />
+      </div>
+    </div>
+  </Container>
+</section>

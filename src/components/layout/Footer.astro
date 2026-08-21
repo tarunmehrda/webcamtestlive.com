@@ -1,0 +1,49 @@
+---
+import Container from './Container.astro';
+import Logo from './Logo.astro';
+import { FOOTER_LINKS, SITE } from '../../data/site';
+const year = new Date().getFullYear();
+---
+
+<footer class="mt-24 border-t border-hairline bg-canvas">
+  <Container class="py-12 sm:py-16">
+    <!--
+      Three stacked full-width blocks made the footer taller than the viewport on a
+      phone. The link columns pair up on mobile; the brand block spans both.
+    -->
+    <div class="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-[1.5fr_1fr_1fr] md:gap-12">
+      <div class="col-span-2 max-w-xs md:col-span-1">
+        <div class="flex items-center gap-2">
+          <Logo class="size-7" />
+          <span class="body-md-strong font-semibold">Webcam Test</span>
+        </div>
+        <p class="body-sm mt-4 text-body">
+          A fast, private webcam &amp; microphone test. Everything runs in your
+          browser — your video never leaves your device.
+        </p>
+      </div>
+
+      {
+        FOOTER_LINKS.map((col) => (
+          <div>
+            <p class="caption-mono uppercase text-mute">{col.title}</p>
+            <ul class="mt-2 space-y-0 sm:mt-4 sm:space-y-3">
+              {col.items.map((item) => (
+                <li>
+                  <a href={item.href} class="body-sm inline-block py-3 text-body transition-colors hover:text-ink sm:py-1">
+                    {item.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+
+    <div class="mt-10 flex flex-col gap-2 border-t border-hairline pt-6 sm:mt-12 sm:flex-row sm:items-center sm:justify-between">
+      <p class="caption text-mute">© {year} {SITE.domain}. All rights reserved.</p>
+      <p class="caption-mono text-mute">100% client-side · no uploads · no tracking of your video</p>
+    </div>
+  </Container>
+</footer>

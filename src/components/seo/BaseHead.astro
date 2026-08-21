@@ -1,0 +1,97 @@
+---
+import { SITE } from '../../data/site';
+
+interface Props {
+  title?: string;
+  /** Full <title> with no "| Webcam Test" suffix — for pages that own their title. */
+  rawTitle?: string;
+  description?: string;
+  /** Keep a page out of the index (thank-you pages, 404). */
+  noindex?: boolean;
+  /** JSON-LD objects to embed as structured data. */
+  jsonLd?: Record<string, unknown>[];
+}
+
+const {
+  title,
+  rawTitle,
+  description = SITE.description,
+  noindex = false,
+  jsonLd = [],
+} = Astro.props;
+
+const fullTitle =
+  rawTitle ?? (title ? `${title} | ${SITE.name}` : `${SITE.name} — ${SITE.tagline}`);
+const canonical = new URL(Astro.url.pathname, SITE.url).href;
+// PNG, not SVG — social platforms do not render SVG preview images.
+const ogImage = new URL('/og-default.png', SITE.url).href;
+
+// Sitewide entity markup. Page-specific graphs are passed in via `jsonLd`.
+const siteLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': `${SITE.url}/#website`,
+  name: SITE.name,
+  alternateName: 'Free Online Webcam Test',
+  url: SITE.url,
+  description: SITE.description,
+  inLanguage: 'en',
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE.url}/#org`,
+    name: SITE.name,
+    url: SITE.url,
+    logo: { '@type': 'ImageObject', url: new URL('/web-app-manifest-512x512.png', SITE.url).href },
+  },
+};
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+<meta name="apple-mobile-web-app-title" content="Webcam" />
+<link rel="manifest" href="/site.webmanifest" />
+<meta name="generator" content={Astro.generator} />
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)" />
+
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+<meta
+  name="robots"
+  content={noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1'}
+/>
+
+<!-- Open Graph -->
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content={SITE.name} />
+<meta property="og:locale" content="en_US" />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={ogImage} />
+<meta property="og:image:secure_url" content={ogImage} />
+<meta property="og:image:type" content="image/png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content={`${SITE.name} — ${SITE.tagline}`} />
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:site" content={SITE.twitter} />
+<meta name="twitter:creator" content={SITE.twitter} />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImage} />
+<meta name="twitter:image:alt" content={`${SITE.name} — ${SITE.tagline}`} />
+
+<script is:inline type="application/ld+json" set:html={JSON.stringify(siteLd)} />
+{
+  jsonLd.map((obj) => (
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(obj)} />
+  ))
+}
