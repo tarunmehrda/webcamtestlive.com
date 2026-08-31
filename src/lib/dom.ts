@@ -24,23 +24,25 @@ function gcd(a: number, b: number): number {
 
 /** Reduce e.g. 1920x1080 → "16:9". */
 export function formatAspectRatio(w: number, h: number): string {
-  if (!w || !h) return '—';
+  if (!w || !h) return '-';
   const d = gcd(w, h);
   return `${w / d}:${h / d}`;
 }
 
 export function formatMegapixels(w: number, h: number): string {
-  if (!w || !h) return '—';
-  return `${((w * h) / 1_000_000).toFixed(1)} MP`;
+  if (!w || !h) return '-';
+  // Two decimals: 1280x720 is 0.92 MP, and rounding that to 0.9 hides the
+  // difference between a 720p sensor and a 1MP one.
+  return `${((w * h) / 1_000_000).toFixed(2)} MP`;
 }
 
 export function formatFps(fps: number | null): string {
-  if (fps === null || Number.isNaN(fps)) return '—';
+  if (fps === null || Number.isNaN(fps)) return '-';
   return `${Math.round(fps)} fps`;
 }
 
 export function formatResolution(w: number, h: number): string {
-  if (!w || !h) return '—';
+  if (!w || !h) return '-';
   return `${w} × ${h}`;
 }
 
@@ -59,7 +61,7 @@ export function commonResolutionName(w: number, h: number): string {
 }
 
 export function formatBytes(n: number): string {
-  if (!n) return '—';
+  if (!n) return '-';
   const units = ['B', 'KB', 'MB'];
   let i = 0;
   let v = n;

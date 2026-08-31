@@ -1,6 +1,6 @@
 // Shared types for the client-side media engine.
 
-export type MediaKind = 'videoinput' | 'audioinput';
+export type MediaKind = 'videoinput' | 'audioinput' | 'audiooutput';
 
 export interface DeviceInfo {
   deviceId: string;

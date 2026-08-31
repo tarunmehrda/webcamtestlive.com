@@ -1,0 +1,225 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Container from '../layout/Container.astro';
+import Hero from '../layout/Hero.astro';
+import WebcamTest from '../tool/WebcamTest.astro';
+import Accordion from '../ui/Accordion.astro';
+import Card from '../ui/Card.astro';
+import FeatureCard from '../ui/FeatureCard.astro';
+import HomeGuide from '../content/HomeGuide.astro';
+import { SITE } from '../../data/site';
+import { t, localePath, localeMeta, type Locale } from '../../i18n';
+
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+const c = t(locale);
+const L = (p: string) => localePath(locale, p);
+const hreflang = localeMeta(locale).hreflang;
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: SITE.name,
+    url: new URL(L('/'), SITE.url).href,
+    applicationCategory: 'UtilitiesApplication',
+    operatingSystem: 'Any',
+    browserRequirements:
+      'Requires a modern browser with camera access (Chrome, Edge, Firefox, Safari).',
+    description: c.meta.homeDescription,
+    inLanguage: hreflang,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: c.home.howItWorks.title,
+    description: c.home.howItWorks.subtitle,
+    inLanguage: hreflang,
+    totalTime: 'PT1M',
+    step: c.home.howItWorks.steps.map((s, i) => ({
+      '@type': 'HowToStep',
+      position: i + 1,
+      name: s.name,
+      text: s.text,
+      url: new URL(`${L('/')}#how-it-works`, SITE.url).href,
+    })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    inLanguage: hreflang,
+    mainEntity: c.home.faq.items.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  },
+];
+
+const trust = [
+  { label: c.hero.trust.noDownloads, icon: 'M12 3v12m0 0 4-4m-4 4-4-4M4 21h16' },
+  { label: c.hero.trust.noSignup, icon: 'M20 6 9 17l-5-5' },
+  {
+    label: c.hero.trust.runsInBrowser,
+    icon: 'M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20',
+  },
+  { label: c.hero.trust.nothingUploaded, icon: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z' },
+];
+
+const subTools = [
+  {
+    ...c.home.subTools.resolution,
+    href: L('/resolution'),
+    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="14" x="3" y="5" rx="2"/><path d="M3 10h18"/></svg>`,
+  },
+  {
+    ...c.home.subTools.fps,
+    href: L('/fps'),
+    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="m16.2 7.8 2.9-2.9"/><path d="M18 12h4"/><circle cx="12" cy="14" r="8"/><path d="M12 14v-3"/></svg>`,
+  },
+  {
+    ...c.home.subTools.mic,
+    href: L('/mic-test'),
+    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>`,
+  },
+];
+---
+
+<Layout
+  rawTitle={c.meta.homeTitle}
+  description={c.meta.homeDescription}
+  jsonLd={jsonLd}
+  locale={locale}
+>
+  <Hero eyebrow={c.hero.eyebrow} title={c.hero.title} subtitle={c.hero.subtitle}>
+    <div class="mx-auto grid w-fit grid-cols-1 gap-y-3 min-[400px]:w-full min-[400px]:max-w-sm min-[400px]:grid-cols-2 min-[400px]:gap-x-3 sm:flex sm:max-w-none sm:flex-wrap sm:items-center sm:justify-center sm:gap-x-6 sm:gap-y-2">
+      {
+        trust.map((t) => (
+          <span class="body-sm flex items-start gap-2 text-left text-body sm:items-center">
+            <svg class="mt-0.5 size-4 shrink-0 text-ink sm:mt-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" set:html={`<path d="${t.icon}" />`} />
+            {t.label}
+          </span>
+        ))
+      }
+    </div>
+  </Hero>
+
+  <Container class="-mt-8 pb-6 md:-mt-12" id="test">
+    <WebcamTest focus="full" />
+  </Container>
+
+  <!-- How it works -->
+  <Container class="py-12 sm:py-16" id="how-it-works">
+    <div class="mx-auto mb-8 max-w-2xl text-center sm:mb-10">
+      <h2 class="display-lg text-ink">{c.home.howItWorks.title}</h2>
+      <p class="body-md mt-3 text-body">{c.home.howItWorks.subtitle}</p>
+    </div>
+    <ol class="grid gap-4 md:grid-cols-3">
+      {
+        c.home.howItWorks.steps.map((s, i) => (
+          <li>
+            <Card class="h-full p-6" elevation={2}>
+              <span class="grid size-9 place-items-center rounded-full bg-primary text-on-primary" aria-hidden="true">
+                <span class="body-sm font-semibold">{i + 1}</span>
+              </span>
+              <h3 class="display-sm mt-4 text-ink">{s.name}</h3>
+              <p class="body-sm mt-2 text-body">{s.text}</p>
+            </Card>
+          </li>
+        ))
+      }
+    </ol>
+  </Container>
+
+  <!-- What gets checked -->
+  <Container class="py-12 sm:py-16">
+    <div class="mx-auto mb-8 max-w-2xl text-center sm:mb-10">
+      <h2 class="display-lg text-ink">{c.home.checks.title}</h2>
+      <p class="body-md mt-3 text-body">{c.home.checks.subtitle}</p>
+    </div>
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        c.home.checks.items.map((item) => (
+          <Card class="p-6" elevation={2}>
+            <h3 class="display-sm text-ink">{item.title}</h3>
+            <p class="body-sm mt-2 text-body">{item.body}</p>
+          </Card>
+        ))
+      }
+    </div>
+  </Container>
+
+  <!-- Sub-tools -->
+  <Container class="py-12 sm:py-16">
+    <div class="mx-auto mb-8 max-w-2xl text-center sm:mb-10">
+      <h2 class="display-lg text-ink">{c.home.subTools.title}</h2>
+      <p class="body-md mt-3 text-body">{c.home.subTools.subtitle}</p>
+    </div>
+    <div class="grid gap-4 md:grid-cols-3">
+      {
+        subTools.map((tool) => (
+          <FeatureCard title={tool.title} href={tool.href} icon={tool.icon} cta={c.home.subTools.openTool}>
+            {tool.body}
+          </FeatureCard>
+        ))
+      }
+    </div>
+  </Container>
+
+  <!-- Not working -->
+  <Container class="py-12 sm:py-16">
+    <div class="rounded-xl border border-hairline bg-canvas p-6 elev-3 sm:p-8 md:p-12">
+      <div class="grid items-center gap-6 md:grid-cols-[1fr_auto] md:gap-8">
+        <div>
+          <p class="caption-mono uppercase text-mute">{c.home.notWorking.eyebrow}</p>
+          <h2 class="display-md mt-3 text-ink">{c.home.notWorking.title}</h2>
+          <p class="body-md mt-3 max-w-xl text-body">{c.home.notWorking.body}</p>
+        </div>
+        <a
+          href={L('/troubleshooting')}
+          class="inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-pill bg-primary px-6 py-3 text-on-primary transition-opacity hover:opacity-90 md:w-auto"
+        >
+          <span class="body-sm font-medium">{c.home.notWorking.cta}</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14" /><path d="m12 5 7 7-7 7" />
+          </svg>
+        </a>
+      </div>
+    </div>
+  </Container>
+
+  <!-- Privacy strip -->
+  <Container>
+    <div class="rounded-xl border border-hairline bg-primary p-6 text-on-primary elev-4 sm:p-8 md:p-12">
+      <div class="grid items-center gap-6 md:grid-cols-[1fr_auto]">
+        <div>
+          <p class="caption-mono uppercase text-on-primary/50">{c.home.privacyStrip.eyebrow}</p>
+          <h2 class="display-md mt-3 text-on-primary">{c.home.privacyStrip.title}</h2>
+          <p class="body-md mt-3 max-w-xl text-on-primary/70">{c.home.privacyStrip.body}</p>
+        </div>
+        <a href={L('/privacy')} class="inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-pill bg-canvas px-6 py-3 text-ink transition-opacity hover:opacity-90 md:w-auto">
+          <span class="body-sm font-medium">{c.home.privacyStrip.cta}</span>
+        </a>
+      </div>
+    </div>
+  </Container>
+
+  <HomeGuide />
+
+  <!-- FAQ -->
+  <Container class="py-12 sm:py-16">
+    <div class="mx-auto max-w-3xl">
+      <h2 class="display-lg text-center text-ink">{c.home.faq.title}</h2>
+      <div class="mt-8">
+        <Accordion items={c.home.faq.items} />
+      </div>
+      <p class="body-md mt-6 text-center text-body">
+        {c.home.faq.more}{' '}
+        <a class="text-link hover:text-link-deep" href={L('/faq')}>{c.home.faq.moreLinkText}</a>.
+      </p>
+    </div>
+  </Container>
+</Layout>

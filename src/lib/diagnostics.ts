@@ -1,7 +1,7 @@
 import type { DiagnosticsInput, HealthCheck } from './types';
 
 /**
- * Pure health-check logic. No I/O — takes a measured snapshot and returns
+ * Pure health-check logic. No I/O: takes a measured snapshot and returns
  * an ordered list of pass/warn/fail checks with actionable hints.
  */
 export function runHealthChecks(input: DiagnosticsInput): HealthCheck[] {
@@ -151,7 +151,7 @@ export function sampleLuminance(video: HTMLVideoElement): number | null {
     }
     return sum / (pixels * 255);
   } catch {
-    // Cross-origin / tainted canvas — bail gracefully.
+    // Cross-origin / tainted canvas, so bail gracefully.
     return null;
   }
 }

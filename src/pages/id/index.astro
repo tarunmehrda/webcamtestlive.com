@@ -1,0 +1,8 @@
+---
+// id homepage. Astro's i18n routing expects a real directory per locale; a
+// [lang] param route collides with the fallback router and emits /id/<locale>/
+// cross-product pages.
+import HomePage from '../../components/pages/HomePage.astro';
+---
+
+<HomePage locale="id" />

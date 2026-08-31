@@ -1,14 +1,16 @@
 ---
-import SpecItem from '../ui/SpecItem.astro';
 import SpeakerTest from './SpeakerTest.astro';
-import CallPreview from './CallPreview.astro';
+import WebcamInfo from './WebcamInfo.astro';
 import CameraControls from './CameraControls.astro';
+import { t, localeFromPath } from '../../i18n';
 
 interface Props {
   /** Which dimension to emphasize on focused sub-tool pages. */
   focus?: 'full' | 'resolution' | 'fps';
 }
 const { focus = 'full' } = Astro.props;
+
+const T = t(localeFromPath(Astro.url.pathname)).tool;
 
 const iconBtn =
   'inline-flex size-11 shrink-0 items-center justify-center rounded-full border border-hairline bg-canvas text-ink transition-colors hover:bg-canvas-soft-2 disabled:opacity-40 aria-pressed:bg-primary aria-pressed:text-on-primary sm:size-9';
@@ -19,12 +21,36 @@ const iconBtn =
   shorter column's card was padded out to match the taller one, leaving a large
   dead area under the device selects.
 -->
-<section class="relative z-10 w-full" data-webcam-tool data-focus={focus}>
-  <div class="grid items-start gap-6 lg:grid-cols-[1.6fr_1fr]">
-    <!-- ================= Left column ================= -->
-    <div class="flex flex-col gap-6">
-      <!-- Preview -->
-      <div class="rounded-xl border border-hairline bg-canvas p-3 elev-3">
+<section
+  class="relative z-10 w-full"
+  data-webcam-tool
+  data-focus={focus}
+  data-strings={JSON.stringify({
+    idle: T.info.idle,
+    live: T.info.live,
+    defaultCamera: T.defaultCamera,
+    defaultMicrophone: T.defaultMicrophone,
+    copyReport: T.healthChecks.copyReport,
+    copied: T.healthChecks.copied,
+    selectAndCopy: T.healthChecks.selectAndCopy,
+    healthIdle: T.healthChecks.idle,
+  })}
+>
+  <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1.6fr_1fr]">
+    <!--
+      Every card is a direct grid item, placed rather than stacked into two
+      independent columns. Stacked columns are what left a tall strip of empty
+      canvas beside the last card: whichever column ran longer, the other one sat
+      blank for the whole overhang.
+
+      Phones read this in DOM order: preview, read-out, audio, controls, health.
+      Two columns from sm. From lg the preview takes the wide one and spans both
+      rows beside it, while the read-out, the recorded clip and the health checks
+      run the full width, which is where the read-out's grid opens out to five or
+      six columns instead of two.
+    -->
+    <!-- Preview -->
+    <div class="rounded-xl border border-hairline bg-canvas p-3 elev-3 sm:col-span-2 lg:col-span-1 lg:col-start-1 lg:row-start-1">
         <div class="relative aspect-video w-full overflow-hidden rounded-lg bg-stage" data-stage>
           <video
             data-video
@@ -43,7 +69,7 @@ const iconBtn =
             <span
               class="caption absolute left-1/2 top-1/3 -translate-x-1/2 -translate-y-[calc(100%+6px)] rounded-xs bg-black/55 px-1.5 py-0.5 text-white/90"
             >
-              eye line
+              {T.eyeLine}
             </span>
           </div>
 
@@ -60,8 +86,8 @@ const iconBtn =
                   <path d="m22 8-6 4 6 4V8Z" /><rect width="14" height="12" x="2" y="6" rx="2" ry="2" />
                 </svg>
               </div>
-              <p class="body-md mt-4 font-medium text-white max-[400px]:body-sm max-[400px]:mt-2">Your camera preview appears here</p>
-              <p class="caption mt-1 text-white/60">Nothing is uploaded — the test runs on your device.</p>
+              <p class="body-md mt-4 font-medium text-white max-[400px]:body-sm max-[400px]:mt-2">{T.idleTitle}</p>
+              <p class="caption mt-1 text-white/60">{T.idleNote}</p>
             </div>
           </div>
 
@@ -76,7 +102,7 @@ const iconBtn =
               </div>
               <p data-error-msg class="body-sm mt-4 text-white/90 max-[400px]:mt-2"></p>
               <a href="/troubleshooting" class="body-sm mt-4 inline-flex text-link hover:text-link-deep max-[400px]:mt-2">
-                How to fix this →
+                {T.howToFix}
               </a>
             </div>
           </div>
@@ -87,7 +113,7 @@ const iconBtn =
             class="absolute left-3 top-3 hidden items-center gap-1.5 rounded-full bg-black/50 px-2.5 py-1 backdrop-blur-sm"
           >
             <span class="size-1.5 animate-pulse rounded-full bg-[#ff4d4d]"></span>
-            <span class="caption font-medium text-white">LIVE</span>
+            <span class="caption font-medium text-white">{T.live}</span>
           </div>
 
           <!-- recording badge -->
@@ -104,7 +130,7 @@ const iconBtn =
           controls
           On phones the primary action and the five icon buttons could not share a
           row: `ml-auto` pushed the icons hard against the right edge and the start
-          pill sat orphaned on the left. Below sm they stack — the CTA takes the
+          pill sat orphaned on the left. Below sm they stack, so the CTA takes the
           full width, the icons get their own evenly-spread row.
         -->
         <div class="mt-3 grid gap-2 sm:flex sm:flex-wrap sm:items-center">
@@ -115,14 +141,14 @@ const iconBtn =
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="m22 8-6 4 6 4V8Z" /><rect width="14" height="12" x="2" y="6" rx="2" ry="2" />
             </svg>
-            <span class="body-sm font-medium">Start test</span>
+            <span class="body-sm font-medium">{T.startTest}</span>
           </button>
 
           <button
             data-stop
             class="hidden w-full items-center justify-center gap-2 rounded-pill border border-hairline bg-canvas px-5 py-3 text-ink transition-colors hover:bg-canvas-soft-2 sm:w-auto sm:justify-start sm:py-2.5"
           >
-            <span class="body-sm font-medium">Stop</span>
+            <span class="body-sm font-medium">{T.stop}</span>
           </button>
 
           <!--
@@ -132,27 +158,27 @@ const iconBtn =
             stranded. At sm they rejoin the CTA's row on the right.
           -->
           <div class="flex items-center justify-center gap-2 sm:ml-auto sm:justify-start sm:gap-2">
-            <button data-mirror aria-pressed="true" class={iconBtn} title="Mirror preview" aria-label="Mirror preview">
+            <button data-mirror aria-pressed="true" class={iconBtn} title={T.mirror} aria-label={T.mirror}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M12 3v18" /><path d="M16 7l4 5-4 5" /><path d="M8 7l-4 5 4 5" />
               </svg>
             </button>
-            <button data-grid aria-pressed="false" class={iconBtn} title="Framing guides" aria-label="Toggle framing guides">
+            <button data-grid aria-pressed="false" class={iconBtn} title={T.framingGuides} aria-label={T.framingGuides}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect width="18" height="18" x="3" y="3" rx="2" /><path d="M9 3v18M15 3v18M3 9h18M3 15h18" />
               </svg>
             </button>
-            <button data-record disabled class={iconBtn} title="Record a short clip" aria-label="Record a short clip">
+            <button data-record disabled class={iconBtn} title={T.record} aria-label={T.record}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="4" fill="currentColor" />
               </svg>
             </button>
-            <button data-snapshot disabled class={iconBtn} title="Take snapshot" aria-label="Take snapshot">
+            <button data-snapshot disabled class={iconBtn} title={T.snapshot} aria-label={T.snapshot}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3Z" /><circle cx="12" cy="13" r="3" />
               </svg>
             </button>
-            <button data-fullscreen disabled class={iconBtn} title="Fullscreen" aria-label="Fullscreen">
+            <button data-fullscreen disabled class={iconBtn} title={T.fullscreen} aria-label={T.fullscreen}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M8 3H5a2 2 0 0 0-2 2v3" /><path d="M21 8V5a2 2 0 0 0-2-2h-3" /><path d="M3 16v3a2 2 0 0 0 2 2h3" /><path d="M16 21h3a2 2 0 0 0 2-2v-3" />
               </svg>
@@ -165,118 +191,93 @@ const iconBtn =
           <label class="flex flex-col gap-1">
             <span class="caption-mono uppercase text-mute">Camera</span>
             <select data-camera-select class="body-sm h-11 rounded-sm border border-hairline bg-canvas px-3 text-ink sm:h-10">
-              <option value="">Default camera</option>
+              <option value="">{T.defaultCamera}</option>
             </select>
           </label>
           <label class="flex flex-col gap-1">
             <span class="caption-mono uppercase text-mute">Microphone</span>
             <select data-mic-select class="body-sm h-11 rounded-sm border border-hairline bg-canvas px-3 text-ink sm:h-10">
-              <option value="">Default microphone</option>
+              <option value="">{T.defaultMicrophone}</option>
             </select>
           </label>
         </div>
       </div>
 
-      <CallPreview />
-
-      <!-- Playback of a recorded clip -->
-      <div data-rec-panel class="hidden rounded-xl border border-hairline bg-canvas p-4 elev-2 sm:p-5">
-        <div class="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h2 class="display-sm text-ink">See what others see</h2>
-            <p class="caption mt-1 text-mute">Played back from your device. Never uploaded.</p>
-          </div>
-          <div class="flex items-center gap-2">
-            <button
-              data-rec-download
-              class="body-sm inline-flex items-center gap-1.5 rounded-pill border border-hairline bg-canvas px-4 py-3 font-medium text-ink transition-colors hover:bg-canvas-soft-2 sm:py-2"
-            >
-              Download
-            </button>
-            <button
-              data-rec-discard
-              class="body-sm inline-flex items-center gap-1.5 rounded-pill border border-hairline bg-canvas px-4 py-3 font-medium text-body transition-colors hover:text-ink sm:py-2"
-            >
-              Discard
-            </button>
-          </div>
+    <!-- Playback of a recorded clip -->
+    <div data-rec-panel class="hidden rounded-xl border border-hairline bg-canvas p-4 elev-2 sm:col-span-2 sm:p-5">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 class="display-sm text-ink">{T.recording.title}</h2>
+          <p class="caption mt-1 text-mute">Played back from your device. Never uploaded.</p>
         </div>
-        <video data-rec-video controls playsinline class="mt-4 aspect-video w-full rounded-lg bg-stage"></video>
-      </div>
-
-      <!-- Health checks -->
-      <div class="rounded-xl border border-hairline bg-canvas p-4 elev-2 sm:p-5">
-        <div class="flex flex-wrap items-center justify-between gap-3">
-          <h2 class="display-sm text-ink">Health checks</h2>
+        <div class="flex items-center gap-2">
           <button
-            data-copy-report
-            class="body-sm inline-flex items-center gap-1.5 rounded-pill border border-hairline bg-canvas px-3 py-3 font-medium text-body transition-colors hover:text-ink sm:py-1.5"
+            data-rec-download
+            class="body-sm inline-flex items-center gap-1.5 rounded-pill border border-hairline bg-canvas px-4 py-3 font-medium text-ink transition-colors hover:bg-canvas-soft-2 sm:py-2"
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect width="14" height="14" x="8" y="8" rx="2" /><path d="M4 16V4a2 2 0 0 1 2-2h10" />
-            </svg>
-            <span data-copy-label>Copy report</span>
+            {T.recording.download}
+          </button>
+          <button
+            data-rec-discard
+            class="body-sm inline-flex items-center gap-1.5 rounded-pill border border-hairline bg-canvas px-4 py-3 font-medium text-body transition-colors hover:text-ink sm:py-2"
+          >
+            {T.recording.discard}
           </button>
         </div>
-        <ul data-health class="mt-4 space-y-2">
-          <li class="body-sm text-mute">Start the test to run automatic checks.</li>
-        </ul>
-        <!-- Shown only when the clipboard is unavailable, so the report is never trapped. -->
-        <textarea
-          data-report-out
-          readonly
-          rows="10"
-          aria-label="Diagnostics report"
-          class="code-font mt-4 hidden w-full resize-y rounded-sm border border-hairline bg-canvas-soft p-3 text-ink"
-        ></textarea>
       </div>
+      <video data-rec-video controls playsinline class="mt-4 aspect-video w-full rounded-lg bg-stage"></video>
     </div>
 
-    <!-- ================= Right column ================= -->
-    <div class="flex flex-col gap-6">
-      <div class="rounded-xl border border-hairline bg-canvas p-4 elev-2 sm:p-5">
-        <h2 class="display-sm text-ink">Camera</h2>
-        <div class="mt-3">
-          <SpecItem label="Device" id="spec-camera" />
-          <SpecItem label="Resolution" id="spec-resolution" />
-          <SpecItem label="Max supported" id="spec-maxres" />
-          <SpecItem label="Frame rate" id="spec-fps" />
-          <SpecItem label="Aspect ratio" id="spec-aspect" />
-          <SpecItem label="Megapixels" id="spec-mp" />
-          <SpecItem label="Bitrate" id="spec-bitrate" />
-          <SpecItem label="Quality" id="spec-quality" />
-        </div>
+    <WebcamInfo class="sm:col-span-2" />
+
+    <!-- Audio: input and output in one card instead of two stacked ones. -->
+    <div class="rounded-xl border border-hairline bg-canvas p-4 elev-2 sm:p-5 flex h-full flex-col lg:col-start-2 lg:row-start-1">
+      <div class="flex items-center justify-between gap-3">
+        <h2 class="display-sm text-ink">Microphone</h2>
+        <span data-mic-status class="caption-mono text-mute">Off</span>
       </div>
-
-      <div class="rounded-xl border border-hairline bg-canvas p-4 elev-2 sm:p-5">
-        <h2 class="display-sm text-ink">Image</h2>
-        <div class="mt-3">
-          <SpecItem label="Brightness" id="spec-brightness" />
-          <SpecItem label="Contrast" id="spec-contrast" />
-          <SpecItem label="Saturation" id="spec-saturation" />
-          <SpecItem label="Colours" id="spec-colors" />
-        </div>
+      <div class="mt-3 h-3 w-full overflow-hidden rounded-full bg-canvas-soft-2">
+        <div
+          data-mic-level
+          class="h-full w-0 rounded-full bg-gradient-to-r from-success via-warning to-error transition-[width] duration-75"
+        ></div>
       </div>
+      <p class="caption mt-2 text-mute">Speak to see your input level.</p>
 
-      <CameraControls />
+      <hr class="my-4 border-0 border-t border-hairline" />
 
-      <div class="rounded-xl border border-hairline bg-canvas p-4 elev-2 sm:p-5">
-        <div class="flex items-center justify-between gap-3">
-          <h2 class="display-sm text-ink">Microphone</h2>
-          <span data-mic-status class="caption-mono text-mute">Off</span>
-        </div>
-        <div class="mt-4 h-3 w-full overflow-hidden rounded-full bg-canvas-soft-2">
-          <div
-            data-mic-level
-            class="h-full w-0 rounded-full bg-gradient-to-r from-success via-warning to-error transition-[width] duration-75"
-          ></div>
-        </div>
-        <p class="caption mt-2 text-mute">Speak to see your input level. Starts with the camera test.</p>
-      </div>
-
-      <SpeakerTest />
+      <SpeakerTest bare class="flex flex-1 flex-col justify-between" />
     </div>
-  </div>
+
+    <CameraControls class="lg:col-span-2" />
+
+    <!-- Health checks -->
+    <div class="rounded-xl border border-hairline bg-canvas p-4 elev-2 sm:col-span-2 sm:p-5">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <h2 class="display-sm text-ink">{T.healthChecks.title}</h2>
+        <button
+          data-copy-report
+          class="body-sm inline-flex items-center gap-1.5 rounded-pill border border-hairline bg-canvas px-3 py-3 font-medium text-body transition-colors hover:text-ink sm:py-1.5"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="14" height="14" x="8" y="8" rx="2" /><path d="M4 16V4a2 2 0 0 1 2-2h10" />
+          </svg>
+          <span data-copy-label>{T.healthChecks.copyReport}</span>
+        </button>
+      </div>
+      <ul data-health class="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+        <li class="body-sm text-mute">Start the test to run automatic checks.</li>
+      </ul>
+      <!-- Shown only when the clipboard is unavailable, so the report is never trapped. -->
+      <textarea
+        data-report-out
+        readonly
+        rows="10"
+        aria-label="Diagnostics report"
+        class="code-font mt-4 hidden w-full resize-y rounded-sm border border-hairline bg-canvas-soft p-3 text-ink"
+      ></textarea>
+    </div>
+</div>
 </section>
 
 <script>
@@ -284,10 +285,21 @@ const iconBtn =
   import { startMic, type MicSession } from '../../lib/mic';
   import { listDevices, queryPermission, onDeviceChange, isSecureMediaContext } from '../../lib/devices';
   import { runHealthChecks } from '../../lib/diagnostics';
-  import { sampleImageStats, type ImageStats } from '../../lib/imagestats';
-  import { captureSnapshot, downloadCanvas } from '../../lib/snapshot';
-  import { record, probeBitrate, canRecord, type Recording, type RecorderHandle } from '../../lib/record';
+  import { sampleImageStats, blendStats, type ImageStats } from '../../lib/imagestats';
+  import { captureSnapshot, downloadCanvas, estimateSizes } from '../../lib/snapshot';
+  import { record, probeBitrate, canRecord, supportedMimeType, type Recording, type RecorderHandle } from '../../lib/record';
   import { readEnvironment, buildReport, copyText } from '../../lib/report';
+  import {
+    videoStandard,
+    qualityRating,
+    imageMode,
+    streamType,
+    detectBuiltIns,
+    formatMBs,
+    formatKB,
+    type BuiltIn,
+    type BuiltIns,
+  } from '../../lib/webcaminfo';
   import { $, setText, formatAspectRatio, formatMegapixels, formatFps, formatResolution } from '../../lib/dom';
   import type { HealthCheck, MediaError, PermissionState } from '../../lib/types';
 
@@ -295,6 +307,8 @@ const iconBtn =
   if (root) init(root);
 
   function init(root: HTMLElement) {
+    // Serialised by the component: client scripts cannot reach the dictionary.
+    const S = JSON.parse(root.dataset.strings || '{}') as Record<string, string>;
     const focus = root.dataset.focus ?? 'full';
     const video = $<HTMLVideoElement>('[data-video]', root)!;
     const idle = $('[data-idle]', root)!;
@@ -324,6 +338,9 @@ const iconBtn =
     const reportOut = $<HTMLTextAreaElement>('[data-report-out]', root)!;
     const micLevelEl = $<HTMLElement>('[data-mic-level]', root);
     const micStatusEl = $('[data-mic-status]', root);
+    const infoStatus = $('[data-info-status]', root);
+    const infoStars = $<HTMLElement>('[data-info-stars]', root);
+    const infoSwatch = $<HTMLElement>('[data-info-swatch]', root);
 
     let session: WebcamSession | null = null;
     let mic: MicSession | null = null;
@@ -335,10 +352,22 @@ const iconBtn =
     let stats: ImageStats | null = null;
     let kbps: number | null = null;
     let checks: HealthCheck[] = [];
+    let builtIns: BuiltIns | null = null;
+    let frameSizes: { png: number; jpeg: number } | null = null;
+    // A probe that finished empty-handed has to read "Unavailable"; a spinner that
+    // never stops is the one state worse than a missing number.
+    let maxResDone = false;
+    let bitrateDone = false;
+    let sizesDone = false;
+    let sizing = false;
     let recorder: RecorderHandle | null = null;
     let clip: Recording | null = null;
     let tickTimer: number | undefined;
     let ticks = 0;
+    // Bumped on every teardown. The three probes below outlive a camera switch,
+    // and without this the old camera's max resolution or bitrate lands in the
+    // new camera's rows a second after it started.
+    let runId = 0;
 
     // ---- rendering ----------------------------------------------------------
     function renderIdle() {
@@ -364,26 +393,115 @@ const iconBtn =
       liveBadge.classList.add('flex');
     }
 
-    function updateSpecs() {
-      if (!session) return;
-      const s = session.getSettings();
-      setText($('#spec-camera'), s.deviceLabel || 'Camera');
-      setText($('#spec-resolution'), formatResolution(s.width, s.height));
-      setText(
-        $('#spec-maxres'),
-        maxRes ? formatResolution(maxRes.width, maxRes.height) : 'Detecting…',
-      );
-      setText($('#spec-fps'), formatFps(measuredFps ?? s.frameRate));
-      setText($('#spec-aspect'), formatAspectRatio(s.width, s.height));
-      setText($('#spec-mp'), formatMegapixels(s.width, s.height));
-      setText($('#spec-bitrate'), kbps ? `${kbps.toLocaleString()} kbps` : 'Measuring…');
+    // ---- webcam information panel -------------------------------------------
+    // Rows measured after the stream opens; they hold a spinner until they land.
+    const LATER_IDS = ['info-maxres', 'info-bitrate', 'info-png', 'info-jpeg', 'info-mic', 'info-speaker'];
+    const IMAGE_IDS = [
+      'info-mode', 'info-colors', 'info-rgb', 'info-lightness', 'info-luminosity',
+      'info-brightness', 'info-contrast', 'info-hue', 'info-saturation',
+    ];
+    const ALL_IDS = [
+      'info-name', 'info-quality', 'info-res', 'info-standard', 'info-fps', 'info-mp',
+      'info-aspect', 'info-stream', ...LATER_IDS, ...IMAGE_IDS,
+    ];
+
+    /** Write a value, or `null` to show the row's spinner. */
+    function info(id: string, value: string | null) {
+      const el = $(`#${id}`);
+      if (!el) return;
+      el.dataset.state = value === null ? 'pending' : 'ready';
+      el.textContent = value ?? '';
     }
 
-    function updateImageSpecs() {
-      setText($('#spec-brightness'), stats ? `${stats.brightness}%` : '—');
-      setText($('#spec-contrast'), stats ? `${stats.contrast}%` : '—');
-      setText($('#spec-saturation'), stats ? `${stats.saturation}%` : '—');
-      setText($('#spec-colors'), stats ? stats.colors.toLocaleString() : '—');
+    function infoIdle(id: string) {
+      const el = $(`#${id}`);
+      if (!el) return;
+      el.dataset.state = 'idle';
+      el.textContent = '-';
+    }
+
+    function builtInLabel(v: BuiltIn): string {
+      return v === 'yes' ? 'Yes' : v === 'no' ? 'None' : 'Unknown';
+    }
+
+    function setInfoStatus(live: boolean) {
+      // The two words are rendered onto the element as data attributes so this
+      // island stays language-agnostic; English is the fallback, not the source.
+      const key = live ? 'live' : 'idle';
+      setText(infoStatus, infoStatus?.dataset[key] || (live ? S.live : S.idle));
+      infoStatus?.classList.toggle('text-success', live);
+      infoStatus?.classList.toggle('text-mute', !live);
+    }
+
+    function updateInfo() {
+      if (!session) return;
+      const s = session.getSettings();
+      info('info-name', s.deviceLabel || 'Camera');
+      info('info-res', formatResolution(s.width, s.height));
+      info('info-maxres', maxRes ? formatResolution(maxRes.width, maxRes.height) : maxResDone ? 'Unavailable' : null);
+      info('info-standard', videoStandard(s.width, s.height));
+      info('info-fps', formatFps(measuredFps ?? s.frameRate));
+      info('info-mp', formatMegapixels(s.width, s.height));
+      // Both forms: the decimal is what spec sheets quote, the ratio is what a
+      // conferencing app will crop you to.
+      info(
+        'info-aspect',
+        s.width && s.height
+          ? `${(s.width / s.height).toFixed(2)} · ${formatAspectRatio(s.width, s.height)}`
+          : '-',
+      );
+      info('info-stream', streamType(supportedMimeType()));
+      info('info-bitrate', kbps ? formatMBs(kbps) : bitrateDone ? 'Unavailable' : null);
+      info('info-png', frameSizes ? formatKB(frameSizes.png) : sizesDone ? 'Unavailable' : null);
+      info('info-jpeg', frameSizes ? formatKB(frameSizes.jpeg) : sizesDone ? 'Unavailable' : null);
+      info('info-mic', builtIns ? builtInLabel(builtIns.microphone) : null);
+      info('info-speaker', builtIns ? builtInLabel(builtIns.speaker) : null);
+
+      const q = qualityRating({ width: s.width, height: s.height, fps: measuredFps, stats });
+      info('info-quality', q.label);
+      if (infoStars) infoStars.style.width = `${(q.score / 5) * 100}%`;
+    }
+
+    function updateImageInfo() {
+      if (!stats) {
+        // Pending while the camera is live (the first frame is still decoding),
+        // idle once it is not.
+        IMAGE_IDS.forEach((id) => (session ? info(id, null) : infoIdle(id)));
+        if (infoSwatch) infoSwatch.hidden = true;
+        return;
+      }
+      info('info-mode', imageMode(stats));
+      info('info-colors', stats.colors.toLocaleString());
+      info('info-rgb', stats.hex.toUpperCase());
+      info('info-lightness', `${stats.lightness}%`);
+      info('info-luminosity', `${stats.luminosity}%`);
+      info('info-brightness', `${stats.brightness}%`);
+      info('info-contrast', `${stats.contrast}%`);
+      info('info-hue', `${stats.hue}°`);
+      info('info-saturation', `${stats.saturation}%`);
+      if (infoSwatch) {
+        infoSwatch.hidden = false;
+        infoSwatch.style.backgroundColor = stats.hex;
+      }
+    }
+
+    /**
+     * Encode the current frame to PNG and JPEG to report what one frame costs.
+     * Full resolution, because a downscaled sample would understate both by an
+     * order of magnitude, and throttled, because it is the one expensive job here.
+     */
+    async function measureFrameSizes() {
+      if (sizing || !session || !video.videoWidth) return;
+      sizing = true;
+      try {
+        frameSizes = await estimateSizes(captureSnapshot(video, false));
+      } catch {
+        frameSizes = null;
+      } finally {
+        sizesDone = true;
+        sizing = false;
+      }
+      updateInfo();
     }
 
     function renderHealth() {
@@ -397,10 +515,6 @@ const iconBtn =
         luminance: stats?.luminance ?? null,
         secure: isSecureMediaContext(),
       });
-
-      const fails = checks.filter((c) => c.status === 'fail').length;
-      const warns = checks.filter((c) => c.status === 'warn').length;
-      setText($('#spec-quality'), fails ? 'Needs attention' : warns ? 'Good' : 'Excellent');
 
       healthList.innerHTML = '';
       for (const c of checks) healthList.appendChild(renderCheck(c));
@@ -426,7 +540,7 @@ const iconBtn =
       return d.innerHTML;
     }
 
-    /** Options carrying a real deviceId — the placeholder has an empty value. */
+    /** Options carrying a real deviceId; the placeholder has an empty value. */
     function countDevices(select: HTMLSelectElement): number {
       return Array.from(select.options).filter((o) => o.value).length || 1;
     }
@@ -434,8 +548,8 @@ const iconBtn =
     // ---- device population ---------------------------------------------------
     async function populateDevices() {
       const [cams, mics] = await Promise.all([listDevices('videoinput'), listDevices('audioinput')]);
-      fillSelect(cameraSelect, cams, 'Default camera', 'No camera found');
-      fillSelect(micSelect, mics, 'Default microphone', 'No microphone found');
+      fillSelect(cameraSelect, cams, S.defaultCamera, 'No camera found');
+      fillSelect(micSelect, mics, S.defaultMicrophone, 'No microphone found');
     }
 
     function fillSelect(
@@ -463,12 +577,16 @@ const iconBtn =
     // ---- lifecycle -----------------------------------------------------------
     async function start(deviceId?: string) {
       teardownStreams();
+      const run = runId;
       startBtn.classList.add('hidden');
       startBtn.classList.remove('inline-flex');
       try {
         session = await startWebcam({ deviceId });
         await session.attach(video);
         renderLive();
+        setInfoStatus(true);
+        LATER_IDS.forEach((id) => info(id, null));
+        updateImageInfo();
 
         stopBtn.classList.remove('hidden');
         stopBtn.classList.add('inline-flex');
@@ -484,26 +602,43 @@ const iconBtn =
           if (match) cameraSelect.value = match.value;
         }
 
-        detectMaxResolution(cameraSelect.value || undefined)
-          .then((r) => {
-            maxRes = r;
-            updateSpecs();
+        // Grouped device ids only become meaningful once permission is granted,
+        // which is why this runs here rather than on load.
+        detectBuiltIns(cameraSelect.value || undefined)
+          .then((b) => {
+            if (run !== runId) return;
+            builtIns = b;
+            updateInfo();
           })
           .catch(() => {});
+
+        detectMaxResolution(cameraSelect.value || undefined)
+          .then((r) => {
+            if (run === runId) maxRes = r;
+          })
+          .catch(() => {})
+          .finally(() => {
+            if (run !== runId) return;
+            maxResDone = true;
+            updateInfo();
+          });
 
         // Encode a short sample to report a real bitrate rather than a guess.
         const stream = session.stream;
         if (stream) {
           probeBitrate(stream)
             .then((v) => {
-              kbps = v;
-              if (!kbps) setText($('#spec-bitrate'), 'Unavailable');
-              else updateSpecs();
+              if (run === runId) kbps = v;
             })
-            .catch(() => setText($('#spec-bitrate'), 'Unavailable'));
+            .catch(() => {})
+            .finally(() => {
+              if (run !== runId) return;
+              bitrateDone = true;
+              updateInfo();
+            });
         }
 
-        // Let the decoupled panels (call preview, camera controls) attach.
+        // Let the decoupled panels (camera controls, speaker output picker) attach.
         document.dispatchEvent(
           new CustomEvent('webcam:stream', {
             detail: { stream, width: s.width, height: s.height },
@@ -514,10 +649,10 @@ const iconBtn =
 
         stopFps = session.measureFps(video, (fps) => {
           measuredFps = fps;
-          updateSpecs();
+          updateInfo();
         });
 
-        updateSpecs();
+        updateInfo();
         tick();
         tickTimer = window.setInterval(tick, 1500);
       } catch (e) {
@@ -526,10 +661,16 @@ const iconBtn =
       }
     }
 
-    /** One sampling pass: image stats every tick, health checks every other. */
+    /**
+     * One sampling pass: image stats every tick, health checks every other, and
+     * a full-resolution encode every fourth, since the encode is the expensive one.
+     */
     function tick() {
-      stats = sampleImageStats(video);
-      updateImageSpecs();
+      const sample = sampleImageStats(video);
+      stats = sample ? blendStats(stats, sample) : null;
+      updateImageInfo();
+      updateInfo();
+      if (ticks % 4 === 0) void measureFrameSizes();
       if (ticks++ % 2 === 0) renderHealth();
     }
 
@@ -549,6 +690,7 @@ const iconBtn =
     }
 
     function teardownStreams() {
+      runId++;
       document.dispatchEvent(new CustomEvent('webcam:stop'));
       window.clearInterval(tickTimer);
       recorder?.cancel();
@@ -571,11 +713,17 @@ const iconBtn =
       kbps = null;
       checks = [];
       ticks = 0;
+      builtIns = null;
+      frameSizes = null;
+      maxResDone = false;
+      bitrateDone = false;
+      sizesDone = false;
       video.srcObject = null;
       renderIdle();
-      updateImageSpecs();
-      ['#spec-camera', '#spec-resolution', '#spec-maxres', '#spec-fps', '#spec-aspect', '#spec-mp', '#spec-bitrate', '#spec-quality']
-        .forEach((sel) => setText($(sel), '—'));
+      ALL_IDS.forEach(infoIdle);
+      if (infoStars) infoStars.style.width = '0';
+      if (infoSwatch) infoSwatch.hidden = true;
+      setInfoStatus(false);
       if (micLevelEl) micLevelEl.style.width = '0%';
       setText(micStatusEl, 'Off');
       micStatusEl?.classList.add('text-mute');
@@ -632,7 +780,7 @@ const iconBtn =
           setRecording(false);
           clip = rec;
           kbps = rec.kbps || kbps;
-          updateSpecs();
+          updateInfo();
           recVideo.src = rec.url;
           recPanel.classList.remove('hidden');
           recPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -701,24 +849,25 @@ const iconBtn =
         maxRes,
         stats,
         kbps,
+        frameSizes,
         checks,
         url: location.href,
       });
       const ok = await copyText(report);
       if (ok) {
         reportOut.classList.add('hidden');
-        setText(copyLabel, 'Copied');
+        setText(copyLabel, S.copied);
       } else {
-        // Clipboard refused — surface the text so it can still be copied by hand.
+        // Clipboard refused, so surface the text so it can still be copied by hand.
         reportOut.value = report;
         reportOut.classList.remove('hidden');
         reportOut.select();
-        setText(copyLabel, 'Select and copy');
+        setText(copyLabel, S.selectAndCopy);
       }
-      window.setTimeout(() => setText(copyLabel, 'Copy report'), 2500);
+      window.setTimeout(() => setText(copyLabel, S.copyReport), 2500);
     });
 
-    // Cleanup — the camera light must never linger.
+    // Cleanup: the camera light must never linger.
     window.addEventListener('pagehide', teardownStreams);
     window.addEventListener('beforeunload', teardownStreams);
     document.addEventListener('astro:before-swap', teardownStreams);

@@ -2,7 +2,7 @@
 //
 // Most webcam-test sites only measure. Where the browser and the camera expose
 // MediaStreamTrack capabilities, we can also *change* zoom, brightness, exposure
-// and focus in place — so a bad picture can be fixed here rather than diagnosed
+// and focus in place, so a bad picture can be fixed here rather than diagnosed
 // and left alone. Support is uneven (Chromium is best, and many UVC cameras
 // expose nothing at all), so every call degrades quietly.
 
@@ -89,7 +89,7 @@ export async function resetControls(track: MediaStreamTrack): Promise<void> {
       advanced: [{ exposureMode: 'continuous', focusMode: 'continuous', whiteBalanceMode: 'continuous' }],
     } as unknown as MediaTrackConstraints);
   } catch {
-    /* not supported — nothing to restore */
+    /* not supported, nothing to restore */
   }
 }
 

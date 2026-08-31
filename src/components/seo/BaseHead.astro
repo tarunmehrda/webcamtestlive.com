@@ -1,15 +1,17 @@
 ---
 import { SITE } from '../../data/site';
+import { LOCALES, DEFAULT_LOCALE, localePath, localeFromPath, pathWithoutLocale, localeMeta, isTranslatedRoute, type Locale } from '../../i18n';
 
 interface Props {
   title?: string;
-  /** Full <title> with no "| Webcam Test" suffix — for pages that own their title. */
+  /** Full <title> with no "| Webcam Test" suffix, for pages that own their title. */
   rawTitle?: string;
   description?: string;
   /** Keep a page out of the index (thank-you pages, 404). */
   noindex?: boolean;
   /** JSON-LD objects to embed as structured data. */
   jsonLd?: Record<string, unknown>[];
+  locale?: Locale;
 }
 
 const {
@@ -18,12 +20,43 @@ const {
   description = SITE.description,
   noindex = false,
   jsonLd = [],
+  locale = localeFromPath(Astro.url.pathname),
 } = Astro.props;
 
 const fullTitle =
-  rawTitle ?? (title ? `${title} | ${SITE.name}` : `${SITE.name} — ${SITE.tagline}`);
-const canonical = new URL(Astro.url.pathname, SITE.url).href;
-// PNG, not SVG — social platforms do not render SVG preview images.
+  rawTitle ?? (title ? `${title} | ${SITE.name}` : `${SITE.name}: ${SITE.tagline}`);
+const routeKey = pathWithoutLocale(Astro.url.pathname);
+const translated = isTranslatedRoute(routeKey);
+
+// A localised URL for a route with no real translation is an English fallback
+// page. Point its canonical at the English original rather than at itself, so
+// the duplicate consolidates instead of competing.
+const isFallbackCopy = !translated && locale !== DEFAULT_LOCALE;
+// Built with localePath rather than Astro.url.pathname so the canonical is byte
+// identical to the matching hreflang href. pathname carries a trailing slash
+// (/vi/) while localePath does not (/vi); a canonical that disagrees with its
+// own hreflang entry invalidates the set. The no-slash form is also the one the
+// Worker serves 200 for: html_handling is "drop-trailing-slash".
+const canonical = new URL(
+  localePath(isFallbackCopy ? DEFAULT_LOCALE : locale, routeKey),
+  SITE.url,
+).href;
+
+// hreflang set. Every locale points at the same route in its own prefix, and
+// x-default goes to English; Google requires the set to be reciprocal and to
+// include a self-reference, so the current page is listed here too. Emitted
+// only for routes that really are translated in every locale.
+const alternates = translated
+  ? LOCALES.map((l) => ({
+      hreflang: l.hreflang,
+      href: new URL(localePath(l.code, routeKey), SITE.url).href,
+    }))
+  : [];
+const xDefault = new URL(localePath(DEFAULT_LOCALE, routeKey), SITE.url).href;
+
+// og:locale wants POSIX-style underscores (pt_BR), not the BCP 47 hyphen form.
+const ogLocale = localeMeta(locale).hreflang.replace('-', '_');
+// PNG, not SVG, because social platforms do not render SVG preview images.
 const ogImage = new URL('/og-default.png', SITE.url).href;
 
 // Sitewide entity markup. Page-specific graphs are passed in via `jsonLd`.
@@ -35,7 +68,7 @@ const siteLd = {
   alternateName: 'Free Online Webcam Test',
   url: SITE.url,
   description: SITE.description,
-  inLanguage: 'en',
+  inLanguage: locale,
   publisher: {
     '@type': 'Organization',
     '@id': `${SITE.url}/#org`,
@@ -66,10 +99,14 @@ const siteLd = {
   content={noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1'}
 />
 
+<!-- hreflang: self-referencing and reciprocal, or Google ignores the whole set. -->
+{!noindex && alternates.map((a) => <link rel="alternate" hreflang={a.hreflang} href={a.href} />)}
+{!noindex && translated && <link rel="alternate" hreflang="x-default" href={xDefault} />}
+
 <!-- Open Graph -->
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content={SITE.name} />
-<meta property="og:locale" content="en_US" />
+<meta property="og:locale" content={ogLocale} />
 <meta property="og:title" content={fullTitle} />
 <meta property="og:description" content={description} />
 <meta property="og:url" content={canonical} />
@@ -78,7 +115,7 @@ const siteLd = {
 <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
-<meta property="og:image:alt" content={`${SITE.name} — ${SITE.tagline}`} />
+<meta property="og:image:alt" content={`${SITE.name}: ${SITE.tagline}`} />
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image" />
@@ -87,7 +124,7 @@ const siteLd = {
 <meta name="twitter:title" content={fullTitle} />
 <meta name="twitter:description" content={description} />
 <meta name="twitter:image" content={ogImage} />
-<meta name="twitter:image:alt" content={`${SITE.name} — ${SITE.tagline}`} />
+<meta name="twitter:image:alt" content={`${SITE.name}: ${SITE.tagline}`} />
 
 <script is:inline type="application/ld+json" set:html={JSON.stringify(siteLd)} />
 {

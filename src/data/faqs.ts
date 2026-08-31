@@ -6,7 +6,7 @@ export interface Faq {
 export const HOME_FAQS: Faq[] = [
   {
     q: 'Is this webcam test safe and private?',
-    a: 'Yes. The entire test runs inside your browser and your video never leaves your device — nothing is uploaded to any server, and there is no server that could receive your feed even if we wanted it to. The optional clip you can record is held in your browser and discarded when you are done.',
+    a: 'Yes. The entire test runs inside your browser and your video never leaves your device, nothing is uploaded to any server, and there is no server that could receive your feed even if we wanted it to. The optional clip you can record is held in your browser and discarded when you are done.',
   },
   {
     q: 'Do I need to install anything?',
@@ -14,15 +14,15 @@ export const HOME_FAQS: Faq[] = [
   },
   {
     q: 'Why does the browser ask for permission?',
-    a: 'Browsers require your explicit permission before any site can use the camera or microphone — it is a built-in protection, not something we control. We request access only while you are testing, and you can revoke it at any time from the icon in your address bar.',
+    a: 'Browsers require your explicit permission before any site can use the camera or microphone, it is a built-in protection, not something we control. We request access only while you are testing, and you can revoke it at any time from the icon in your address bar.',
   },
   {
-    q: 'My camera does not show up — what should I do?',
+    q: 'My camera does not show up, what should I do?',
     a: 'Close any other app that may be holding the camera (Zoom, Teams, Meet, OBS), confirm the camera is plugged in and not covered by a privacy shutter, and check that you allowed access from the address-bar icon. Reload and try again. Our troubleshooting guide walks through every cause step by step.',
   },
   {
     q: 'Which browsers and devices are supported?',
-    a: 'All modern browsers work: Chrome, Edge, Firefox, Safari, Opera and Brave, on Windows, macOS, Linux, Android and iOS. The page must be served over HTTPS — this site is, which is why the camera can start at all.',
+    a: 'All modern browsers work: Chrome, Edge, Firefox, Safari, Opera and Brave, on Windows, macOS, Linux, Android and iOS. The page must be served over HTTPS, this site is, which is why the camera can start at all.',
   },
   {
     q: 'What do the health checks mean?',
@@ -30,11 +30,11 @@ export const HOME_FAQS: Faq[] = [
   },
   {
     q: 'Does testing here block my camera in other apps?',
-    a: 'Only while the test is running — most systems let one page or app hold the camera at a time. Press “Stop” when you are done and the camera is released immediately, your indicator light turns off, and Zoom or Teams can pick it up again.',
+    a: 'Only while the test is running, most systems let one page or app hold the camera at a time. Press “Stop” when you are done and the camera is released immediately, your indicator light turns off, and Zoom or Teams can pick it up again.',
   },
   {
     q: 'Does the recorded clip get uploaded anywhere?',
-    a: 'No. The “see what others see” clip is recorded by your browser into memory on your own device and played back from there. It is discarded when you press Discard, record again, stop the test, or close the tab — and it only reaches your disk if you choose Download.',
+    a: 'No. The “see what others see” clip is recorded by your browser into memory on your own device and played back from there. It is discarded when you press Discard, record again, stop the test, or close the tab, and it only reaches your disk if you choose Download.',
   },
   {
     q: 'Can I test my speakers and headphones here too?',
@@ -46,7 +46,7 @@ export const HOME_FAQS: Faq[] = [
   },
   {
     q: 'Can I test my webcam before a job interview or meeting?',
-    a: 'That is exactly what this is for. Run the test a few minutes beforehand to confirm the right camera is selected, the picture is sharp and well lit, and your microphone level responds when you speak — all without joining a call and putting yourself on display.',
+    a: 'That is exactly what this is for. Run the test a few minutes beforehand to confirm the right camera is selected, the picture is sharp and well lit, and your microphone level responds when you speak, all without joining a call and putting yourself on display.',
   },
 ];
 
@@ -69,11 +69,11 @@ export const RESOLUTION_FAQS: Faq[] = [
   },
   {
     q: 'What is aspect ratio and why does it matter?',
-    a: 'Aspect ratio is the shape of your image — 16:9 is the widescreen standard used by nearly all conferencing apps. If your camera reports 4:3, apps may crop the top and bottom or add black bars at the sides to make it fit.',
+    a: 'Aspect ratio is the shape of your image, 16:9 is the widescreen standard used by nearly all conferencing apps. If your camera reports 4:3, apps may crop the top and bottom or add black bars at the sides to make it fit.',
   },
   {
     q: 'Can I force my webcam into 1080p?',
-    a: 'Only if the camera supports it. This test requests the maximum your device reports, so if the result caps at 720p that is your hardware ceiling. Inside conferencing apps, look for an “HD video” setting — many disable it by default to save bandwidth.',
+    a: 'Only if the camera supports it. This test requests the maximum your device reports, so if the result caps at 720p that is your hardware ceiling. Inside conferencing apps, look for an “HD video” setting, many disable it by default to save bandwidth.',
   },
 ];
 
@@ -92,14 +92,14 @@ export const FPS_FAQS: Faq[] = [
   },
   {
     q: 'How do I improve my webcam frame rate?',
-    a: 'Add light in front of your face — this alone often doubles the frame rate. Then close background applications, plug the camera directly into the computer rather than through a hub, and if the camera offers the option, drop from 1080p to 720p to give the sensor more headroom.',
+    a: 'Add light in front of your face, this alone often doubles the frame rate. Then close background applications, plug the camera directly into the computer rather than through a hub, and if the camera offers the option, drop from 1080p to 720p to give the sensor more headroom.',
   },
   {
     q: 'Is 60 fps worth it for video calls?',
     a: 'Rarely. Most conferencing platforms cap at 30 fps and re-encode your video anyway, so a 60 fps camera gains nothing on a call. It is genuinely useful for streaming and recording, where the extra smoothness survives all the way to the viewer.',
   },
   {
-    q: 'My frame rate keeps fluctuating — is that normal?',
+    q: 'My frame rate keeps fluctuating, is that normal?',
     a: 'Some variation is expected. Cameras with auto-exposure adjust continuously as the light in the room changes, and browsers drop frames when the CPU is busy. Swings of a few frames per second are normal; a sustained drop below 15 fps is worth investigating.',
   },
 ];
@@ -107,7 +107,7 @@ export const FPS_FAQS: Faq[] = [
 export const MIC_FAQS: Faq[] = [
   {
     q: 'How does the microphone test work?',
-    a: 'Allow microphone access and speak — the level meter moves with your voice. If the bar responds, your microphone is working and your computer is receiving audio. The signal is analysed locally with the Web Audio API and never leaves your device.',
+    a: 'Allow microphone access and speak, the level meter moves with your voice. If the bar responds, your microphone is working and your computer is receiving audio. The signal is analysed locally with the Web Audio API and never leaves your device.',
   },
   {
     q: 'The meter is not moving. What is wrong?',
@@ -115,7 +115,7 @@ export const MIC_FAQS: Faq[] = [
   },
   {
     q: 'What level should the meter show when I speak?',
-    a: 'Normal speech should push the meter into the middle of its range and peak toward the upper third. If it barely moves, raise your input gain or move closer. If it sits pinned at the top, lower the gain — a signal that clips sounds harsh and distorted to everyone else.',
+    a: 'Normal speech should push the meter into the middle of its range and peak toward the upper third. If it barely moves, raise your input gain or move closer. If it sits pinned at the top, lower the gain, a signal that clips sounds harsh and distorted to everyone else.',
   },
   {
     q: 'Why do I sound quiet or distant to other people?',
@@ -123,7 +123,7 @@ export const MIC_FAQS: Faq[] = [
   },
   {
     q: 'Can I hear myself during the test?',
-    a: 'This test shows your level visually rather than playing your voice back, which avoids the feedback squeal that happens when a microphone picks up its own output through your speakers. Watch the meter instead — it tells you what a caller would hear.',
+    a: 'This test shows your level visually rather than playing your voice back, which avoids the feedback squeal that happens when a microphone picks up its own output through your speakers. Watch the meter instead, it tells you what a caller would hear.',
   },
   {
     q: 'Does the microphone test record my voice?',
@@ -137,7 +137,7 @@ export const TROUBLESHOOTING_FAQS: Faq[] = [
     a: 'A black picture with the camera light on usually means a privacy shutter or a piece of tape is covering the lens. If the light is off instead, another application is holding the camera or the wrong device is selected. Close other video apps, reload the page, and pick the correct camera from the dropdown.',
   },
   {
-    q: 'I blocked camera access by mistake — how do I undo it?',
+    q: 'I blocked camera access by mistake, how do I undo it?',
     a: 'Click the camera or padlock icon at the left of your browser’s address bar, set camera access back to “Allow”, then reload the page. Blocked permissions are remembered per site, so the prompt will not reappear on its own until you reset it there.',
   },
   {
@@ -146,14 +146,14 @@ export const TROUBLESHOOTING_FAQS: Faq[] = [
   },
   {
     q: 'My video is grainy and dark. How do I fix it?',
-    a: 'Put a light source in front of you rather than behind you — a window you face, or a lamp beside your monitor. Backlighting forces the camera to expose for the bright background, leaving your face dark and noisy. This single change fixes most quality complaints.',
+    a: 'Put a light source in front of you rather than behind you, a window you face, or a lamp beside your monitor. Backlighting forces the camera to expose for the bright background, leaving your face dark and noisy. This single change fixes most quality complaints.',
   },
   {
     q: 'Why is my webcam mirrored or upside down?',
-    a: 'A mirrored preview is normal and intentional — it matches how you see yourself in a mirror, and most conferencing apps do the same. Other people see you the correct way round. An upside-down picture is different: that points to a driver problem, so update or reinstall the camera driver.',
+    a: 'A mirrored preview is normal and intentional, it matches how you see yourself in a mirror, and most conferencing apps do the same. Other people see you the correct way round. An upside-down picture is different: that points to a driver problem, so update or reinstall the camera driver.',
   },
   {
     q: 'The test says my camera is in use by another application.',
-    a: 'Quit every app that can access video — Zoom, Teams, Slack, Discord, OBS, Skype — including any minimised to the system tray, then reload this page. On Windows a background process sometimes keeps the device open, in which case signing out and back in releases it.',
+    a: 'Quit every app that can access video, Zoom, Teams, Slack, Discord, OBS, Skype, including any minimised to the system tray, then reload this page. On Windows a background process sometimes keeps the device open, in which case signing out and back in releases it.',
   },
 ];

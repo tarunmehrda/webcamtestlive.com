@@ -1,21 +1,27 @@
 ---
+import { t, localeFromPath } from '../../i18n';
+const c = t(localeFromPath(Astro.url.pathname)).tool.mic;
 interface Props {
   standalone?: boolean;
 }
 const { standalone = true } = Astro.props;
 ---
 
-<section class="relative z-10 w-full" data-mic-tool>
+<section
+  class="relative z-10 w-full"
+  data-mic-tool
+  data-strings={JSON.stringify({ idle: c.idle, listening: c.listening })}
+>
   <div class="rounded-xl border border-hairline bg-canvas p-6 elev-3">
     <div class="flex items-center justify-between gap-4">
       <div>
-        <h2 class="display-sm text-ink">Microphone level</h2>
-        <p class="body-sm mt-1 text-body">Speak and watch the bar respond. Audio is analysed on your device only.</p>
+        <h2 class="display-sm text-ink">{c.meterTitle}</h2>
+        <p class="body-sm mt-1 text-body">{c.meterSubtitle}</p>
       </div>
       <span
         data-mic-status
         class="caption-mono rounded-full border border-hairline bg-canvas-soft px-2.5 py-1 text-mute"
-        >Idle</span
+        >{c.idle}</span
       >
     </div>
 
@@ -75,6 +81,8 @@ const { standalone = true } = Astro.props;
   if (root) init(root);
 
   function init(root: HTMLElement) {
+    // Serialised by the component: client scripts cannot reach the dictionary.
+    const S = JSON.parse(root.dataset.strings || '{}') as Record<string, string>;
     const startBtn = $<HTMLButtonElement>('[data-mic-start]', root)!;
     const stopBtn = $<HTMLButtonElement>('[data-mic-stop]', root)!;
     const levelEl = $<HTMLElement>('[data-mic-level]', root)!;
@@ -108,7 +116,7 @@ const { standalone = true } = Astro.props;
       try {
         mic = await startMic(select.value || undefined);
         await populate();
-        setText(statusEl, 'Listening');
+        setText(statusEl, S.listening);
         statusEl.classList.remove('text-mute');
         statusEl.classList.add('text-success');
         startBtn.classList.add('hidden');
@@ -135,7 +143,7 @@ const { standalone = true } = Astro.props;
     function stop() {
       teardown();
       levelEl.style.width = '0%';
-      setText(statusEl, 'Idle');
+      setText(statusEl, S.idle);
       statusEl.classList.add('text-mute');
       statusEl.classList.remove('text-success');
       stopBtn.classList.add('hidden');

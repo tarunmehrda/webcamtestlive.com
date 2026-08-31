@@ -1,8 +1,9 @@
-// Builds a plain-text diagnostics report. Useful when someone else — an IT desk,
-// a colleague — has to help you and cannot see your screen.
+// Builds a plain-text diagnostics report. Useful when someone else (an IT desk,
+// a colleague) has to help you and cannot see your screen.
 
 import type { HealthCheck, StreamSettings } from './types';
 import type { ImageStats } from './imagestats';
+import { videoStandard, formatKB, formatMBs } from './webcaminfo';
 
 export interface Environment {
   browser: string;
@@ -68,6 +69,8 @@ export interface ReportInput {
   maxRes: { width: number; height: number } | null;
   stats: ImageStats | null;
   kbps: number | null;
+  /** Encoded size of one frame, when it has been measured. */
+  frameSizes?: { png: number; jpeg: number } | null;
   checks: HealthCheck[];
   url: string;
 }
@@ -78,7 +81,7 @@ export function buildReport(i: ReportInput): string {
   const row = (k: string, v: string | number | undefined | null) =>
     v === undefined || v === null || v === '' ? undefined : L.push(`  ${k.padEnd(16)}${v}`);
 
-  L.push('Webcam Test — diagnostics report');
+  L.push('Webcam Test: diagnostics report');
   L.push(`  ${'Generated'.padEnd(16)}${new Date().toISOString()}`);
   L.push(`  ${'Page'.padEnd(16)}${i.url}`);
   L.push('');
@@ -86,7 +89,7 @@ export function buildReport(i: ReportInput): string {
   L.push('Environment');
   row('Browser', i.env.browser);
   row('OS', i.env.os);
-  row('Secure ctx', i.env.secure ? 'yes (HTTPS)' : 'NO — camera will be blocked');
+  row('Secure ctx', i.env.secure ? 'yes (HTTPS)' : 'NO (camera will be blocked)');
   row('Cameras', i.env.cameras);
   row('Microphones', i.env.microphones);
   L.push('');
@@ -95,11 +98,14 @@ export function buildReport(i: ReportInput): string {
   if (i.settings) {
     row('Device', i.settings.deviceLabel || 'Unnamed camera');
     row('Resolution', `${i.settings.width}x${i.settings.height}`);
+    row('Standard', videoStandard(i.settings.width, i.settings.height));
     row('Max supported', i.maxRes ? `${i.maxRes.width}x${i.maxRes.height}` : 'not detected');
     row('Frame rate', i.measuredFps ? `${Math.round(i.measuredFps)} fps (measured)` : `${Math.round(i.settings.frameRate)} fps (reported)`);
     row('Aspect ratio', i.settings.aspectRatio.toFixed(2));
     row('Megapixels', i.settings.megapixels.toFixed(2));
-    row('Bitrate', i.kbps ? `${i.kbps} kbps` : undefined);
+    row('Bitrate', i.kbps ? `${i.kbps} kbps (${formatMBs(i.kbps)})` : undefined);
+    row('PNG frame', i.frameSizes ? formatKB(i.frameSizes.png) : undefined);
+    row('JPEG frame', i.frameSizes ? formatKB(i.frameSizes.jpeg) : undefined);
   } else {
     L.push('  not started');
   }
@@ -107,10 +113,15 @@ export function buildReport(i: ReportInput): string {
 
   if (i.stats) {
     L.push('Image');
+    row('Mode', i.stats.mono ? 'greyscale' : 'RGB colour (24-bit)');
     row('Brightness', `${i.stats.brightness}%`);
+    row('Lightness', `${i.stats.lightness}%`);
+    row('Luminosity', `${i.stats.luminosity}%`);
     row('Contrast', `${i.stats.contrast}%`);
     row('Saturation', `${i.stats.saturation}%`);
-    row('Colours', i.stats.colors.toLocaleString());
+    row('Hue', `${i.stats.hue}deg`);
+    row('Average colour', `${i.stats.hex} (${i.stats.avg.r}, ${i.stats.avg.g}, ${i.stats.avg.b})`);
+    row('Colours', `${i.stats.colors.toLocaleString()} in a ${i.stats.sampled.toLocaleString()}px sample`);
     L.push('');
   }
 
@@ -118,7 +129,7 @@ export function buildReport(i: ReportInput): string {
   if (i.checks.length) {
     for (const c of i.checks) {
       const mark = { pass: 'PASS', warn: 'WARN', fail: 'FAIL' }[c.status];
-      L.push(`  [${mark}] ${c.label}${c.hint ? ` — ${c.hint}` : ''}`);
+      L.push(`  [${mark}] ${c.label}${c.hint ? `: ${c.hint}` : ''}`);
     }
   } else {
     L.push('  none run');

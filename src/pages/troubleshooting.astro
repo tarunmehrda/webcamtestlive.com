@@ -9,11 +9,11 @@ import { TROUBLESHOOTING_FAQS } from '../data/faqs';
 import { breadcrumbs } from '../lib/seo';
 import { SITE } from '../data/site';
 
-/** The quick checklist — rendered on the page and emitted as HowTo structured data. */
+/** The quick checklist, rendered on the page and emitted as HowTo structured data. */
 const steps = [
   {
     name: 'Close every other app using the camera',
-    text: 'Zoom, Teams, Meet, Slack, Discord and OBS all claim the camera exclusively on most systems. Quit them completely — including windows minimised to the system tray or menu bar — then reload this page.',
+    text: 'Zoom, Teams, Meet, Slack, Discord and OBS all claim the camera exclusively on most systems. Quit them completely, including windows minimised to the system tray or menu bar, then reload this page.',
   },
   {
     name: 'Check the permission prompt',
@@ -86,7 +86,7 @@ const browsers = [
 const os = [
   {
     name: 'Windows 11 and 10',
-    path: 'Settings → Privacy & security → Camera. Turn on “Camera access” and “Let apps access your camera”, then scroll to “Let desktop apps access your camera” and make sure it is on — browsers are counted as desktop apps, and this second switch is the one people miss.',
+    path: 'Settings → Privacy & security → Camera. Turn on “Camera access” and “Let apps access your camera”, then scroll to “Let desktop apps access your camera” and make sure it is on, browsers are counted as desktop apps, and this second switch is the one people miss.',
   },
   {
     name: 'macOS',
@@ -205,7 +205,7 @@ const jsonLd = [
       <h2 class="display-lg mt-3 text-ink">How to allow camera access in your browser</h2>
       <p class="body-md mt-4 text-body">
         Browsers remember your answer per site. If you dismissed or blocked the prompt once,
-        it will not appear again on its own — you have to clear the decision by hand. Here is
+        it will not appear again on its own, you have to clear the decision by hand. Here is
         where that setting lives.
       </p>
 
@@ -291,7 +291,7 @@ const jsonLd = [
   <Container class="py-12 sm:py-16" id="quality">
     <div class="mx-auto max-w-3xl">
       <p class="caption-mono uppercase text-mute">Image quality</p>
-      <h2 class="display-lg mt-3 text-ink">Your camera works — it just looks bad</h2>
+      <h2 class="display-lg mt-3 text-ink">Your camera works, it just looks bad</h2>
       <p class="body-md mt-4 text-body">
         A working camera and a good-looking picture are different problems. If the test passes
         but you are unhappy with the result, these five changes will do more than replacing the

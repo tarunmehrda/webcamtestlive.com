@@ -2,9 +2,9 @@ export const SITE = {
   name: 'Webcam Test',
   domain: 'webcamtestlive.com',
   url: 'https://webcamtestlive.com',
-  tagline: 'Test your webcam online — instantly and privately.',
+  tagline: 'Test your webcam online, instantly and privately.',
   description:
-    'Free online webcam test. Check your camera, microphone and speakers in your browser — resolution, FPS, bitrate and image quality. Nothing is uploaded.',
+    'Free online webcam test. Check your camera, microphone and speakers in your browser, resolution, FPS, bitrate and image quality. Nothing is uploaded.',
   twitter: '@webcamtestlive',
   /** Change this to the mailbox you actually monitor. */
   email: 'hello@webcamtestlive.com',

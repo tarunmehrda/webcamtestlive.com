@@ -1,7 +1,8 @@
 ---
 import type { Faq } from '../../data/faqs';
 interface Props {
-  items: Faq[];
+  /** readonly: the locale dictionaries are `as const`-ish literals. */
+  items: readonly Faq[];
 }
 const { items } = Astro.props;
 ---

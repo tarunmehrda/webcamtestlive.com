@@ -9,7 +9,7 @@
 @import "@fontsource/jetbrains-mono/500.css";
 
 /* ---------------------------------------------------------------------------
-   Design tokens — mapped from DESIGN.md (Vercel-inspired system).
+   Design tokens, mapped from DESIGN.md (Vercel-inspired system).
    Tailwind v4 is CSS-first: theme lives here, NOT in a tailwind.config.js.
 --------------------------------------------------------------------------- */
 @theme {
@@ -24,7 +24,7 @@
   --color-canvas: #ffffff;
   --color-canvas-soft: #fafafa;
   --color-canvas-soft-2: #f5f5f5;
-  --color-stage: #0d0d0d; /* video preview surface — always dark in both themes */
+  --color-stage: #0d0d0d; /* video preview surface: always dark in both themes */
 
   /* Elevation tints. Black rings are invisible on a dark canvas, so .dark
      re-points these at translucent white instead of restating every elev-*. */
@@ -58,7 +58,7 @@
   --color-grad-ship-end: #f9cb28;
 
   /* Spacing: use Tailwind's numeric scale (4px base), which already expresses the
-     design system's steps exactly — p-1 4px, p-2 8px, p-4 16px, p-6 24px, p-8 32px,
+     design system's steps exactly: p-1 4px, p-2 8px, p-4 16px, p-6 24px, p-8 32px,
      p-12 48px, p-16 64px, p-24 96px, p-32 128px, p-48 192px.
      Do NOT add named --spacing-* keys (xs, lg, 3xl...): Tailwind resolves max-w-*
      against that namespace, so `--spacing-3xl: 48px` silently turns max-w-3xl into
@@ -83,13 +83,13 @@
 }
 
 /* ---------------------------------------------------------------------------
-   Typography presets — bundle size + line-height + weight + tracking.
+   Typography presets: bundle size + line-height + weight + tracking.
    (@utility so they compose with Tailwind variants.)
 --------------------------------------------------------------------------- */
 /* The display sizes are fluid, not stepped. A hard sm breakpoint made the type
    visibly snap while resizing (and DevTools drag showed the jump mid-frame), so
    each preset interpolates with clamp() between its phone size at 360px and its
-   DESIGN.md size at 640px — the ends are the same, the middle no longer jumps.
+   DESIGN.md size at 640px, so the ends are the same and the middle no longer jumps.
    line-height is unitless so it scales with the fluid font-size, and tracking
    uses em for the same reason. */
 @utility display-xl {
@@ -164,7 +164,7 @@
 }
 
 /* ---------------------------------------------------------------------------
-   Elevation — stacked subtle shadows + inset hairline (DESIGN.md).
+   Elevation: stacked subtle shadows + inset hairline (DESIGN.md).
 --------------------------------------------------------------------------- */
 @utility elev-1 {
   box-shadow: 0 0 0 1px var(--shadow-ring) inset;
@@ -195,7 +195,7 @@
     0 24px 32px -8px var(--shadow-deep);
 }
 
-/* Mesh gradient — hero scale only */
+/* Mesh gradient, hero scale only */
 @utility mesh-hero {
   background-image:
     radial-gradient(60% 80% at 15% 10%, color-mix(in srgb, var(--color-grad-develop-start) 42%, transparent), transparent 60%),
@@ -208,7 +208,7 @@
    Base
 --------------------------------------------------------------------------- */
 /* These MUST live in @layer base. Tailwind puts its utilities in @layer utilities,
-   and unlayered rules beat layered ones no matter the specificity — so an unlayered
+   and unlayered rules beat layered ones no matter the specificity, so an unlayered
    `a { color: inherit }` silently overrides text-link / text-on-primary / text-ink on
    every anchor on the site. */
 @layer base {
@@ -216,10 +216,10 @@
     color-scheme: light;
   }
 
-  /* Dark theme — override the theme CSS variables so every bg-canvas / text-ink /
+  /* Dark theme: override the theme CSS variables so every bg-canvas / text-ink /
      border-hairline utility adapts automatically. `primary` flips to a light fill so
      ink CTAs and polarity bands invert cleanly (Vercel-style). `stage` is not
-     overridden — the video preview stays dark in both themes. */
+     overridden, so the video preview stays dark in both themes. */
   .dark {
     color-scheme: dark;
 
@@ -306,7 +306,7 @@
 }
 
 /* ---------------------------------------------------------------------------
-   Container gutter — honours the notch.
+   Container gutter, honouring the notch.
    BaseHead sets viewport-fit=cover, so on notched phones (landscape especially)
    the viewport extends under the cutout. Full-bleed section backgrounds should
    still reach the edge, so the inset is applied to the centred column's padding
@@ -332,5 +332,73 @@
     .container-px {
       --gutter: 2rem;
     }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Measured-value cells (Webcam information panel).
+   `data-state="pending"` swaps the value for a spinner, so a row that is still
+   being measured reads as busy rather than as a number we failed to produce.
+   The global prefers-reduced-motion rule already freezes the animation.
+--------------------------------------------------------------------------- */
+@layer base {
+  @keyframes info-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  [data-info][data-state='pending']::after {
+    content: '';
+    display: inline-block;
+    width: 0.875rem;
+    height: 0.875rem;
+    vertical-align: -0.125rem;
+    border: 2px solid var(--color-hairline-strong);
+    border-top-color: transparent;
+    border-radius: var(--radius-full);
+    animation: info-spin 0.7s linear infinite;
+  }
+
+  [data-info][data-state='idle'] {
+    color: var(--color-mute);
+    font-weight: 400;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Speaker test channel indicator.
+   Written as plain CSS rather than utilities because Tailwind v4's scale-*
+   utilities set the `scale` property, which multiplies with the keyframes'
+   transform and would pin the bar at zero width.
+--------------------------------------------------------------------------- */
+@layer base {
+  @keyframes speaker-wave {
+    0%,
+    100% {
+      transform: scaleX(0.25);
+    }
+    50% {
+      transform: scaleX(1);
+    }
+  }
+
+  .chan-bar {
+    display: block;
+    height: 100%;
+    width: 100%;
+    border-radius: var(--radius-full);
+    background: var(--color-success);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.2s ease;
+  }
+
+  /* The static transform is what reduced-motion users see: the global
+     prefers-reduced-motion rule collapses the animation to a single 0.01ms pass,
+     leaving this declaration to hold the bar full. */
+  .chan-bar.is-sounding {
+    transform: scaleX(1);
+    animation: speaker-wave 0.9s ease-in-out infinite;
   }
 }

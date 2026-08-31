@@ -1,4 +1,6 @@
 ---
+import { t, localeFromPath } from '../../i18n';
+
 // Second differentiator: where the browser exposes them, these sliders drive the
 // camera hardware live. Other test sites report a dark picture; this one lets you
 // raise the brightness and watch it change.
@@ -6,26 +8,36 @@ interface Props {
   class?: string;
 }
 const { class: className = '' } = Astro.props;
+
+const c = t(localeFromPath(Astro.url.pathname)).tool.cameraControls;
 ---
 
 <div
   data-camera-controls
+  data-strings={JSON.stringify({ idle: c.idle, unsupported: c.unsupported, torch: c.torch, on: c.on, off: c.off })}
   class:list={['rounded-xl border border-hairline bg-canvas p-4 elev-2 sm:p-5', className]}
 >
   <div class="flex flex-wrap items-start justify-between gap-3">
     <div>
-      <h2 class="display-sm text-ink">Camera controls</h2>
-      <p class="body-sm mt-1 text-body">Adjust the camera itself, not just the picture on screen.</p>
+      <h2 class="display-sm text-ink">{c.title}</h2>
+      <p class="body-sm mt-1 text-body">{c.subtitle}</p>
     </div>
     <button
       data-controls-reset
       class="body-sm hidden shrink-0 rounded-pill border border-hairline bg-canvas px-3 py-3 font-medium text-body transition-colors hover:text-ink sm:py-1.5"
     >
-      Reset
+      {c.reset}
     </button>
   </div>
 
-  <div data-controls-list class="mt-4 space-y-4"></div>
+  <!--
+    Columns, not a stack: six sliders in one column ran to ~700px, which is what
+    stretched the row beside the preview and opened half a screen of empty canvas
+    under it. Three across at lg, where this card runs the full width of the
+    tool, is two rows instead of six. Below lg the card is only half the width,
+    so a single column stays right.
+  -->
+  <div data-controls-list class="mt-4 grid gap-x-6 gap-y-4 lg:grid-cols-3"></div>
 
   <p data-controls-empty class="body-sm mt-4 text-mute">
     Start the test to see which controls your camera supports.
@@ -41,6 +53,9 @@ const { class: className = '' } = Astro.props;
   }
 
   document.querySelectorAll<HTMLElement>('[data-camera-controls]').forEach((root) => {
+    // Client scripts cannot reach the server-side dictionary, so the component
+    // serialises the strings it needs onto the root element.
+    const S = JSON.parse(root.dataset.strings || '{}') as Record<string, string>;
     const list = root.querySelector('[data-controls-list]')!;
     const empty = root.querySelector('[data-controls-empty]')!;
     const resetBtn = root.querySelector<HTMLButtonElement>('[data-controls-reset]')!;
@@ -60,10 +75,7 @@ const { class: className = '' } = Astro.props;
       const torch = hasTorch(track);
 
       if (!specs.length && !torch) {
-        setText(
-          empty,
-          'This camera does not expose adjustable controls to your browser. That is common for built-in laptop webcams, and it is a browser limitation rather than a fault.',
-        );
+        setText(empty, S.unsupported);
         empty.classList.remove('hidden');
         return;
       }
@@ -107,19 +119,20 @@ const { class: className = '' } = Astro.props;
 
     function torchToggle(): HTMLElement {
       const wrap = document.createElement('div');
-      wrap.className = 'flex items-center justify-between gap-3';
-      wrap.innerHTML = `<span class="caption-mono uppercase text-mute">Torch</span>`;
+      wrap.className = 'flex items-center justify-between gap-3 self-end pb-2';
+      wrap.innerHTML = `<span class="caption-mono uppercase text-mute"></span>`;
+      setText(wrap.firstElementChild, S.torch);
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.setAttribute('aria-pressed', 'false');
       btn.className =
         'body-sm rounded-pill border border-hairline bg-canvas px-4 py-3 sm:py-2 font-medium text-ink transition-colors hover:bg-canvas-soft-2 aria-pressed:bg-primary aria-pressed:text-on-primary';
-      btn.textContent = 'Off';
+      btn.textContent = S.off;
       btn.addEventListener('click', async () => {
         const on = btn.getAttribute('aria-pressed') !== 'true';
         if (track && (await setTorch(track, on))) {
           btn.setAttribute('aria-pressed', String(on));
-          btn.textContent = on ? 'On' : 'Off';
+          btn.textContent = on ? S.on : S.off;
         }
       });
       wrap.appendChild(btn);
@@ -136,7 +149,7 @@ const { class: className = '' } = Astro.props;
     document.addEventListener('webcam:stop', () => {
       track = null;
       clear();
-      setText(empty, 'Start the test to see which controls your camera supports.');
+      setText(empty, S.idle);
       empty.classList.remove('hidden');
     });
   });

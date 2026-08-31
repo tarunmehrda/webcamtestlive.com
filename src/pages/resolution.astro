@@ -55,8 +55,8 @@ const jsonLd = [
 ---
 
 <Layout
-  rawTitle="Webcam Resolution Test — Check Your Camera Resolution Online"
-  description="Free online webcam resolution test. Check your current and maximum camera resolution — 720p, 1080p or 4K — instantly in your browser."
+  rawTitle="Webcam Resolution Test: Check Your Camera Resolution Online"
+  description="Free online webcam resolution test. Check your current and maximum camera resolution, 720p, 1080p or 4K, instantly in your browser."
   jsonLd={jsonLd}
 >
   <Hero
@@ -76,7 +76,7 @@ const jsonLd = [
       <h2 class="display-lg mt-3 text-ink">Understanding webcam resolution</h2>
       <p class="body-md mt-4 text-body">
         Resolution is the number of pixels your camera captures, written as width × height.
-        More pixels means more detail is available — but only if there is enough light for the
+        More pixels means more detail is available, but only if there is enough light for the
         sensor to resolve that detail in the first place. Two numbers matter here: the
         resolution you are getting right now, and the maximum your camera is capable of. The
         test above reports both, because they are frequently not the same.
@@ -109,19 +109,19 @@ const jsonLd = [
         It is normal for a 1080p camera to hand the browser a 720p stream. There are three
         common reasons, and none of them mean the camera is faulty:
       </p>
-      <ul class="body-md mt-4 space-y-3 text-body">
+      <ul class="body-md mt-4 list-disc space-y-3 ps-5 text-body">
         <li>
-          — <strong class="text-ink">The application asked for less.</strong> Browsers and
+          <strong class="text-ink">The application asked for less.</strong> Browsers and
           conferencing apps negotiate a resolution that balances quality against bandwidth and
           CPU. Many default to 720p and only go higher if you enable an HD option.
         </li>
         <li>
-          — <strong class="text-ink">The light is low.</strong> Cameras trade resolution and frame
+          <strong class="text-ink">The light is low.</strong> Cameras trade resolution and frame
           rate for exposure. Add light in front of you and the reported numbers often rise on
           their own, with no setting changed.
         </li>
         <li>
-          — <strong class="text-ink">The connection is limited.</strong> A webcam sharing a USB hub
+          <strong class="text-ink">The connection is limited.</strong> A webcam sharing a USB hub
           with other devices, or running through a long unpowered cable, may not have the
           bandwidth for its top mode. Plugging directly into the computer usually fixes it.
         </li>

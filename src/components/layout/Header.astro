@@ -1,17 +1,33 @@
 ---
 import Container from './Container.astro';
 import Logo from './Logo.astro';
-import { NAV, SITE } from '../../data/site';
+import LanguageSwitcher from './LanguageSwitcher.astro';
+import { SITE } from '../../data/site';
+import { localeFromPath, localePath, pathWithoutLocale, t } from '../../i18n';
 
 const path = Astro.url.pathname;
-const isActive = (href: string) =>
-  href === '/' ? path === '/' : path.startsWith(href);
+const locale = localeFromPath(path);
+const copy = t(locale);
+// Nav labels come from the dictionary, and every href is rewritten into the
+// active locale's prefix so navigation never drops the visitor back to English.
+const NAV = [
+  { key: '/', label: copy.nav.home },
+  { key: '/resolution', label: copy.nav.resolution },
+  { key: '/fps', label: copy.nav.fps },
+  { key: '/mic-test', label: copy.nav.micTest },
+  { key: '/troubleshooting', label: copy.nav.troubleshooting },
+  { key: '/faq', label: copy.nav.faq },
+  { key: '/about', label: copy.nav.about },
+].map((item) => ({ ...item, href: localePath(locale, item.key) }));
+
+const routeKey = pathWithoutLocale(path);
+const isActive = (key: string) => (key === '/' ? routeKey === '/' : routeKey.startsWith(key));
 ---
 
 <header class="sticky top-0 z-50 border-b border-hairline bg-canvas/80 backdrop-blur-md">
   <Container>
     <nav class="flex h-16 items-center justify-between gap-4">
-      <a href="/" class="-my-2 flex items-center gap-2 py-2" aria-label={`${SITE.name} home`}>
+      <a href={localePath(locale, "/")} class="-my-2 flex items-center gap-2 py-2" aria-label={`${SITE.name} home`}>
         <Logo class="size-7" />
         <span class="body-md-strong font-semibold tracking-tight">Webcam Test</span>
       </a>
@@ -24,11 +40,11 @@ const isActive = (href: string) =>
                 href={item.href}
                 class:list={[
                   'body-sm rounded-full px-3 py-2 transition-colors',
-                  isActive(item.href)
+                  isActive(item.key)
                     ? 'text-ink'
                     : 'text-body hover:text-ink hover:bg-canvas-soft-2',
                 ]}
-                aria-current={isActive(item.href) ? 'page' : undefined}
+                aria-current={isActive(item.key) ? 'page' : undefined}
               >
                 {item.label}
               </a>
@@ -38,10 +54,12 @@ const isActive = (href: string) =>
       </ul>
 
       <div class="flex items-center gap-2">
+        <LanguageSwitcher />
+
         <button
           type="button"
           data-theme-toggle
-          aria-label="Toggle dark mode"
+          aria-label={copy.nav.toggleTheme}
           class="grid size-11 place-items-center rounded-full border border-hairline bg-canvas text-ink transition-colors hover:bg-canvas-soft-2 sm:size-9"
         >
           <svg class="size-4 dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -54,17 +72,17 @@ const isActive = (href: string) =>
         </button>
 
         <a
-          href="/#test"
+          href={`${localePath(locale, "/")}#test`}
           class="hidden shrink-0 items-center rounded-sm bg-primary px-3 py-1.5 text-on-primary transition-opacity hover:opacity-90 sm:inline-flex"
         >
-          <span class="body-sm font-medium">Start test</span>
+          <span class="body-sm font-medium">{copy.nav.startTest}</span>
         </a>
 
         <!-- Mobile menu (native details, zero JS) -->
       <details class="relative lg:hidden">
         <summary
           class="grid size-11 cursor-pointer list-none place-items-center rounded-full border border-hairline bg-canvas sm:size-9 [&::-webkit-details-marker]:hidden"
-          aria-label="Open menu"
+          aria-label={copy.nav.openMenu}
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
             <line x1="4" x2="20" y1="6" y2="6" />
@@ -80,7 +98,7 @@ const isActive = (href: string) =>
                   href={item.href}
                   class:list={[
                     'body-sm block rounded-sm px-3 py-3',
-                    isActive(item.href) ? 'bg-canvas-soft-2 text-ink' : 'text-body',
+                    isActive(item.key) ? 'bg-canvas-soft-2 text-ink' : 'text-body',
                   ]}
                 >
                   {item.label}

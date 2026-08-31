@@ -1,0 +1,69 @@
+---
+import { LOCALES, localePath, localeFromPath, pathWithoutLocale, t } from '../../i18n';
+
+const current = localeFromPath(Astro.url.pathname);
+const routeKey = pathWithoutLocale(Astro.url.pathname);
+const copy = t(current);
+const currentMeta = LOCALES.find((l) => l.code === current)!;
+---
+
+{/*
+  Real <a> links inside a native <details>, not a JS-driven <select>: crawlers
+  follow anchors, which is how the alternate locales get discovered in the first
+  place. hreflang on each link tells them what they are pointing at.
+*/}
+<details class="relative" data-lang-switcher>
+  <summary
+    class="body-sm flex h-11 cursor-pointer list-none items-center gap-1.5 rounded-full border border-hairline bg-canvas px-3 text-body transition-colors hover:text-ink sm:h-9 [&::-webkit-details-marker]:hidden"
+    aria-label={copy.nav.language}
+    title={copy.nav.language}
+  >
+    <svg class="size-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10" />
+      <path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20" />
+    </svg>
+    <span class="hidden sm:inline">{currentMeta.label}</span>
+    <span class="sm:hidden">{currentMeta.code.toUpperCase()}</span>
+  </summary>
+
+  <ul class="elev-4 absolute right-0 top-[calc(100%+8px)] z-50 w-52 rounded-md border border-hairline bg-canvas p-1">
+    {
+      LOCALES.map((l) => (
+        <li>
+          <a
+            href={localePath(l.code, routeKey)}
+            hreflang={l.hreflang}
+            lang={l.hreflang}
+            class:list={[
+              'body-sm flex items-center justify-between gap-2 rounded-sm px-3 py-3',
+              l.code === current ? 'bg-canvas-soft-2 text-ink' : 'text-body hover:text-ink',
+            ]}
+            aria-current={l.code === current ? 'true' : undefined}
+          >
+            {l.label}
+            {l.code === current && (
+              <svg class="size-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 6 9 17l-5-5" />
+              </svg>
+            )}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</details>
+
+<script>
+  // Close the dropdown on outside click / Escape, matching normal menu behaviour.
+  document.addEventListener('click', (e) => {
+    document.querySelectorAll<HTMLDetailsElement>('[data-lang-switcher][open]').forEach((d) => {
+      if (!d.contains(e.target as Node)) d.open = false;
+    });
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    document.querySelectorAll<HTMLDetailsElement>('[data-lang-switcher][open]').forEach((d) => {
+      d.open = false;
+    });
+  });
+</script>

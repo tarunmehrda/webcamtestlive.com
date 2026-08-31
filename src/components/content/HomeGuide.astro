@@ -1,6 +1,6 @@
 ---
 // Long-form homepage guide. Written to be genuinely readable first and
-// keyword-complete second — the target terms all appear because the topic
+// keyword-complete second: the target terms all appear because the topic
 // demands them, not because they were sprinkled in.
 import Container from '../layout/Container.astro';
 ---
@@ -15,7 +15,7 @@ import Container from '../layout/Container.astro';
         A free webcam test is the quickest way to answer a question that costs people meetings
         every day: does my camera actually work, and do I look the way I think I do? Running a free
         webcam test here takes about a minute, needs no download and no account, and gives you a
-        real answer before an interview, a lesson, a telehealth appointment or a stream — rather
+        real answer before an interview, a lesson, a telehealth appointment or a stream rather
         than five awkward minutes at the start of a call while everyone waits.
       </p>
 
@@ -23,15 +23,15 @@ import Container from '../layout/Container.astro';
       <p class="body-md text-body">
         When you press start, your browser asks for permission and then hands the camera feed
         straight to this page. The preview you see is the live stream from your device. Every
-        number reported next to it — resolution, frame rate, aspect ratio, bitrate, brightness,
-        contrast, saturation and colour count — is calculated in your browser from frames that
+        number reported next to it, resolution, frame rate, aspect ratio, bitrate, brightness,
+        contrast, saturation and colour count, is calculated in your browser from frames that
         never leave your computer. That is the important difference between a webcam test online
         and an app you install: there is no upload, no server-side processing, and nothing to
         uninstall afterwards.
       </p>
       <p class="body-md text-body">
         Most people only need the first ten seconds of this. If your face appears, the camera
-        works. The rest of the test exists for the harder question — whether the picture is good
+        works. The rest of the test exists for the harder question, whether the picture is good
         enough that nobody on the call is quietly distracted by it.
       </p>
 
@@ -43,7 +43,7 @@ import Container from '../layout/Container.astro';
         </li>
         <li>
           <strong class="text-ink">2. Allow camera access.</strong> Your browser will ask, every
-          time, for every site — that prompt is a protection, not a warning about this page. If no
+          time, for every site, that prompt is a protection, not a warning about this page. If no
           prompt appears, you have answered before and the browser remembered.
         </li>
         <li>
@@ -71,7 +71,7 @@ import Container from '../layout/Container.astro';
         <strong class="text-ink">Frame rate</strong> is smoothness. 30 fps is the standard;
         below 15 fps your movements visibly stutter. We count the frames your browser actually
         presents rather than repeating the figure printed on the box, so the reading reflects your
-        real conditions — including the lighting in the room you are sitting in.
+        real conditions including the lighting in the room you are sitting in.
         <strong class="text-ink">Bitrate</strong> is measured by encoding a short sample of your
         own stream, which is the only honest way to produce that number in a browser.
       </p>
@@ -95,12 +95,12 @@ import Container from '../layout/Container.astro';
 
       <h3 class="display-sm mt-10 text-ink">Webcam test Windows 10 and Windows 11 users can run in any browser</h3>
       <p class="body-md text-body">
-        A webcam test on Windows 10 works exactly as it does anywhere else — the browser does the
-        work, so there is no driver or app to install — but Windows keeps its own camera permission list underneath the browser, and that is
+        A webcam test on Windows 10 works exactly as it does anywhere else, the browser does the
+        work, so there is no driver or app to install, but Windows keeps its own camera permission list underneath the browser, and that is
         where most Windows-specific failures come from. Open
         <span class="code-font">Settings → Privacy &amp; security → Camera</span> and confirm three
-        switches: “Camera access” is on, “Let apps access your camera” is on, and — the one almost
-        everyone misses — “Let desktop apps access your camera” is on as well. Browsers count as
+        switches: “Camera access” is on, “Let apps access your camera” is on, and, the one almost
+        everyone misses, “Let desktop apps access your camera” is on as well. Browsers count as
         desktop apps, so a camera that works in the Windows Camera app can still fail in Chrome
         while that third switch is off. Windows 11 uses the same path with slightly different
         wording.
@@ -116,18 +116,20 @@ import Container from '../layout/Container.astro';
       <p class="body-md text-body">
         Every current browser supports camera access: Chrome, Edge, Firefox, Safari, Opera and
         Brave, across Windows, macOS, Linux, ChromeOS, Android and iOS. The one hard requirement is
-        a secure connection — browsers refuse camera access to any page served over plain
+        a secure connection, browsers refuse camera access to any page served over plain
         <span class="code-font">http://</span>, which is why a local development site never shows a
         preview no matter which permission you grant.
       </p>
 
       <h3 class="display-sm mt-10 text-ink">What makes this webcam test site different</h3>
       <p class="body-md text-body">
-        Most tools stop at “your camera works”. This one shows you the two things a large mirrored
-        preview actively hides. The call preview renders your feed at the sizes a real meeting uses
-        — speaker view, gallery tile and thumbnail — and un-mirrored, which is how everyone except
-        you sees your face. The recording panel captures a few seconds and plays it back, because
-        watching yourself move is the only reliable way to judge lighting and framing.
+        Most tools stop at “your camera works”. This one hands you the whole specification of what
+        your camera is actually producing: live and maximum resolution, measured frame rate,
+        megapixels, aspect ratio, video standard, encoded bitrate, the weight of a single frame as
+        PNG and JPEG, and a live read of brightness, lightness, luminosity, contrast, hue,
+        saturation and average colour. Turning the mirror off shows your face the way everyone else
+        sees it, and the recording panel captures a few seconds and plays it back, because watching
+        yourself move is the only reliable way to judge lighting and framing.
       </p>
       <p class="body-md text-body">
         Where your camera and browser allow it, the camera controls go further still and adjust the
@@ -141,7 +143,7 @@ import Container from '../layout/Container.astro';
       <p class="body-md text-body">
         Four causes explain nearly every failure: a blocked permission, another application holding
         the camera, the wrong device selected, or a privacy shutter over the lens. Close Zoom,
-        Teams, Meet and OBS completely — including windows minimised to the system tray — then
+        Teams, Meet and OBS completely, including windows minimised to the system tray then
         reload. Our <a class="text-link hover:text-link-deep" href="/troubleshooting">troubleshooting guide</a>
         covers each one with the exact settings path for every major browser and operating system,
         and decodes the specific error your browser reports.
@@ -152,7 +154,7 @@ import Container from '../layout/Container.astro';
         A free webcam test should not cost you your privacy. This site is a set of static files
         with no endpoint that could receive video, so your feed is never uploaded, and snapshots
         and recordings are created on your device and stay there unless you choose to download
-        them. Pressing stop releases the camera immediately and your indicator light goes out —
+        them. Pressing stop releases the camera immediately and your indicator light goes out  
         your own independent confirmation. The
         <a class="text-link hover:text-link-deep" href="/privacy">privacy page</a> sets out the
         detail in plain language.

@@ -1,6 +1,6 @@
 // Short local recording, so you can watch yourself back instead of guessing how
 // you look to other people. The clip is held in memory as a Blob and revoked on
-// stop — it is never uploaded.
+// stop. It is never uploaded.
 
 export interface Recording {
   url: string;
@@ -124,7 +124,7 @@ export function record(
  *
  * Competitors quote a bitrate figure; this derives one honestly by encoding a
  * short sample and dividing bytes by time. Resolves to null when recording is
- * unsupported or the probe fails — callers should treat it as optional.
+ * unsupported or the probe fails, so callers should treat it as optional.
  */
 export function probeBitrate(stream: MediaStream, ms = 1200): Promise<number | null> {
   return new Promise((resolve) => {

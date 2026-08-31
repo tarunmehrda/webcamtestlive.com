@@ -1,0 +1,147 @@
+---
+// The full technical read-out for the connected camera. Every value is measured
+// on the device from the live stream; this panel only displays them.
+//
+// Values are written by the WebcamTest island through their ids. Three display
+// states are driven by `data-state`: `idle` shows an em dash, `pending` shows a
+// spinner (see `[data-info]` in global.css), `ready` shows the measured value.
+import { t, localeFromPath } from '../../i18n';
+
+interface Props {
+  class?: string;
+}
+const { class: className = '' } = Astro.props;
+
+const c = t(localeFromPath(Astro.url.pathname)).tool.info;
+const copyReportLabel = t(localeFromPath(Astro.url.pathname)).tool.healthChecks.copyReport;
+
+// The footnote embeds the "Copy report" button name as a highlighted span. The
+// dictionary string carries a {copyReport} token rather than three fragments, so
+// each language places the button name where its own word order needs it.
+const [noteBefore, noteAfter = ''] = c.note.split('{copyReport}');
+
+// Every reading stays visible: no tabs, no accordion. What keeps the panel short
+// is the cell shape: each label sits above its value inside a narrow column, so
+// two to six readings share a row instead of taking one each. Laid out as
+// label-left / value-right this same content ran past 1100px and pushed the
+// speaker test a screen and a half down the page.
+const groups: {
+  title: string;
+  rows: { id: string; label: string; kind?: 'stars' | 'swatch'; wide?: boolean }[];
+}[] = [
+  {
+    title: c.groupDevice,
+    rows: [
+      { id: 'info-name', label: c.name, wide: true },
+      { id: 'info-quality', label: c.quality, kind: 'stars' },
+      { id: 'info-mic', label: c.builtInMic },
+      { id: 'info-speaker', label: c.builtInSpeaker },
+    ],
+  },
+  {
+    title: c.groupVideo,
+    rows: [
+      { id: 'info-res', label: c.resolution },
+      { id: 'info-maxres', label: c.maxSupported },
+      { id: 'info-standard', label: c.videoStandard },
+      { id: 'info-fps', label: c.frameRate },
+      { id: 'info-mp', label: c.megapixels },
+      { id: 'info-aspect', label: c.aspectRatio },
+      { id: 'info-stream', label: c.streamType },
+      { id: 'info-bitrate', label: c.bitrate },
+      { id: 'info-png', label: c.pngSize },
+      { id: 'info-jpeg', label: c.jpegSize },
+    ],
+  },
+  {
+    title: c.groupImage,
+    rows: [
+      { id: 'info-mode', label: c.imageMode },
+      { id: 'info-colors', label: c.colours },
+      { id: 'info-rgb', label: c.averageRgb, kind: 'swatch' },
+      { id: 'info-lightness', label: c.lightness },
+      { id: 'info-luminosity', label: c.luminosity },
+      { id: 'info-brightness', label: c.brightness },
+      { id: 'info-contrast', label: c.contrast },
+      { id: 'info-hue', label: c.hue },
+      { id: 'info-saturation', label: c.saturation },
+    ],
+  },
+];
+
+// Two columns on the narrowest phone, up to six once the card runs the full width
+// of the tool. `min-h-5` holds a cell's height steady through idle → spinner →
+// value, so nothing below it jumps as readings land. Labels wrap rather than
+// truncate: a clipped label in a language with longer words is unreadable.
+const grid = [
+  'grid grid-cols-2 gap-x-4 gap-y-4',
+  'min-[520px]:grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6',
+].join(' ');
+const label = 'caption-mono mb-1 block uppercase leading-4 text-mute';
+const value = 'body-sm block min-h-5 break-words font-medium text-ink';
+---
+
+<div
+  data-webcam-info
+  class:list={['rounded-xl border border-hairline bg-canvas p-4 elev-2 sm:p-5', className]}
+>
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <h2 class="display-sm text-ink">{c.title}</h2>
+    <span data-info-status data-idle={c.idle} data-live={c.live} class="caption-mono text-mute">{c.idle}</span>
+  </div>
+
+  {
+    groups.map((group, gi) => (
+      <section class:list={[gi === 0 ? 'mt-4' : 'mt-5 border-t border-hairline pt-4']}>
+        <h3 class="caption-mono mb-2.5 uppercase text-hairline-strong">{group.title}</h3>
+        <div class={grid}>
+          {group.rows.map((r) => (
+            <div class:list={['min-w-0', r.wide && 'col-span-full']}>
+              <span class={label}>{r.label}</span>
+
+              {r.kind === 'stars' ? (
+                <span class="flex min-h-5 flex-wrap items-center gap-x-2">
+                  <span
+                    class="relative inline-block shrink-0 text-[12px] leading-5 tracking-[0.06em]"
+                    aria-hidden="true"
+                  >
+                    <span class="text-hairline-strong">★★★★★</span>
+                    <span
+                      data-info-stars
+                      class="absolute inset-0 w-0 overflow-hidden whitespace-nowrap text-warning transition-[width] duration-500 ease-out"
+                    >
+                      ★★★★★
+                    </span>
+                  </span>
+                  <span class="body-sm min-w-0 font-medium text-ink" id={r.id} data-info data-state="idle">
+                     -
+                  </span>
+                </span>
+              ) : r.kind === 'swatch' ? (
+                <span class="flex min-h-5 items-center gap-1.5">
+                  <span
+                    data-info-swatch
+                    hidden
+                    class="size-3 shrink-0 rounded-xs border border-hairline transition-colors duration-500"
+                  />
+                  <span class="body-sm min-w-0 truncate font-medium text-ink" id={r.id} data-info data-state="idle">
+                     -
+                  </span>
+                </span>
+              ) : (
+                <span class={value} id={r.id} data-info data-state="idle">
+                   -
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+    ))
+  }
+
+  <p class="caption mt-3 text-mute">
+    {noteBefore}<span class="text-body">{copyReportLabel}</span>{noteAfter}
+  </p>
+</div>
+

@@ -10,7 +10,7 @@ export interface FaqGroup {
 
 /**
  * The long-tail FAQ hub. Several target queries are the same question reworded,
- * so each one is answered from a different angle — a page of near-identical
+ * so each one is answered from a different angle a page of near-identical
  * answers reads as padding to both people and search engines.
  */
 export const FAQ_GROUPS: FaqGroup[] = [
@@ -38,7 +38,7 @@ export const FAQ_GROUPS: FaqGroup[] = [
       },
       {
         q: 'How test webcam',
-        a: 'Press Start test and allow access. That is the whole process — about ten seconds. If your face appears, the camera works.',
+        a: 'Press Start test and allow access. That is the whole process, about ten seconds. If your face appears, the camera works.',
       },
       {
         q: 'How to test the webcam',
@@ -68,7 +68,7 @@ export const FAQ_GROUPS: FaqGroup[] = [
     items: [
       {
         q: 'How to test webcam on Mac',
-        a: 'Any browser test works on macOS. If the camera does not start, open System Settings → Privacy & Security → Camera and make sure your browser is listed and switched on. macOS requires the browser to be quit completely — not just the window closed — before the change takes effect.',
+        a: 'Any browser test works on macOS. If the camera does not start, open System Settings → Privacy & Security → Camera and make sure your browser is listed and switched on. macOS requires the browser to be quit completely, not just the window closed, before the change takes effect.',
       },
       {
         q: 'How to test webcam Windows 11',
@@ -76,11 +76,11 @@ export const FAQ_GROUPS: FaqGroup[] = [
       },
       {
         q: 'How to test webcam on Windows 11',
-        a: 'As well as a browser test, Windows 11 ships with a Camera app: press Start, type “Camera” and open it. That confirms the hardware works at the system level, which is a useful second opinion if a browser test fails — but it will not tell you your resolution, frame rate or bitrate.',
+        a: 'As well as a browser test, Windows 11 ships with a Camera app: press Start, type “Camera” and open it. That confirms the hardware works at the system level, which is a useful second opinion if a browser test fails, but it will not tell you your resolution, frame rate or bitrate.',
       },
       {
         q: 'How to test my webcam on Windows 11',
-        a: 'If the camera works in the Camera app but not in your browser, the block is in Windows privacy settings. Open Settings → Privacy & security → Camera and turn on “Camera access”, “Let apps access your camera”, and “Let desktop apps access your camera” — browsers count as desktop apps, and that third switch is the one people miss.',
+        a: 'If the camera works in the Camera app but not in your browser, the block is in Windows privacy settings. Open Settings → Privacy & security → Camera and turn on “Camera access”, “Let apps access your camera”, and “Let desktop apps access your camera”, browsers count as desktop apps, and that third switch is the one people miss.',
       },
       {
         q: 'How to test webcam Windows 10',
@@ -92,7 +92,7 @@ export const FAQ_GROUPS: FaqGroup[] = [
       },
       {
         q: 'How to test webcam on laptop',
-        a: 'Laptops have a built-in camera, so the usual culprits are a privacy shutter sliding over the lens, a function key that disables the camera, or another app holding it. Check the lens first — a black picture with the camera light on is nearly always something covering it.',
+        a: 'Laptops have a built-in camera, so the usual culprits are a privacy shutter sliding over the lens, a function key that disables the camera, or another app holding it. Check the lens first, a black picture with the camera light on is nearly always something covering it.',
       },
     ],
   },
@@ -102,7 +102,7 @@ export const FAQ_GROUPS: FaqGroup[] = [
     items: [
       {
         q: 'How to test Logitech webcam',
-        a: 'A Logitech webcam tests like any other: plug it in, start the test, and select it from the camera dropdown — it will usually appear under its model name, such as C920 or Brio. No Logitech software is required for the camera to work in a browser.',
+        a: 'A Logitech webcam tests like any other: plug it in, start the test, and select it from the camera dropdown, it will usually appear under its model name, such as C920 or Brio. No Logitech software is required for the camera to work in a browser.',
       },
       {
         q: 'How to test my Logitech webcam',
@@ -130,11 +130,11 @@ export const FAQ_GROUPS: FaqGroup[] = [
       },
       {
         q: 'What is a camera test?',
-        a: '“Camera test” is used interchangeably with “webcam test” for computers, and also covers phone and tablet cameras. In every case the aim is the same — confirm the device is detected and permitted, then judge the quality of the image it produces.',
+        a: '“Camera test” is used interchangeably with “webcam test” for computers, and also covers phone and tablet cameras. In every case the aim is the same, confirm the device is detected and permitted, then judge the quality of the image it produces.',
       },
       {
         q: 'What are webcams used for?',
-        a: 'Video calls and meetings, remote interviews and lessons, telehealth appointments, live streaming and content creation, recording video messages, and identity verification. They are also used for monitoring — a home or pet camera is the same hardware with different software behind it.',
+        a: 'Video calls and meetings, remote interviews and lessons, telehealth appointments, live streaming and content creation, recording video messages, and identity verification. They are also used for monitoring, a home or pet camera is the same hardware with different software behind it.',
       },
     ],
   },
@@ -148,7 +148,7 @@ export const FAQ_GROUPS: FaqGroup[] = [
       },
       {
         q: 'Is WebcamTests.com safe to use?',
-        a: 'WebcamTests.com is a different, unaffiliated website, so we are not in a position to vouch for how it handles your data — judge it against the criteria above and read its own privacy policy. What we can state is how this site works: it is a set of static files with no endpoint that could receive video, so your camera feed is never uploaded, and any snapshot or clip stays on your device unless you choose to download it.',
+        a: 'WebcamTests.com is a different, unaffiliated website, so we are not in a position to vouch for how it handles your data, judge it against the criteria above and read its own privacy policy. What we can state is how this site works: it is a set of static files with no endpoint that could receive video, so your camera feed is never uploaded, and any snapshot or clip stays on your device unless you choose to download it.',
       },
     ],
   },
@@ -158,7 +158,7 @@ export const FAQ_GROUPS: FaqGroup[] = [
     items: [
       {
         q: 'How do I test what my webcam sees?',
-        a: 'Start the test and the live preview shows the camera’s view. Bear in mind the preview is mirrored, as most video apps mirror your self-view. To see yourself the way other people do, use the call preview, which renders your feed un-mirrored at the sizes a real meeting uses.',
+        a: 'Start the test and the live preview shows the camera’s view. Bear in mind the preview is mirrored, as most video apps mirror your self-view. To see yourself the way other people do, switch the mirror off with the mirror button under the preview.',
       },
       {
         q: 'How to check camera view?',
@@ -176,15 +176,15 @@ export const FAQ_GROUPS: FaqGroup[] = [
     items: [
       {
         q: 'How do I detect my camera?',
-        a: 'A webcam test lists every camera your browser can see, which is the fastest way to confirm detection. If the list is empty, check Device Manager on Windows or System Information on a Mac — if the camera is missing there too, it is a connection or driver problem rather than a browser one.',
+        a: 'A webcam test lists every camera your browser can see, which is the fastest way to confirm detection. If the list is empty, check Device Manager on Windows or System Information on a Mac, if the camera is missing there too, it is a connection or driver problem rather than a browser one.',
       },
       {
         q: 'How do I open my webcam?',
-        a: 'A camera has no “open” of its own — an application opens it. In a browser, pressing Start test opens it. On Windows, the Camera app does; on macOS, Photo Booth or QuickTime. Whichever you use, the camera closes again when that application releases it.',
+        a: 'A camera has no “open” of its own, an application opens it. In a browser, pressing Start test opens it. On Windows, the Camera app does; on macOS, Photo Booth or QuickTime. Whichever you use, the camera closes again when that application releases it.',
       },
       {
         q: 'How do I activate my webcam?',
-        a: 'Built-in webcams are active as soon as an app requests them and you grant permission. If nothing happens, check for a physical privacy shutter, a keyboard function key that disables the camera, and the operating system’s camera privacy setting — all three can keep an otherwise healthy camera switched off.',
+        a: 'Built-in webcams are active as soon as an app requests them and you grant permission. If nothing happens, check for a physical privacy shutter, a keyboard function key that disables the camera, and the operating system’s camera privacy setting, all three can keep an otherwise healthy camera switched off.',
       },
       {
         q: 'Where is my webcam located?',
@@ -202,7 +202,7 @@ export const FAQ_GROUPS: FaqGroup[] = [
       },
       {
         q: 'Is my webcam on or off?',
-        a: 'Trust the hardware indicator light next to the lens: on nearly every laptop it is wired to the camera, so if it is lit, something is using the camera. Windows 11 and macOS also show an on-screen indicator — a taskbar icon on Windows, a green dot in the menu bar on macOS.',
+        a: 'Trust the hardware indicator light next to the lens: on nearly every laptop it is wired to the camera, so if it is lit, something is using the camera. Windows 11 and macOS also show an on-screen indicator, a taskbar icon on Windows, a green dot in the menu bar on macOS.',
       },
       {
         q: 'How do I check what is using my webcam?',
@@ -210,7 +210,7 @@ export const FAQ_GROUPS: FaqGroup[] = [
       },
       {
         q: 'What app is using my webcam?',
-        a: 'Usually a conferencing app left running in the background — Zoom, Teams, Slack, Discord, Skype or OBS are the common ones, and they hold the camera even when minimised. Quit them fully rather than closing the window. If the camera stays busy, restarting the computer releases it.',
+        a: 'Usually a conferencing app left running in the background, Zoom, Teams, Slack, Discord, Skype or OBS are the common ones, and they hold the camera even when minimised. Quit them fully rather than closing the window. If the camera stays busy, restarting the computer releases it.',
       },
       {
         q: 'Where to check webcam settings?',

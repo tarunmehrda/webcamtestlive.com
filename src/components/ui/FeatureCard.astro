@@ -3,8 +3,10 @@ interface Props {
   title: string;
   href?: string;
   icon?: string;
+  /** Localised label for the trailing link. Defaults to English. */
+  cta?: string;
 }
-const { title, href, icon } = Astro.props;
+const { title, href, icon, cta = 'Open tool' } = Astro.props;
 const Tag = href ? 'a' : 'div';
 ---
 
@@ -25,7 +27,7 @@ const Tag = href ? 'a' : 'div';
   {
     href && (
       <span class="body-sm mt-4 inline-flex items-center gap-1 font-medium text-link">
-        Open tool
+        {cta}
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M5 12h14" /><path d="m12 5 7 7-7 7" />
         </svg>

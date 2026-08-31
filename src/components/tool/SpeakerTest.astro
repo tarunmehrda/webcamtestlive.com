@@ -1,52 +1,266 @@
 ---
+import { t, localeFromPath } from '../../i18n';
+
 interface Props {
   /** Extra classes for the wrapping card. */
   class?: string;
+  /** Drop the card chrome so this can sit inside a larger panel. */
+  bare?: boolean;
 }
-const { class: className = '' } = Astro.props;
+const { class: className = '', bare = false } = Astro.props;
 
-const btn =
-  'body-sm rounded-sm border border-hairline bg-canvas py-3 font-medium text-ink transition-colors hover:bg-canvas-soft-2 sm:py-2';
+const c = t(localeFromPath(Astro.url.pathname)).tool.speakers;
+
+const card = bare ? '' : 'rounded-xl border border-hairline bg-canvas p-4 elev-2 sm:p-5';
+// Inside another card this is a sub-heading, not a second top-level one.
+const Heading = bare ? 'h3' : 'h2';
+
+// Touch targets stay at 44px on phones and only shrink once there is a pointer.
+const btn = [
+  'group flex min-h-11 flex-col items-center justify-center gap-0.5 rounded-md border border-hairline bg-canvas px-2 py-2.5',
+  'transition-[background-color,border-color,transform] duration-150 hover:bg-canvas-soft-2 active:scale-[0.98]',
+  'aria-pressed:border-transparent aria-pressed:bg-primary aria-pressed:text-on-primary',
+  'disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-canvas',
+].join(' ');
+
+const chip =
+  'caption-mono rounded-pill border border-hairline px-2.5 py-1.5 text-mute transition-colors hover:text-ink aria-pressed:border-transparent aria-pressed:bg-canvas-soft-2 aria-pressed:text-ink';
+
+const tones = [
+  { id: 'low', label: c.toneLow, hz: 120, note: c.toneLowNote },
+  { id: 'mid', label: c.toneMid, hz: 440, note: c.toneMidNote },
+  { id: 'high', label: c.toneHigh, hz: 2000, note: c.toneHighNote },
+];
+
+const sides = [
+  { key: 'left', mark: 'L' },
+  { key: 'right', mark: 'R' },
+];
 ---
 
 <div
   data-speaker-tool
-  class:list={['rounded-xl border border-hairline bg-canvas p-4 elev-2 sm:p-5', className]}
+  data-strings={JSON.stringify({ idle: c.idle, playing: c.playing, unavailable: c.unavailable, blocked: c.blocked, left: c.left, right: c.right, lr: c.lr })}
+  class:list={[card, className]}
 >
-  <div class="flex items-center justify-between gap-3">
-    <h2 class="display-sm text-ink">Speakers</h2>
-    <span data-tone-status class="caption-mono text-mute">Idle</span>
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <Heading class="display-sm text-ink">{c.title}</Heading>
+    <span data-tone-status class="caption-mono text-mute">{c.idle}</span>
   </div>
-  <p class="caption mt-2 text-mute">
-    Play a test tone to check each side is working. Wear headphones to tell left from right.
-  </p>
+  <p class="caption mt-1 text-mute">{c.hint}</p>
+
+  <!--
+    Three equal columns at every width: even a 320px phone leaves each button
+    ~95px, and stacking them would throw away the left-centre-right spatial
+    mapping that makes the control readable at a glance.
+  -->
   <div class="mt-3 grid grid-cols-3 gap-2">
-    <button data-tone="left" class={btn}>Left</button>
-    <button data-tone="both" class={btn}>Both</button>
-    <button data-tone="right" class={btn}>Right</button>
+    <button data-tone="left" type="button" aria-pressed="false" class={btn}>
+      <span class="body-sm font-medium">{c.left}</span>
+      <span class="caption opacity-60">L</span>
+    </button>
+    <button data-tone="both" type="button" aria-pressed="false" class={btn}>
+      <span class="body-sm font-medium">{c.both}</span>
+      <span class="caption opacity-60">{c.lr}</span>
+    </button>
+    <button data-tone="right" type="button" aria-pressed="false" class={btn}>
+      <span class="body-sm font-medium">{c.right}</span>
+      <span class="caption opacity-60">R</span>
+    </button>
   </div>
+
+  <!-- Which side is sounding, for anyone who cannot rely on hearing it. -->
+  <div class="mt-2 grid grid-cols-2 gap-3" aria-hidden="true">
+    {
+      sides.map((s) => (
+        <div class="flex items-center gap-2">
+          <span class="caption-mono w-3 shrink-0 text-mute">{s.mark}</span>
+          <span class="h-2 min-w-0 flex-1 overflow-hidden rounded-full bg-canvas-soft-2">
+            {/* Styled in global.css, not with utilities: Tailwind v4's scale-*
+                sets the `scale` property, which multiplies with the keyframes'
+                transform and pins the bar at zero width. */}
+            <span data-chan={s.key} class="chan-bar" />
+          </span>
+        </div>
+      ))
+    }
+  </div>
+
+  <div class="mt-3 flex flex-wrap items-center gap-2">
+    <span class="caption-mono uppercase text-mute">{c.toneLabel}</span>
+    {
+      tones.map((t) => (
+        <button
+          type="button"
+          data-tone-freq={t.hz}
+          aria-pressed={t.id === 'mid' ? 'true' : 'false'}
+          title={t.note}
+          class={chip}
+        >
+          {t.label}
+        </button>
+      ))
+    }
+  </div>
+
+  <label data-output-row hidden class="mt-3 flex flex-col gap-1">
+    <span class="caption-mono uppercase text-mute">Output device</span>
+    <select
+      data-output-select
+      class="body-sm h-11 rounded-sm border border-hairline bg-canvas px-3 text-ink sm:h-10"
+    >
+      <option value="">System default</option>
+    </select>
+  </label>
+
+  <p data-tone-hint class="caption mt-3 text-mute">
+    Nothing? Raise the volume, check your output device, and on iPhone turn the silent switch off.
+  </p>
 </div>
 
 <script>
-  import { playTone, closeTone, type ToneChannel } from '../../lib/tone';
+  import {
+    playTone,
+    stopTone,
+    closeTone,
+    canSelectOutput,
+    setToneOutput,
+    isToneSupported,
+    type ToneChannel,
+    type TonePlayback,
+  } from '../../lib/tone';
+  import { listOutputs, onDeviceChange } from '../../lib/devices';
   import { setText } from '../../lib/dom';
 
   // Astro hoists this script once per page, so bind every instance on the page.
-  document.querySelectorAll<HTMLElement>('[data-speaker-tool]').forEach((root) => {
+  document.querySelectorAll<HTMLElement>('[data-speaker-tool]').forEach(setup);
+
+  function setup(root: HTMLElement) {
+    // Serialised by the component: client scripts cannot reach the dictionary.
+    const S = JSON.parse(root.dataset.strings || '{}') as Record<string, string>;
     const status = root.querySelector('[data-tone-status]');
-    root.querySelectorAll<HTMLButtonElement>('[data-tone]').forEach((btn) => {
-      btn.addEventListener('click', async () => {
-        const channel = (btn.dataset.tone ?? 'both') as ToneChannel;
-        setText(status, channel === 'both' ? 'Playing both' : `Playing ${channel}`);
+    const hint = root.querySelector('[data-tone-hint]');
+    const buttons = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-tone]'));
+    const freqButtons = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-tone-freq]'));
+    const bars = {
+      left: root.querySelector<HTMLElement>('[data-chan="left"]'),
+      right: root.querySelector<HTMLElement>('[data-chan="right"]'),
+    };
+    const outputRow = root.querySelector<HTMLElement>('[data-output-row]');
+    const outputSelect = root.querySelector<HTMLSelectElement>('[data-output-select]');
+
+    let frequency = 440;
+    let playing: ToneChannel | null = null;
+    // Identity, not channel: retuning while a side is sounding restarts the same
+    // channel, and the old tone's completion would otherwise clear the new one.
+    let currentTone: TonePlayback | null = null;
+    // Guards a double-tap that would start a second tone while the first is still
+    // awaiting resume(), the two would overlap and both buttons would light up.
+    let pending = false;
+
+    if (!isToneSupported()) {
+      [...buttons, ...freqButtons].forEach((b) => (b.disabled = true));
+      setText(status, S.unavailable);
+      setText(
+        hint,
+        'This browser does not support the Web Audio API, so the test tone cannot be generated.',
+      );
+      return;
+    }
+
+    function paint(channel: ToneChannel | null) {
+      playing = channel;
+      for (const b of buttons) b.setAttribute('aria-pressed', String(b.dataset.tone === channel));
+      for (const side of ['left', 'right'] as const) {
+        const on = channel === side || channel === 'both';
+        bars[side]?.classList.toggle('is-sounding', on);
+      }
+      if (channel) {
+        setText(status, `${S.playing} ${channel === 'both' ? S.lr : channel === 'left' ? S.left : S.right}`);
         status?.classList.remove('text-mute');
         status?.classList.add('text-success');
-        await playTone(channel);
-        setText(status, 'Idle');
+      } else {
+        setText(status, S.idle);
         status?.classList.add('text-mute');
         status?.classList.remove('text-success');
+      }
+    }
+
+    async function toggle(channel: ToneChannel) {
+      if (pending) return;
+      // Pressing the sounding button stops it; pressing another switches to it.
+      if (playing === channel) {
+        stopTone();
+        currentTone = null;
+        paint(null);
+        return;
+      }
+      pending = true;
+      paint(channel);
+      let tone: TonePlayback;
+      try {
+        tone = await playTone(channel, { frequency });
+      } catch {
+        paint(null);
+        setText(status, S.blocked);
+        return;
+      } finally {
+        pending = false;
+      }
+      currentTone = tone;
+      await tone.finished;
+      // A later press may already own the UI by the time this tone ends.
+      if (currentTone !== tone) return;
+      currentTone = null;
+      paint(null);
+    }
+
+    for (const b of buttons) {
+      b.addEventListener('click', () => void toggle(b.dataset.tone as ToneChannel));
+    }
+
+    for (const b of freqButtons) {
+      b.addEventListener('click', () => {
+        frequency = Number(b.dataset.toneFreq) || 440;
+        for (const other of freqButtons) other.setAttribute('aria-pressed', String(other === b));
+        // Retune whatever is sounding, so comparing low against high is one press
+        // rather than stop, change, start again.
+        if (playing) {
+          const channel = playing;
+          stopTone();
+          currentTone = null;
+          paint(null);
+          void toggle(channel);
+        }
       });
-    });
-  });
+    }
+
+    // ---- output device picker (Chromium only) --------------------------------
+    async function fillOutputs() {
+      if (!outputRow || !outputSelect || !canSelectOutput()) return;
+      const outputs = (await listOutputs()).filter((d) => d.deviceId && d.deviceId !== 'default');
+      // One device is not a choice worth rendering a control for.
+      if (outputs.length < 2) {
+        outputRow.hidden = true;
+        return;
+      }
+      const current = outputSelect.value;
+      outputSelect.innerHTML = '';
+      outputSelect.appendChild(new Option('System default', ''));
+      for (const d of outputs) outputSelect.appendChild(new Option(d.label, d.deviceId));
+      if (current && Array.from(outputSelect.options).some((o) => o.value === current)) {
+        outputSelect.value = current;
+      }
+      outputRow.hidden = false;
+    }
+
+    outputSelect?.addEventListener('change', () => void setToneOutput(outputSelect.value));
+
+    void fillOutputs();
+    onDeviceChange(fillOutputs);
+    // Device labels only arrive once a media permission has been granted.
+    document.addEventListener('webcam:stream', () => void fillOutputs());
+  }
 
   window.addEventListener('pagehide', closeTone);
   document.addEventListener('astro:before-swap', closeTone);
