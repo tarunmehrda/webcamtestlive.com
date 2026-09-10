@@ -2,28 +2,18 @@
 import Layout from '../layouts/Layout.astro';
 import Container from '../components/layout/Container.astro';
 import { SITE } from '../data/site';
-import { breadcrumbs } from '../lib/seo';
+import { breadcrumbs, ORG_ID } from '../lib/seo';
 
-const jsonLd = [
-  {
-    '@context': 'https://schema.org',
-    '@type': 'ContactPage',
-    name: `Contact ${SITE.name}`,
-    url: new URL('/contact', SITE.url).href,
-    mainEntity: {
-      '@type': 'Organization',
-      name: SITE.name,
-      url: SITE.url,
-      email: SITE.email,
-    },
-  },
-  breadcrumbs([{ name: 'Contact', href: '/contact' }]),
-];
+// The page node is the ContactPage, and its subject is the sitewide
+// Organization node (which already carries the email and contact point).
+const jsonLd = [breadcrumbs([{ name: 'Contact', href: '/contact' }])];
 ---
 
 <Layout
   title="Contact"
   description="Contact Webcam Test, report a bug, ask a question about a camera or microphone problem, or send feedback by email."
+  pageType="ContactPage"
+  pageExtra={{ mainEntity: { '@id': ORG_ID } }}
   jsonLd={jsonLd}
 >
   <Container class="py-12 sm:py-16">

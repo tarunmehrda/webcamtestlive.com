@@ -5,8 +5,11 @@ import Hero from '../components/layout/Hero.astro';
 import WebcamTest from '../components/tool/WebcamTest.astro';
 import Accordion from '../components/ui/Accordion.astro';
 import Card from '../components/ui/Card.astro';
+import QuickAnswer from '../components/content/QuickAnswer.astro';
+import LastUpdated from '../components/content/LastUpdated.astro';
 import { RESOLUTION_FAQS } from '../data/faqs';
-import { breadcrumbs } from '../lib/seo';
+import { breadcrumbs, webApplication } from '../lib/seo';
+import { SITE } from '../data/site';
 
 const resolutions = [
   {
@@ -41,6 +44,18 @@ const resolutions = [
   },
 ];
 const jsonLd = [
+  webApplication({
+    name: 'Webcam Resolution Test',
+    url: `${SITE.url}/resolution`,
+    description:
+      'Check the resolution your webcam is delivering right now and the maximum it supports, from 360p to 4K, in your browser.',
+    featureList: [
+      'Live stream resolution in pixels',
+      'Maximum supported resolution detection',
+      'Video standard, megapixels and aspect ratio read-out',
+      'Runs entirely in the browser; nothing is uploaded',
+    ],
+  }),
   {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
@@ -68,6 +83,14 @@ const jsonLd = [
   <Container class="-mt-8 pb-6 md:-mt-12">
     <WebcamTest focus="resolution" />
   </Container>
+
+  <QuickAnswer>
+    Your webcam resolution is the width × height, in pixels, of the video your camera is sending
+    right now, and it appears above the moment you press Start. For video calls, 1280 × 720
+    (720p) is the practical minimum and 1920 × 1080 (1080p) looks excellent. The test also
+    reports the maximum your camera supports, which is often higher than the resolution apps use
+    by default.
+  </QuickAnswer>
 
   <!-- Explainer -->
   <Container class="py-12 sm:py-16">
@@ -143,6 +166,7 @@ const jsonLd = [
       <div class="mt-8">
         <Accordion items={RESOLUTION_FAQS} />
       </div>
+      <LastUpdated route="/resolution" class="mt-8" />
     </div>
   </Container>
 </Layout>

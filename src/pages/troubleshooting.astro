@@ -5,11 +5,14 @@ import Hero from '../components/layout/Hero.astro';
 import WebcamTest from '../components/tool/WebcamTest.astro';
 import Accordion from '../components/ui/Accordion.astro';
 import Card from '../components/ui/Card.astro';
+import QuickAnswer from '../components/content/QuickAnswer.astro';
+import LastUpdated from '../components/content/LastUpdated.astro';
 import { TROUBLESHOOTING_FAQS } from '../data/faqs';
-import { breadcrumbs } from '../lib/seo';
+import { breadcrumbs, techArticle } from '../lib/seo';
+import { pageDates } from '../lib/dates';
 import { SITE } from '../data/site';
 
-/** The quick checklist, rendered on the page and emitted as HowTo structured data. */
+/** The quick checklist, in the order that resolves the most cases soonest. */
 const steps = [
   {
     name: 'Close every other app using the camera',
@@ -121,22 +124,16 @@ const quality = [
   },
 ];
 
+// TechArticle rather than HowTo: Google retired HowTo rich results in 2023,
+// and what this page is, structurally, is a dated, maintained guide.
 const jsonLd = [
-  {
-    '@context': 'https://schema.org',
-    '@type': 'HowTo',
-    name: 'How to fix a webcam that is not working',
+  techArticle({
+    headline: 'Webcam not working? How to fix it',
     description:
       'A step-by-step checklist to get a webcam working again in your browser, covering permissions, conflicting applications, device selection and hardware.',
-    totalTime: 'PT5M',
-    step: steps.map((s, i) => ({
-      '@type': 'HowToStep',
-      position: i + 1,
-      name: s.name,
-      text: s.text,
-      url: `${SITE.url}/troubleshooting#step-${i + 1}`,
-    })),
-  },
+    url: `${SITE.url}/troubleshooting`,
+    dates: pageDates('/troubleshooting'),
+  }),
   {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
@@ -164,6 +161,13 @@ const jsonLd = [
   <Container class="-mt-8 pb-6 md:-mt-12">
     <WebcamTest focus="full" />
   </Container>
+
+  <QuickAnswer>
+    If your webcam is not working, the cause is almost always one of four things: camera
+    permission is blocked in the browser, another app such as Zoom, Teams or OBS is holding the
+    camera, the wrong device is selected, or a privacy shutter is covering the lens. Fix them in
+    that order, and start the test above again after each step to see which one it was.
+  </QuickAnswer>
 
   <!-- Quick checklist -->
   <Container class="py-12 sm:py-16">
@@ -324,6 +328,7 @@ const jsonLd = [
       <div class="mt-8">
         <Accordion items={TROUBLESHOOTING_FAQS} />
       </div>
+      <LastUpdated route="/troubleshooting" class="mt-8" />
     </div>
   </Container>
 </Layout>

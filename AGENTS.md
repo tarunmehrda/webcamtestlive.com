@@ -8,6 +8,15 @@ astro dev --background
 
 Manage the background server with `astro dev stop`, `astro dev status`, and `astro dev logs`.
 
+## Deploy
+
+`npm run deploy` builds, uploads to the `webcamtestlive` Cloudflare Worker (wrangler is already logged in), then pings IndexNow with every sitemap URL.
+
+- `worker/index.js` runs in front of the static assets for everything except `/_astro/*`: it 301s `www.` and plain `http://` to `https://webcamtestlive.com`, and marks the `*.workers.dev` preview `noindex`.
+- `public/_headers` sets the security headers and the immutable cache policy for the hashed bundles.
+- Page dates in the sitemap and the JSON-LD come from git (`src/lib/dates.ts`), so commit before building a release.
+- `public/llms.txt` and `public/robots.txt` are maintained by hand; update them when a page is added.
+
 ## Documentation
 
 Full documentation: https://docs.astro.build

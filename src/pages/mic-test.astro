@@ -6,8 +6,10 @@ import MicMeter from '../components/tool/MicMeter.astro';
 import SpeakerTest from '../components/tool/SpeakerTest.astro';
 import Accordion from '../components/ui/Accordion.astro';
 import Card from '../components/ui/Card.astro';
+import QuickAnswer from '../components/content/QuickAnswer.astro';
+import LastUpdated from '../components/content/LastUpdated.astro';
 import { MIC_FAQS } from '../data/faqs';
-import { breadcrumbs } from '../lib/seo';
+import { breadcrumbs, webApplication } from '../lib/seo';
 import { SITE } from '../data/site';
 
 const steps = [
@@ -53,21 +55,20 @@ const problems = [
 ];
 
 const jsonLd = [
-  {
-    '@context': 'https://schema.org',
-    '@type': 'HowTo',
-    name: 'How to test your microphone online',
+  webApplication({
+    name: 'Microphone Test',
+    url: `${SITE.url}/mic-test`,
     description:
-      'Test a microphone in your browser using a live input level meter, with no downloads and no recording.',
-    totalTime: 'PT1M',
-    step: steps.map((s, i) => ({
-      '@type': 'HowToStep',
-      position: i + 1,
-      name: s.name,
-      text: s.text,
-      url: `${SITE.url}/mic-test#setup`,
-    })),
-  },
+      'Test a microphone in your browser with a live input level meter, and your speakers or headphones with left, right and stereo test tones. Nothing is recorded or uploaded.',
+    featureList: [
+      'Live microphone input level meter',
+      'Input device selection',
+      'Left, right and stereo speaker test tones at three frequencies',
+      'Runs entirely in the browser; audio is never recorded or uploaded',
+    ],
+    browserRequirements:
+      'Requires a modern browser with microphone access (Chrome, Edge, Firefox, Safari).',
+  }),
   {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
@@ -106,6 +107,14 @@ const jsonLd = [
       </div>
     </div>
   </Container>
+
+  <QuickAnswer>
+    To test your microphone online, press Start above, allow microphone access when your browser
+    asks, and speak at your normal call volume. The level meter should move well into the middle
+    of its range and peak in the upper third: barely moving means the gain is too low or the
+    wrong device is selected, and a bar pinned at the top means clipping. Audio is analysed in
+    your browser and never recorded or uploaded.
+  </QuickAnswer>
 
   <!-- How to use it -->
   <Container class="py-12 sm:py-16" id="setup">
@@ -208,6 +217,7 @@ const jsonLd = [
       <div class="mt-8">
         <Accordion items={MIC_FAQS} />
       </div>
+      <LastUpdated route="/mic-test" class="mt-8" />
     </div>
   </Container>
 </Layout>

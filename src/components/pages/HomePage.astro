@@ -8,6 +8,7 @@ import Card from '../ui/Card.astro';
 import FeatureCard from '../ui/FeatureCard.astro';
 import HomeGuide from '../content/HomeGuide.astro';
 import { SITE } from '../../data/site';
+import { webApplication } from '../../lib/seo';
 import { t, localePath, localeMeta, type Locale } from '../../i18n';
 
 interface Props {
@@ -18,35 +19,17 @@ const c = t(locale);
 const L = (p: string) => localePath(locale, p);
 const hreflang = localeMeta(locale).hreflang;
 
+// No HowTo node for the three steps: Google dropped HowTo rich results in
+// 2023, and the steps are plain HTML below. FAQPage stays: it has no rich
+// result any more either, but it is an accurate description of the section.
 const jsonLd = [
-  {
-    '@context': 'https://schema.org',
-    '@type': 'WebApplication',
+  webApplication({
     name: SITE.name,
     url: new URL(L('/'), SITE.url).href,
-    applicationCategory: 'UtilitiesApplication',
-    operatingSystem: 'Any',
-    browserRequirements:
-      'Requires a modern browser with camera access (Chrome, Edge, Firefox, Safari).',
     description: c.meta.homeDescription,
+    featureList: c.home.checks.items.map((i) => i.title),
     inLanguage: hreflang,
-    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-  },
-  {
-    '@context': 'https://schema.org',
-    '@type': 'HowTo',
-    name: c.home.howItWorks.title,
-    description: c.home.howItWorks.subtitle,
-    inLanguage: hreflang,
-    totalTime: 'PT1M',
-    step: c.home.howItWorks.steps.map((s, i) => ({
-      '@type': 'HowToStep',
-      position: i + 1,
-      name: s.name,
-      text: s.text,
-      url: new URL(`${L('/')}#how-it-works`, SITE.url).href,
-    })),
-  },
+  }),
   {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',

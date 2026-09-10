@@ -1,13 +1,22 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "webcamtestlive",
+  "main": "worker/index.js",
   "compatibility_date": "2026-08-21",
 
-  // Static-only Worker: Astro prerenders every route (including /sitemap.xml)
-  // to dist/, so there is no `main` script and therefore no ASSETS `binding` —
-  // that field is only valid alongside `main`.
+  // Astro prerenders every route (including /sitemap.xml) to dist/, so the
+  // site is static assets. The small script in `main` exists only to redirect
+  // the duplicate hosts (www., plain http://) to the canonical origin; every
+  // other request is handed straight to the ASSETS binding.
   "assets": {
     "directory": "./dist",
+    "binding": "ASSETS",
+    // Run the redirect script before asset lookup for pages, but let Astro's
+    // content-hashed bundles skip it: they are the bulk of requests, they are
+    // never a landing URL a crawler could index under the wrong host, and
+    // serving them straight from the asset layer keeps them off the Worker's
+    // request quota.
+    "run_worker_first": ["/*", "!/_astro/*"],
     // Pages auto-detected 404.html; Workers requires it to be explicit, or an
     // unknown path returns a bare 404 instead of src/pages/404.astro.
     "not_found_handling": "404-page",

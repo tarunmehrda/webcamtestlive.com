@@ -1,21 +1,10 @@
 import type { APIRoute } from 'astro';
 import { SITE } from '../data/site';
 import { LOCALES, DEFAULT_LOCALE, localePath, TRANSLATED_ROUTES } from '../i18n';
+import { pageDates, isoDay } from '../lib/dates';
 
 /** Pages excluded from the sitemap: error pages, which are noindex. */
 const EXCLUDE = new Set(['404', '500']);
-
-/** Relative importance, highest first. Anything unlisted falls back to 0.5. */
-const PRIORITY: Record<string, number> = {
-  '/': 1.0,
-  '/resolution': 0.8,
-  '/fps': 0.8,
-  '/mic-test': 0.8,
-  '/troubleshooting': 0.7,
-  '/faq': 0.7,
-  '/about': 0.5,
-  '/contact': 0.4,
-};
 
 // Only the English page files. The per-locale index files (vi/index.astro …)
 // are filtered out here and re-added below with their hreflang annotations, so
@@ -32,8 +21,6 @@ const routes = Object.keys(import.meta.glob('./**/*.astro'))
 const xml_escape = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
 
 export const GET: APIRoute = () => {
-  const lastmod = new Date().toISOString().slice(0, 10);
-
   const entries: string[] = [];
 
   for (const route of routes) {
@@ -42,6 +29,11 @@ export const GET: APIRoute = () => {
     // each entry carries the full reciprocal alternate set: Google wants the
     // annotations on every URL in the group, not just the canonical one.
     const group = translated ? LOCALES.map((l) => l.code) : [DEFAULT_LOCALE];
+
+    // The last commit that changed this route's content, not the build date:
+    // Google only trusts <lastmod> when it moves with real changes. There is
+    // no <priority> or <changefreq> because Google ignores both.
+    const lastmod = isoDay(pageDates(route).modified);
 
     const alternates = translated
       ? LOCALES.map(
@@ -66,7 +58,6 @@ export const GET: APIRoute = () => {
           `    <loc>${loc}</loc>`,
           ...alternates,
           `    <lastmod>${lastmod}</lastmod>`,
-          `    <priority>${(PRIORITY[route] ?? 0.5).toFixed(1)}</priority>`,
           '  </url>',
         ].join('\n'),
       );

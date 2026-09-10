@@ -3,26 +3,26 @@ import Layout from '../layouts/Layout.astro';
 import Container from '../components/layout/Container.astro';
 import Hero from '../components/layout/Hero.astro';
 import Accordion from '../components/ui/Accordion.astro';
+import LastUpdated from '../components/content/LastUpdated.astro';
 import { FAQ_GROUPS, ALL_FAQ_ITEMS } from '../data/faq-page';
 import { breadcrumbs } from '../lib/seo';
 
-const jsonLd = [
-  {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: ALL_FAQ_ITEMS.map((f) => ({
-      '@type': 'Question',
-      name: f.q,
-      acceptedAnswer: { '@type': 'Answer', text: f.a },
-    })),
-  },
-  breadcrumbs([{ name: 'Webcam Test FAQ', href: '/faq' }]),
-];
+// The whole page is the FAQ, so the page node itself is the FAQPage rather
+// than a second node beside a generic WebPage.
+const questions = ALL_FAQ_ITEMS.map((f) => ({
+  '@type': 'Question',
+  name: f.q,
+  acceptedAnswer: { '@type': 'Answer', text: f.a },
+}));
+
+const jsonLd = [breadcrumbs([{ name: 'Webcam Test FAQ', href: '/faq' }])];
 ---
 
 <Layout
   rawTitle="Webcam Test FAQ: How to Test Your Webcam"
   description="How to test a webcam on Windows 11, Windows 10, Mac, PC or laptop, check what your camera sees, find which app is using it, and fix it when it will not start."
+  pageType="FAQPage"
+  pageExtra={{ mainEntity: questions }}
   jsonLd={jsonLd}
 >
   <Hero
@@ -71,6 +71,7 @@ const jsonLd = [
           browser and operating system.
         </p>
       </div>
+      <LastUpdated route="/faq" class="mt-8" />
     </div>
   </Container>
 </Layout>

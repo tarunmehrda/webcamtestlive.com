@@ -2,11 +2,14 @@
 import Layout from '../layouts/Layout.astro';
 import Container from '../components/layout/Container.astro';
 import { SITE } from '../data/site';
+import { ORG_ID } from '../lib/seo';
 ---
 
 <Layout
   rawTitle="About This Free Webcam Test Site"
   description="About Webcam Test, a fast, free, privacy-first tool to check your camera and microphone directly in your browser."
+  pageType="AboutPage"
+  pageExtra={{ mainEntity: { '@id': ORG_ID } }}
 >
   <Container class="py-12 sm:py-16">
     <div class="mx-auto max-w-3xl">

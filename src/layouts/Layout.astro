@@ -15,10 +15,12 @@ interface Props {
   description?: string;
   noindex?: boolean;
   jsonLd?: Record<string, unknown>[];
+  pageType?: string;
+  pageExtra?: Record<string, unknown>;
   locale?: Locale;
 }
 
-const { title, rawTitle, description, noindex, jsonLd } = Astro.props;
+const { title, rawTitle, description, noindex, jsonLd, pageType, pageExtra } = Astro.props;
 // Pages under /[lang]/ pass their locale explicitly; the English pages at the
 // root leave it undefined and fall back to reading it off the URL.
 const locale: Locale = Astro.props.locale ?? localeFromPath(Astro.url.pathname);
@@ -28,7 +30,29 @@ const { hreflang, dir } = localeMeta(locale);
 <!doctype html>
 <html lang={hreflang} dir={dir}>
   <head>
-    <BaseHead title={title} rawTitle={rawTitle} description={description} noindex={noindex} jsonLd={jsonLd} locale={locale} />
+    <!-- BaseHead first: <meta charset> has to sit inside the first 1024 bytes
+         of the document, and it opens with it. -->
+    <BaseHead
+      title={title}
+      rawTitle={rawTitle}
+      description={description}
+      noindex={noindex}
+      jsonLd={jsonLd}
+      pageType={pageType}
+      pageExtra={pageExtra}
+      locale={locale}
+    />
+    <!-- Google tag (gtag.js) -->
+    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-77LVBNHK2K"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+
+      gtag('config', 'G-77LVBNHK2K');
+    </script>
     <!-- Without this, font-display:swap paints system-ui first and the page
          visibly re-aligns when Inter lands. crossorigin is required: font
          requests are CORS-mode, and a mismatched preload is fetched twice. -->

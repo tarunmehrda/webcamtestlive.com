@@ -1,0 +1,19 @@
+---
+// A short, self-contained answer to the question the page's H1 asks, placed
+// directly under the tool so it sits in the first part of the document.
+// Written for the person who wants the number and nothing else; that is also
+// the passage a search engine or assistant lifts when it summarises the page.
+import Container from '../layout/Container.astro';
+
+interface Props {
+  label?: string;
+}
+const { label = 'Quick answer' } = Astro.props;
+---
+
+<Container class="pb-4">
+  <div class="mx-auto max-w-3xl rounded-lg border border-hairline bg-canvas-soft p-5 sm:p-6">
+    <p class="caption-mono uppercase text-mute">{label}</p>
+    <p class="body-md mt-2 text-body"><slot /></p>
+  </div>
+</Container>

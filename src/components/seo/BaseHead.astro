@@ -1,6 +1,8 @@
 ---
 import { SITE } from '../../data/site';
 import { LOCALES, DEFAULT_LOCALE, localePath, localeFromPath, pathWithoutLocale, localeMeta, isTranslatedRoute, type Locale } from '../../i18n';
+import { pageDates } from '../../lib/dates';
+import { ORG_ID, WEBSITE_ID } from '../../lib/seo';
 
 interface Props {
   title?: string;
@@ -11,6 +13,10 @@ interface Props {
   noindex?: boolean;
   /** JSON-LD objects to embed as structured data. */
   jsonLd?: Record<string, unknown>[];
+  /** Schema.org type of the page node: WebPage, or a subtype such as FAQPage. */
+  pageType?: string;
+  /** Extra properties merged into the page node, e.g. a FAQPage's mainEntity. */
+  pageExtra?: Record<string, unknown>;
   locale?: Locale;
 }
 
@@ -20,6 +26,8 @@ const {
   description = SITE.description,
   noindex = false,
   jsonLd = [],
+  pageType = 'WebPage',
+  pageExtra = {},
   locale = localeFromPath(Astro.url.pathname),
 } = Astro.props;
 
@@ -54,28 +62,76 @@ const alternates = translated
   : [];
 const xDefault = new URL(localePath(DEFAULT_LOCALE, routeKey), SITE.url).href;
 
-// og:locale wants POSIX-style underscores (pt_BR), not the BCP 47 hyphen form.
-const ogLocale = localeMeta(locale).hreflang.replace('-', '_');
+const hreflang = localeMeta(locale).hreflang;
+// og:locale wants the POSIX language_TERRITORY form (pt_BR), not the BCP 47
+// hyphen form, and a bare language code filled out with its main region.
+const OG_LOCALE: Record<Locale, string> = {
+  en: 'en_US',
+  vi: 'vi_VN',
+  'pt-br': 'pt_BR',
+  ru: 'ru_RU',
+  id: 'id_ID',
+  hi: 'hi_IN',
+};
+const ogLocale = OG_LOCALE[locale];
 // PNG, not SVG, because social platforms do not render SVG preview images.
 const ogImage = new URL('/og-default.png', SITE.url).href;
 
-// Sitewide entity markup. Page-specific graphs are passed in via `jsonLd`.
-const siteLd = {
-  '@context': 'https://schema.org',
+// Sitewide entity graph, in one block so the nodes can reference each other
+// by @id: the Organization that publishes the WebSite that this WebPage is
+// part of. Page-specific nodes (tools, articles, FAQs, breadcrumbs) come in
+// via `jsonLd` and point back at the same ids.
+const dates = pageDates(routeKey);
+const logo = new URL('/web-app-manifest-512x512.png', SITE.url).href;
+
+const orgLd = {
+  '@type': 'Organization',
+  '@id': ORG_ID,
+  name: SITE.name,
+  url: SITE.url,
+  logo: { '@type': 'ImageObject', url: logo, width: 512, height: 512 },
+  email: SITE.email,
+  contactPoint: {
+    '@type': 'ContactPoint',
+    contactType: 'customer support',
+    email: SITE.email,
+    url: `${SITE.url}/contact`,
+    availableLanguage: LOCALES.map((l) => l.hreflang),
+  },
+};
+
+const websiteLd = {
   '@type': 'WebSite',
-  '@id': `${SITE.url}/#website`,
+  '@id': WEBSITE_ID,
   name: SITE.name,
   alternateName: 'Free Online Webcam Test',
   url: SITE.url,
   description: SITE.description,
-  inLanguage: locale,
-  publisher: {
-    '@type': 'Organization',
-    '@id': `${SITE.url}/#org`,
-    name: SITE.name,
-    url: SITE.url,
-    logo: { '@type': 'ImageObject', url: new URL('/web-app-manifest-512x512.png', SITE.url).href },
-  },
+  inLanguage: LOCALES.map((l) => l.hreflang),
+  publisher: { '@id': ORG_ID },
+};
+
+// Dated, so a crawler can tell a refreshed guide from a stale one. The dates
+// come from git (src/lib/dates.ts) and match the visible "Last updated" line
+// on the pages that show one.
+const webPageLd = {
+  '@type': pageType,
+  '@id': `${canonical}#webpage`,
+  url: canonical,
+  name: fullTitle,
+  description,
+  isPartOf: { '@id': WEBSITE_ID },
+  inLanguage: hreflang,
+  datePublished: dates.published,
+  dateModified: dates.modified,
+  primaryImageOfPage: { '@type': 'ImageObject', url: ogImage, width: 1200, height: 630 },
+  publisher: { '@id': ORG_ID },
+  ...pageExtra,
+};
+
+const siteLd = {
+  '@context': 'https://schema.org',
+  '@graph': noindex ? [orgLd, websiteLd] : [orgLd, websiteLd, webPageLd],
 };
 ---
 

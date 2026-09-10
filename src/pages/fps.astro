@@ -5,8 +5,11 @@ import Hero from '../components/layout/Hero.astro';
 import WebcamTest from '../components/tool/WebcamTest.astro';
 import Accordion from '../components/ui/Accordion.astro';
 import Card from '../components/ui/Card.astro';
+import QuickAnswer from '../components/content/QuickAnswer.astro';
+import LastUpdated from '../components/content/LastUpdated.astro';
 import { FPS_FAQS } from '../data/faqs';
-import { breadcrumbs } from '../lib/seo';
+import { breadcrumbs, webApplication } from '../lib/seo';
+import { SITE } from '../data/site';
 
 const bands = [
   {
@@ -60,6 +63,18 @@ const causes = [
 ];
 
 const jsonLd = [
+  webApplication({
+    name: 'Webcam FPS Test',
+    url: `${SITE.url}/fps`,
+    description:
+      'Measure the frame rate your webcam actually delivers, counted from the frames the browser presents rather than the number on the box.',
+    featureList: [
+      'Live frame rate counted over rolling one-second windows',
+      'Camera selection for laptops with several devices',
+      'Guidance on the five usual causes of a low frame rate',
+      'Runs entirely in the browser; nothing is uploaded',
+    ],
+  }),
   {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
@@ -87,6 +102,13 @@ const jsonLd = [
   <Container class="-mt-8 pb-6 md:-mt-12">
     <WebcamTest focus="fps" />
   </Container>
+
+  <QuickAnswer>
+    A webcam should deliver a steady 30 frames per second for video calls: 24 fps is acceptable,
+    and anything under 15 fps looks visibly choppy. The reading above counts the frames your
+    browser actually presents each second, so it reflects your real lighting and CPU load rather
+    than the figure on the box. Low light is the most common cause of a low result.
+  </QuickAnswer>
 
   <!-- Bands -->
   <Container class="py-12 sm:py-16">
@@ -172,6 +194,7 @@ const jsonLd = [
       <div class="mt-8">
         <Accordion items={FPS_FAQS} />
       </div>
+      <LastUpdated route="/fps" class="mt-8" />
     </div>
   </Container>
 </Layout>

@@ -1,0 +1,16 @@
+---
+// Visible counterpart of the WebPage dateModified in <head>: the same git date,
+// so the page never claims one thing to readers and another to crawlers.
+import { pageDates, formatDate } from '../../lib/dates';
+
+interface Props {
+  route: string;
+  class?: string;
+}
+const { route, class: className } = Astro.props;
+const { modified } = pageDates(route);
+---
+
+<p class:list={['caption text-mute', className]}>
+  Last updated <time datetime={modified}>{formatDate(modified)}</time>
+</p>

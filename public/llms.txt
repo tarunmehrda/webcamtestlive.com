@@ -1,0 +1,35 @@
+# Webcam Test (webcamtestlive.com)
+
+> Free online webcam, microphone and speaker test that runs entirely in the browser. It shows the live camera picture and measures resolution, frame rate, bitrate, aspect ratio and image quality, with no download, no account and nothing uploaded.
+
+Webcam Test is a static site built on standard browser APIs (getUserMedia and the Web Audio API). Camera and microphone streams are processed on the visitor's own device; there is no server that receives media. Every measurement is taken live from real frames rather than read from a spec sheet.
+
+## Tools
+
+- [Webcam test](https://webcamtestlive.com/): Start the camera, see the live preview, and get resolution, frame rate, bitrate and lighting readings with automatic health checks and a copyable diagnostics report.
+- [Webcam resolution test](https://webcamtestlive.com/resolution): Shows the current stream resolution and the maximum the camera supports (360p, 480p, 720p, 1080p, 4K), and explains why the live figure is often lower.
+- [Webcam FPS test](https://webcamtestlive.com/fps): Counts the frames the browser actually presents to report a delivered frame rate, with the five usual causes of a low result.
+- [Microphone and speaker test](https://webcamtestlive.com/mic-test): Live input level meter for the microphone and left, right and stereo test tones for speakers or headphones.
+
+## Guides
+
+- [Webcam not working? How to fix it](https://webcamtestlive.com/troubleshooting): A 60-second checklist, the camera-permission path for Chrome, Edge, Firefox, Safari, Android and iOS, Windows and macOS system settings, and what NotAllowedError, NotFoundError, NotReadableError and OverconstrainedError mean.
+- [Webcam test FAQ](https://webcamtestlive.com/faq): How to test a webcam on Windows 10, Windows 11, Mac, laptop or PC, and what the results mean.
+
+## Languages
+
+The webcam test is also available in Vietnamese (https://webcamtestlive.com/vi), Brazilian Portuguese (https://webcamtestlive.com/pt-br), Russian (https://webcamtestlive.com/ru), Indonesian (https://webcamtestlive.com/id) and Hindi (https://webcamtestlive.com/hi). The guides are in English.
+
+## Key facts
+
+- Video calls look sharp at 1280×720 (720p) and excellent at 1920×1080 (1080p); anything below 640×480 looks soft on a large screen.
+- 30 frames per second is the target for video calls; 24 fps is acceptable; below 15 fps looks choppy. Low light is the most common cause of a low frame rate.
+- Browsers only allow camera access on HTTPS pages and always ask for permission first.
+- Nearly every "camera not working" report comes down to one of four causes: a blocked permission, another app holding the camera, the wrong device selected, or a closed privacy shutter.
+
+## Site
+
+- [About](https://webcamtestlive.com/about)
+- [Contact](https://webcamtestlive.com/contact): hello@webcamtestlive.com
+- [Privacy](https://webcamtestlive.com/privacy)
+- [Terms](https://webcamtestlive.com/terms)
