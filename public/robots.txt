@@ -1,27 +1,27 @@
 # webcamtestlive.com
-# Every page is public and static. Search engines and AI assistants are all
-# welcome to index and cite the site; there is nothing behind a login.
+#
+# Cloudflare prepends its managed block to this file at the edge (dashboard:
+# AI Crawl Control > robots.txt). That block declares
+# "Content-Signal: search=yes,ai-train=no" and disallows the AI *training*
+# crawlers (GPTBot, ClaudeBot, Google-Extended, CCBot, Bytespider, Amazonbot,
+# Applebot-Extended, meta-externalagent). Nothing below contradicts it: the
+# agents listed here are the AI *search and assistant* fetchers that cite
+# pages in answers, which is the traffic the site wants.
 
 User-agent: *
 Allow: /
 
 # AI search and assistant crawlers, listed explicitly so the policy stays
 # unambiguous if the wildcard rule above ever changes.
-User-agent: GPTBot
 User-agent: OAI-SearchBot
 User-agent: ChatGPT-User
-User-agent: ClaudeBot
 User-agent: Claude-SearchBot
 User-agent: Claude-User
 User-agent: PerplexityBot
 User-agent: Perplexity-User
-User-agent: Google-Extended
 User-agent: Applebot
-User-agent: Applebot-Extended
 User-agent: Bingbot
 User-agent: DuckAssistBot
-User-agent: Amazonbot
-User-agent: meta-externalagent
 User-agent: YouBot
 Allow: /
 
