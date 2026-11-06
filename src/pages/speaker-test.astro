@@ -1,0 +1,127 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Container from '../components/layout/Container.astro';
+import Hero from '../components/layout/Hero.astro';
+import SpeakerTest from '../components/tool/SpeakerTest.astro';
+import Accordion from '../components/ui/Accordion.astro';
+import Card from '../components/ui/Card.astro';
+import QuickAnswer from '../components/content/QuickAnswer.astro';
+import { breadcrumbs, webApplication } from '../lib/seo';
+import { SITE } from '../data/site';
+
+const speakerFaqs = [
+  {
+    q: 'How do I test my computer or phone speakers?',
+    a: 'Click the "Left", "Both", or "Right" sound buttons above. A tone will sound through your selected audio channel. If you can hear the tone clearly without crackling or distortion from both sides, your speakers and audio drivers are functioning correctly.',
+  },
+  {
+    q: 'Why does only one speaker have sound?',
+    a: 'Single-channel audio usually indicates an unplugged cable, unbalanced stereo balance in your operating system sound settings, or a faulty headphone jack/cable. Check Windows or macOS Sound Settings to ensure audio balance is centered at 50/50 and mono audio is turned off.',
+  },
+  {
+    q: 'What do the low, mid, and high frequency buttons test?',
+    a: 'The 120 Hz (Low) tone tests bass response and woofer performance. The 440 Hz (Mid) tone tests vocal clarity and standard pitch calibration. The 2000 Hz (High) tone tests tweeter clarity and high-frequency audio playback.',
+  },
+  {
+    q: 'Why are my speakers crackling or buzzing?',
+    a: 'Audio crackling is often caused by audio driver latency, high CPU usage, loose 3.5mm headphone jacks, electrical interference from unshielded cables, or volume levels pushed beyond the speaker\'s maximum wattage causing digital clipping.',
+  },
+];
+
+const jsonLd = [
+  webApplication({
+    name: 'Online Speaker Test & Sound Check',
+    url: `${SITE.url}/speaker-test`,
+    description: 'Free online speaker test. Check left and right stereo audio channels, headphone balance, and sound frequencies in your browser.',
+    featureList: [
+      'Left and Right stereo sound channel testing',
+      'Low (120Hz), Mid (440Hz), and High (2000Hz) frequency acoustic tones',
+      'Instant audio driver and headphone diagnosis',
+      '100% private in-browser tone generation with Web Audio API',
+    ],
+  }),
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: speakerFaqs.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  },
+  breadcrumbs([{ name: 'Speaker Test', href: '/speaker-test' }]),
+];
+---
+
+<Layout
+  rawTitle="Speaker Test: Free Online Stereo & Audio Sound Test (Left / Right)"
+  description="Free online speaker test. Test left and right stereo channels, headphone audio balance, bass and treble frequencies instantly in your browser."
+  jsonLd={jsonLd}
+>
+  <Hero
+    eyebrow="Audio diagnostics"
+    title="Test your speakers & headphones online"
+    subtitle="Play calibrated stereo tones to verify left and right channels, audio balance, and sound clarity before calls or gaming."
+  />
+
+  <Container class="-mt-8 pb-6 md:-mt-12">
+    <div class="mx-auto max-w-2xl">
+      <SpeakerTest />
+    </div>
+  </Container>
+
+  <QuickAnswer>
+    To test your speakers, select <strong>Left</strong>, <strong>Both</strong>, or <strong>Right</strong> above. A clean tone will play through each stereo channel. You can also switch between <strong>Low (120 Hz)</strong>, <strong>Mid (440 Hz)</strong>, and <strong>High (2000 Hz)</strong> frequencies to test bass, vocal presence, and treble response. Everything generates locally using the Web Audio API—no audio files or downloads required.
+  </QuickAnswer>
+
+  <!-- How to test section -->
+  <Container class="py-12 sm:py-16">
+    <div class="mx-auto max-w-3xl">
+      <p class="caption-mono uppercase text-mute">Audio Guide</p>
+      <h2 class="display-lg mt-3 text-ink">How to check your stereo sound & balance</h2>
+      
+      <div class="mt-8 grid gap-6 sm:grid-cols-2">
+        <Card class="p-5">
+          <h3 class="display-sm text-ink">1. Check Stereo Separation</h3>
+          <p class="body-sm mt-2 text-body">
+            Press the <strong>Left</strong> button, then the <strong>Right</strong> button. Sound should cleanly isolate to each respective ear or speaker. If both play at the same time, check if "Mono Audio" is enabled in your system accessibility settings.
+          </p>
+        </Card>
+
+        <Card class="p-5">
+          <h3 class="display-sm text-ink">2. Test Frequency Response</h3>
+          <p class="body-sm mt-2 text-body">
+            Cycle through 120 Hz, 440 Hz, and 2000 Hz. Listen for mechanical rattling, buzz, or volume dropoffs. Healthy speakers deliver continuous, steady sound without popping or hiss.
+          </p>
+        </Card>
+      </div>
+
+      <!-- Common Audio Problems & Fixes -->
+      <div class="mt-12 rounded-xl border border-hairline bg-canvas p-6 elev-1">
+        <h3 class="display-md text-ink">Troubleshooting speaker & audio issues</h3>
+        <ul class="mt-4 space-y-3 body-sm text-body">
+          <li class="flex items-start gap-2">
+            <span class="font-bold text-primary">•</span>
+            <span><strong>No sound at all:</strong> Ensure your system output device is set to your active speakers, unmute master volume, and ensure the browser tab has permission to play audio.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="font-bold text-primary">•</span>
+            <span><strong>Sound only from one side:</strong> Check that 3.5mm audio jacks are fully seated. On Bluetooth earbuds, unpair and re-pair both units.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="font-bold text-primary">•</span>
+            <span><strong>Distorted or muffled audio:</strong> Lower software volume to 80% to eliminate digital pre-amp clipping, or check for physical debris blocking speaker grills.</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- FAQ Section -->
+      <div class="mt-14">
+        <h2 class="display-md text-ink">Frequently asked questions</h2>
+        <div class="mt-6">
+          <Accordion items={speakerFaqs} />
+        </div>
+      </div>
+    </div>
+  </Container>
+</Layout>

@@ -33,6 +33,17 @@ export const FOOTER_LINKS: { title: string; items: NavItem[] }[] = [
       { href: '/resolution', label: 'Resolution Test' },
       { href: '/fps', label: 'FPS Test' },
       { href: '/mic-test', label: 'Microphone Test' },
+      { href: '/speaker-test', label: 'Speaker Test' },
+      { href: '/embed', label: 'Embed Widget' },
+    ],
+  },
+  {
+    title: 'Devices & Apps',
+    items: [
+      { href: '/mac', label: 'Mac & FaceTime Test' },
+      { href: '/windows', label: 'Windows 11/10 Test' },
+      { href: '/chromebook', label: 'Chromebook Camera Test' },
+      { href: '/zoom', label: 'Zoom Meeting Camera Test' },
     ],
   },
   {

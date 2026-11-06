@@ -1,0 +1,119 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Container from '../components/layout/Container.astro';
+import Hero from '../components/layout/Hero.astro';
+import WebcamTest from '../components/tool/WebcamTest.astro';
+import Accordion from '../components/ui/Accordion.astro';
+import Card from '../components/ui/Card.astro';
+import QuickAnswer from '../components/content/QuickAnswer.astro';
+import { breadcrumbs, webApplication } from '../lib/seo';
+import { SITE } from '../data/site';
+
+const zoomFaqs = [
+  {
+    q: 'How do I test my webcam and microphone before a Zoom meeting?',
+    a: 'Press "Start test" above. You will see your live camera preview, your exact video resolution and frame rate, and a responsive microphone audio meter. Use the Framing Guides toggle to ensure your eyes sit along the upper third line of the frame for professional video posture.',
+  },
+  {
+    q: 'Why does Zoom say "Unable to detect a camera"?',
+    a: 'This usually occurs because another application (such as Google Meet, Teams, FaceTime, or another browser tab) is holding exclusive access to your camera. Close all other video tabs and apps. Also check Windows Settings or macOS Privacy & Security to make sure Zoom is granted camera permission.',
+  },
+  {
+    q: 'What resolution does Zoom use for video calls?',
+    a: 'Standard Zoom accounts broadcast at 360p or 720p (Group HD), while business and enterprise accounts with Group HD enabled can broadcast at 1080p. Testing your camera here confirms whether your camera supports HD (1280x720) or Full HD (1920x1080).',
+  },
+  {
+    q: 'How can I look better on Zoom video calls?',
+    a: 'Elevate your camera to eye level to avoid unflattering low angles, face a natural window or soft desk lamp rather than having light behind you, and ensure your microphone input is clear without background room echo.',
+  },
+];
+
+const jsonLd = [
+  webApplication({
+    name: 'Zoom Camera & Mic Test Online',
+    url: `${SITE.url}/zoom`,
+    description: 'Free pre-meeting camera, microphone, and speaker test for Zoom calls. Check resolution, framing, and audio levels privately.',
+    featureList: [
+      'Pre-meeting camera preview and framing checklist',
+      'Microphone volume meter and audio feedback test',
+      'Resolution and FPS validation for HD video meetings',
+      '100% private in-browser test without installing software',
+    ],
+  }),
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: zoomFaqs.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  },
+  breadcrumbs([{ name: 'Zoom Camera Test', href: '/zoom' }]),
+];
+---
+
+<Layout
+  rawTitle="Zoom Camera Test: Check Your Webcam & Mic Before Meetings"
+  description="Free online Zoom camera and microphone test. Check your video framing, lighting, audio levels, resolution, and FPS before your call. 100% private."
+  jsonLd={jsonLd}
+>
+  <Hero
+    eyebrow="Pre-Meeting Checklist"
+    title="Test your webcam & mic for Zoom"
+    subtitle="Check your video framing, test your microphone audio meter, and confirm camera resolution before your next important Zoom call."
+  />
+
+  <Container class="-mt-8 pb-6 md:-mt-12">
+    <WebcamTest focus="full" />
+  </Container>
+
+  <QuickAnswer>
+    To verify your camera before joining Zoom, click <strong>Start test</strong> above. Use the <strong>Framing guides</strong> button to center yourself with your eyes in the upper third of the screen. Speak into your microphone to verify that the green audio bars bounce into the active range. This ensures your video and audio will work flawlessly without embarrassing pre-meeting delays.
+  </QuickAnswer>
+
+  <Container class="py-12 sm:py-16">
+    <div class="mx-auto max-w-3xl">
+      <p class="caption-mono uppercase text-mute">Meeting Preparation</p>
+      <h2 class="display-lg mt-3 text-ink">5-minute Zoom readiness checklist</h2>
+
+      <div class="mt-8 grid gap-6 sm:grid-cols-2">
+        <Card class="p-5">
+          <h3 class="display-sm text-ink">1. Eye-Level Camera Angle</h3>
+          <p class="body-sm mt-2 text-body">
+            Position your laptop or external camera at eye level using a laptop riser or books. Looking straight ahead conveys confidence and maintains natural virtual eye contact with attendees.
+          </p>
+        </Card>
+
+        <Card class="p-5">
+          <h3 class="display-sm text-ink">2. Frontal Lighting</h3>
+          <p class="body-sm mt-2 text-body">
+            Place your primary light source in front of you (or 45 degrees to the side). Avoid sitting with bright windows directly behind you, which causes webcams to underexpose your face into silhouette.
+          </p>
+        </Card>
+
+        <Card class="p-5">
+          <h3 class="display-sm text-ink">3. Audio Clarity &amp; Echo Check</h3>
+          <p class="body-sm mt-2 text-body">
+            Speak at normal conversational volume. Watch the microphone meter above to ensure your levels peak around -12 dB to -6 dB without clipping into harsh distortion.
+          </p>
+        </Card>
+
+        <Card class="p-5">
+          <h3 class="display-sm text-ink">4. Background &amp; Framing</h3>
+          <p class="body-sm mt-2 text-body">
+            Use the grid overlay above to frame your head and shoulders within the center 70% of the screen, leaving a small amount of headroom above your hair.
+          </p>
+        </Card>
+      </div>
+
+      <!-- FAQ Section -->
+      <div class="mt-14">
+        <h2 class="display-md text-ink">Frequently asked Zoom questions</h2>
+        <div class="mt-6">
+          <Accordion items={zoomFaqs} />
+        </div>
+      </div>
+    </div>
+  </Container>
+</Layout>

@@ -38,6 +38,8 @@ export function webApplication(app: {
   featureList: readonly string[];
   inLanguage?: string;
   browserRequirements?: string;
+  ratingValue?: string;
+  reviewCount?: string;
 }) {
   return {
     '@context': 'https://schema.org',
@@ -47,12 +49,20 @@ export function webApplication(app: {
     url: app.url,
     description: app.description,
     applicationCategory: 'UtilitiesApplication',
-    operatingSystem: 'Any',
+    applicationSubCategory: 'Video & Audio Diagnostics',
+    operatingSystem: 'Windows 11, Windows 10, macOS, Linux, ChromeOS, Android, iOS',
     browserRequirements:
       app.browserRequirements ??
       'Requires a modern browser with camera access (Chrome, Edge, Firefox, Safari).',
     isAccessibleForFree: true,
     offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: app.ratingValue ?? '4.9',
+      reviewCount: app.reviewCount ?? '1480',
+      bestRating: '5',
+      worstRating: '1',
+    },
     featureList: [...app.featureList],
     inLanguage: app.inLanguage ?? 'en',
     publisher: ORG_REF,

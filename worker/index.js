@@ -25,11 +25,24 @@ export default {
     }
 
     const response = await env.ASSETS.fetch(request);
+    const headers = new Headers(response.headers);
+
+    // Allow iframe embedding from any external domain for /embed
+    if (url.pathname === '/embed' || url.pathname.startsWith('/embed/')) {
+      headers.delete('X-Frame-Options');
+      headers.set('Content-Security-Policy', 'frame-ancestors *');
+      headers.set('Permissions-Policy', 'camera=*, microphone=*');
+      headers.set('Access-Control-Allow-Origin', '*');
+      return new Response(response.body, {
+        status: response.status,
+        statusText: response.statusText,
+        headers,
+      });
+    }
 
     // The workers.dev preview stays reachable for smoke tests, but it must
     // never be indexed in place of the real domain.
     if (url.hostname.endsWith('.workers.dev')) {
-      const headers = new Headers(response.headers);
       headers.set('X-Robots-Tag', 'noindex');
       return new Response(response.body, {
         status: response.status,

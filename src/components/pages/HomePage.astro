@@ -7,6 +7,7 @@ import Accordion from '../ui/Accordion.astro';
 import Card from '../ui/Card.astro';
 import FeatureCard from '../ui/FeatureCard.astro';
 import HomeGuide from '../content/HomeGuide.astro';
+import EmbedWidgetCode from '../tool/EmbedWidgetCode.astro';
 import { SITE } from '../../data/site';
 import { webApplication } from '../../lib/seo';
 import { t, localePath, localeMeta, type Locale } from '../../i18n';
@@ -150,6 +151,11 @@ const subTools = [
         ))
       }
     </div>
+  </Container>
+
+  <!-- Embed Widget Section -->
+  <Container class="py-4">
+    <EmbedWidgetCode />
   </Container>
 
   <!-- Not working -->

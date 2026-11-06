@@ -1,0 +1,112 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Container from '../components/layout/Container.astro';
+import Hero from '../components/layout/Hero.astro';
+import WebcamTest from '../components/tool/WebcamTest.astro';
+import Accordion from '../components/ui/Accordion.astro';
+import Card from '../components/ui/Card.astro';
+import QuickAnswer from '../components/content/QuickAnswer.astro';
+import { breadcrumbs, webApplication } from '../lib/seo';
+import { SITE } from '../data/site';
+
+const macFaqs = [
+  {
+    q: 'How do I test my webcam on Mac (MacBook Air / Pro / iMac)?',
+    a: 'Click "Start test" above. When Safari or Chrome prompts "Allow webcamtestlive.com to use your camera?", click "Allow". Your live camera preview and green camera indicator light will turn on immediately, displaying your resolution and frame rate.',
+  },
+  {
+    q: 'Why is my Mac camera showing a black screen or not working?',
+    a: 'On macOS, ensure camera access is allowed under Apple menu > System Settings > Privacy & Security > Camera. Verify that your browser (Safari, Chrome, or Firefox) is toggled ON. If another app like FaceTime or Photo Booth is using the camera, close it and refresh this page.',
+  },
+  {
+    q: 'How do I use my iPhone as a Mac webcam (Continuity Camera)?',
+    a: 'Bring your iPhone near your Mac with Wi-Fi and Bluetooth turned on on both devices, signed in to the same Apple ID. In the camera selector above, choose your iPhone camera to stream high-resolution 1080p or 4K video wirelessly.',
+  },
+  {
+    q: 'How can I fix the green indicator light blinking or staying off?',
+    a: 'Restart the AppleCameraAssistant daemon by opening Terminal and running: sudo killall AppleCameraAssistant VDCAssistant, or simply restart your Mac.',
+  },
+];
+
+const jsonLd = [
+  webApplication({
+    name: 'Mac Webcam Test Online',
+    url: `${SITE.url}/mac`,
+    description: 'Test your MacBook Air, MacBook Pro, iMac FaceTime HD camera or external webcam on macOS online for free.',
+    featureList: [
+      'FaceTime HD camera test for MacBooks and iMacs',
+      'Continuity Camera iPhone webcam compatibility check',
+      'macOS System Settings permission guidance',
+      'Instant resolution and FPS readouts',
+    ],
+  }),
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: macFaqs.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  },
+  breadcrumbs([{ name: 'Mac Webcam Test', href: '/mac' }]),
+];
+---
+
+<Layout
+  rawTitle="Webcam Test Mac: Test MacBook & FaceTime Camera Online"
+  description="Free online Mac webcam test. Test FaceTime HD camera on MacBook Pro, MacBook Air, iMac, and external webcams on macOS. Fast, private, no downloads."
+  jsonLd={jsonLd}
+>
+  <Hero
+    eyebrow="macOS Camera Diagnostic"
+    title="Test your Mac webcam online"
+    subtitle="Check your MacBook Air, MacBook Pro, iMac FaceTime camera, or Continuity Camera instantly. Runs 100% privately in your browser."
+  />
+
+  <Container class="-mt-8 pb-6 md:-mt-12">
+    <WebcamTest focus="full" />
+  </Container>
+
+  <QuickAnswer>
+    To test your Mac camera, press <strong>Start test</strong> above and click <strong>Allow</strong> when Safari or Chrome asks for camera permissions. The green camera indicator light next to your Mac's notch or display bezel will turn on, and your video feed will appear instantly. If the camera stays black, navigate to <strong>System Settings &gt; Privacy &amp; Security &gt; Camera</strong> and ensure your browser is enabled.
+  </QuickAnswer>
+
+  <Container class="py-12 sm:py-16">
+    <div class="mx-auto max-w-3xl">
+      <p class="caption-mono uppercase text-mute">macOS Setup</p>
+      <h2 class="display-lg mt-3 text-ink">How to grant camera permissions on macOS</h2>
+
+      <div class="mt-8 space-y-4">
+        <Card class="p-5">
+          <h3 class="display-sm text-ink">Step 1: Check System Settings</h3>
+          <p class="body-sm mt-2 text-body">
+            Open the <strong>Apple menu () &gt; System Settings &gt; Privacy &amp; Security &gt; Camera</strong>. Find your browser (Google Chrome, Safari, Firefox, or Brave) in the list and ensure the toggle switch is turned <strong>ON (green)</strong>.
+          </p>
+        </Card>
+
+        <Card class="p-5">
+          <h3 class="display-sm text-ink">Step 2: Check Browser-Level Permissions</h3>
+          <p class="body-sm mt-2 text-body">
+            In Safari, choose <strong>Safari &gt; Settings &gt; Websites &gt; Camera</strong> and select "Allow" for webcamtestlive.com. In Chrome, click the tune icon next to the address bar and switch Camera to "Allow".
+          </p>
+        </Card>
+
+        <Card class="p-5">
+          <h3 class="display-sm text-ink">Step 3: Close Competing Mac Video Apps</h3>
+          <p class="body-sm mt-2 text-body">
+            On macOS, only one application can hold the hardware camera lock at a time. If Photo Booth, FaceTime, Zoom, or Microsoft Teams is running in the background, quit that application and refresh this tab.
+          </p>
+        </Card>
+      </div>
+
+      <!-- FAQ Section -->
+      <div class="mt-14">
+        <h2 class="display-md text-ink">Mac webcam questions &amp; answers</h2>
+        <div class="mt-6">
+          <Accordion items={macFaqs} />
+        </div>
+      </div>
+    </div>
+  </Container>
+</Layout>

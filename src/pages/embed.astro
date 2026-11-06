@@ -1,0 +1,79 @@
+---
+import '../styles/global.css';
+import BaseHead from '../components/seo/BaseHead.astro';
+import WebcamTest from '../components/tool/WebcamTest.astro';
+import { SITE } from '../data/site';
+import { webApplication } from '../lib/seo';
+
+const jsonLd = [
+  webApplication({
+    name: 'Embeddable Webcam Test Widget',
+    url: `${SITE.url}/embed`,
+    description: 'Embeddable online webcam and microphone testing widget for any website.',
+    featureList: [
+      'Live camera preview',
+      'Microphone level meter',
+      'Instant resolution & FPS detection',
+      '100% private, runs entirely in the browser',
+    ],
+  }),
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead
+      rawTitle="Webcam Test Widget | Free Embeddable Camera & Mic Tester"
+      description="Embed free online webcam and microphone test widget on your website. 100% private in-browser testing with zero downloads."
+      jsonLd={jsonLd}
+    />
+    <style>
+      body {
+        margin: 0;
+        padding: 12px;
+        background-color: var(--color-canvas, #ffffff);
+        color: var(--color-ink, #111827);
+        font-family: var(--font-sans, system-ui, -apple-system, sans-serif);
+      }
+      .embed-wrapper {
+        max-width: 900px;
+        margin: 0 auto;
+      }
+      .embed-badge {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-top: 10px;
+        margin-top: 10px;
+        border-top: 1px solid var(--color-hairline, rgba(0, 0, 0, 0.08));
+        font-size: 12px;
+        color: var(--color-mute, #6b7280);
+      }
+      .embed-badge a {
+        color: var(--color-ink, #111827);
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .embed-badge a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 class="sr-only">Free Online Webcam &amp; Microphone Test Widget</h1>
+    <div class="embed-wrapper">
+      <WebcamTest focus="full" />
+      <div class="embed-badge">
+        <a href={SITE.url} target="_blank" rel="noopener" title="Visit WebcamTestLive.com">
+          <span>⚡</span>
+          <span>WebcamTestLive.com</span>
+        </a>
+        <span>100% Private · Zero Uploads</span>
+      </div>
+    </div>
+  </body>
+</html>

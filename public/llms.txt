@@ -9,7 +9,16 @@ Webcam Test is a static site built on standard browser APIs (getUserMedia and th
 - [Webcam test](https://webcamtestlive.com/): Start the camera, see the live preview, and get resolution, frame rate, bitrate and lighting readings with automatic health checks and a copyable diagnostics report.
 - [Webcam resolution test](https://webcamtestlive.com/resolution): Shows the current stream resolution and the maximum the camera supports (360p, 480p, 720p, 1080p, 4K), and explains why the live figure is often lower.
 - [Webcam FPS test](https://webcamtestlive.com/fps): Counts the frames the browser actually presents to report a delivered frame rate, with the five usual causes of a low result.
-- [Microphone and speaker test](https://webcamtestlive.com/mic-test): Live input level meter for the microphone and left, right and stereo test tones for speakers or headphones.
+- [Microphone test](https://webcamtestlive.com/mic-test): Live input level meter for the microphone with instant audio feedback.
+- [Speaker test](https://webcamtestlive.com/speaker-test): Calibrated stereo left and right channel audio test with 120Hz, 440Hz, and 2000Hz frequency tones for headphones and speakers.
+- [Embeddable webcam widget](https://webcamtestlive.com/embed): Clean iframe widget allowing webmasters, online interview platforms, and schools to embed camera and mic testing directly on their websites.
+
+## Device & Platform Diagnostics
+
+- [Webcam test for Mac](https://webcamtestlive.com/mac): Test FaceTime HD cameras on MacBook Air, MacBook Pro, iMac, and Continuity Camera with macOS System Settings permission guidance.
+- [Webcam test for Windows 11 & 10](https://webcamtestlive.com/windows): Diagnose Windows 11 and 10 camera permissions, physical privacy shutters, and Device Manager driver issues.
+- [Webcam test for Chromebook](https://webcamtestlive.com/chromebook): Test ChromeOS internal and USB cameras with site permission and school admin policy troubleshooting.
+- [Zoom camera test](https://webcamtestlive.com/zoom): Pre-meeting checklist, video framing grid, and microphone level validation before joining Zoom calls.
 
 ## Guides
 

@@ -1,0 +1,112 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Container from '../components/layout/Container.astro';
+import Hero from '../components/layout/Hero.astro';
+import WebcamTest from '../components/tool/WebcamTest.astro';
+import Accordion from '../components/ui/Accordion.astro';
+import Card from '../components/ui/Card.astro';
+import QuickAnswer from '../components/content/QuickAnswer.astro';
+import { breadcrumbs, webApplication } from '../lib/seo';
+import { SITE } from '../data/site';
+
+const chromebookFaqs = [
+  {
+    q: 'How do I test the camera on my Chromebook?',
+    a: 'Click "Start test" above. When Chrome prompts "webcamtestlive.com wants to use your camera", click "Allow". Your Chromebook camera preview and microphone meter will activate immediately, showing your resolution and FPS.',
+  },
+  {
+    q: 'Why is my Chromebook camera blocked or showing a lock icon?',
+    a: 'Click the padlock or settings icon on the left side of the address bar. Set "Camera" from "Block" to "Allow" and reload the page. If the setting is greyed out with a building icon, your school or company administrator has disabled the camera via Google Workspace device policy.',
+  },
+  {
+    q: 'How do I test an external USB webcam on a Chromebook?',
+    a: 'Plug your USB webcam into any available USB-C or USB-A port on your Chromebook. Press "Start test" above and use the camera dropdown menu above the video preview to switch from the internal camera to your external USB webcam.',
+  },
+  {
+    q: 'How can I test the built-in Camera app on ChromeOS?',
+    a: 'Press the Everything button (Launcher) on your Chromebook keyboard, type "Camera", and press Enter to launch Google\'s default ChromeOS Camera app.',
+  },
+];
+
+const jsonLd = [
+  webApplication({
+    name: 'Chromebook Webcam Test Online',
+    url: `${SITE.url}/chromebook`,
+    description: 'Free online webcam test for Chromebooks and ChromeOS. Test internal and external USB cameras, check microphone and resolution.',
+    featureList: [
+      'Chromebook internal and USB camera test',
+      'ChromeOS site permission troubleshooting',
+      'School Chromebook camera policy guidance',
+      'Audio microphone level testing',
+    ],
+  }),
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: chromebookFaqs.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  },
+  breadcrumbs([{ name: 'Chromebook Webcam Test', href: '/chromebook' }]),
+];
+---
+
+<Layout
+  rawTitle="Webcam Test Chromebook: Online Camera & Mic Checker"
+  description="Free online webcam test for Chromebook. Check your built-in or USB camera, resolution, FPS, and microphone on ChromeOS instantly without apps or downloads."
+  jsonLd={jsonLd}
+>
+  <Hero
+    eyebrow="ChromeOS Camera Diagnostic"
+    title="Test your Chromebook webcam online"
+    subtitle="Fast, private camera and microphone test designed for Chromebooks and ChromeOS laptops. No extensions or downloads required."
+  />
+
+  <Container class="-mt-8 pb-6 md:-mt-12">
+    <WebcamTest focus="full" />
+  </Container>
+
+  <QuickAnswer>
+    To test your camera on a Chromebook, click <strong>Start test</strong> above and tap <strong>Allow</strong> when the Chrome prompt appears. If the camera does not start, check that the physical privacy shutter on top of your Chromebook screen is open, and verify that camera permissions are allowed in <strong>Chrome &gt; Settings &gt; Privacy and security &gt; Site settings &gt; Camera</strong>.
+  </QuickAnswer>
+
+  <Container class="py-12 sm:py-16">
+    <div class="mx-auto max-w-3xl">
+      <p class="caption-mono uppercase text-mute">ChromeOS Guide</p>
+      <h2 class="display-lg mt-3 text-ink">How to unblock camera on a Chromebook</h2>
+
+      <div class="mt-8 space-y-4">
+        <Card class="p-5">
+          <h3 class="display-sm text-ink">1. Reset Site Camera Permissions</h3>
+          <p class="body-sm mt-2 text-body">
+            Look at the URL bar at the top of the browser. Click the site settings icon directly to the left of <code>webcamtestlive.com</code>. Ensure <strong>Camera</strong> and <strong>Microphone</strong> are set to <strong>Allow</strong>. Then reload the page.
+          </p>
+        </Card>
+
+        <Card class="p-5">
+          <h3 class="display-sm text-ink">2. Perform a Chromebook Hardware Reset</h3>
+          <p class="body-sm mt-2 text-body">
+            If the camera hardware is unresponsive, turn off your Chromebook. Press and hold the <strong>Refresh key (↻)</strong> and tap the <strong>Power button</strong>. Keep holding Refresh until your Chromebook starts up.
+          </p>
+        </Card>
+
+        <Card class="p-5">
+          <h3 class="display-sm text-ink">3. Check for School Administrator Restrictions</h3>
+          <p class="body-sm mt-2 text-body">
+            On school-managed or enterprise Chromebooks, administrators sometimes restrict camera access outside of approved Google Meet or Zoom sessions. If camera permissions are managed by an admin, you will need to contact your school's IT helpdesk to grant access.
+          </p>
+        </Card>
+      </div>
+
+      <!-- FAQ Section -->
+      <div class="mt-14">
+        <h2 class="display-md text-ink">Chromebook camera questions &amp; answers</h2>
+        <div class="mt-6">
+          <Accordion items={chromebookFaqs} />
+        </div>
+      </div>
+    </div>
+  </Container>
+</Layout>

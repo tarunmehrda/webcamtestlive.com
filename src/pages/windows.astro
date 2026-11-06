@@ -1,0 +1,112 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Container from '../components/layout/Container.astro';
+import Hero from '../components/layout/Hero.astro';
+import WebcamTest from '../components/tool/WebcamTest.astro';
+import Accordion from '../components/ui/Accordion.astro';
+import Card from '../components/ui/Card.astro';
+import QuickAnswer from '../components/content/QuickAnswer.astro';
+import { breadcrumbs, webApplication } from '../lib/seo';
+import { SITE } from '../data/site';
+
+const windowsFaqs = [
+  {
+    q: 'How do I test my webcam on Windows 11 or Windows 10?',
+    a: 'Click "Start test" above. When Microsoft Edge, Chrome, or Firefox prompts for camera permission, click "Allow". Your camera preview, live resolution (720p/1080p), and FPS will appear immediately.',
+  },
+  {
+    q: 'Why does Windows say "We cannot find your camera" (Error 0xA00F4244)?',
+    a: 'Check your laptop for a physical privacy shutter switch or a function key (like F8, F10, or Fn+F6) that disables the camera electronically. Next, go to Start > Settings > Privacy & security > Camera and toggle "Camera access" and "Let apps access your camera" to ON.',
+  },
+  {
+    q: 'How do I check if my Windows camera driver is working?',
+    a: 'Right-click the Start button and select "Device Manager". Expand "Cameras" or "Imaging devices". If you see a yellow exclamation mark next to your webcam, right-click it, select "Update driver", and choose "Search automatically for drivers".',
+  },
+  {
+    q: 'Can antivirus software block my webcam in Windows?',
+    a: 'Yes. Antivirus suites such as Norton, Kaspersky, Bitdefender, and AVG include webcam protection shields that block browser access by default. Check your antivirus settings and whitelist your browser.',
+  },
+];
+
+const jsonLd = [
+  webApplication({
+    name: 'Windows Webcam Test Online',
+    url: `${SITE.url}/windows`,
+    description: 'Free online webcam test for Windows 11 and Windows 10. Check integrated laptop cameras and USB webcams instantly.',
+    featureList: [
+      'Windows 11 and 10 camera compatibility check',
+      'Resolution and frame rate detection',
+      'Windows Privacy Settings troubleshooting guide',
+      'Device Manager camera driver diagnostics',
+    ],
+  }),
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: windowsFaqs.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  },
+  breadcrumbs([{ name: 'Windows Webcam Test', href: '/windows' }]),
+];
+---
+
+<Layout
+  rawTitle="Webcam Test Windows 11 & 10: Test Camera Online Free"
+  description="Free online webcam test for Windows 11 & Windows 10. Test laptop and USB webcams, check resolution and FPS, fix camera not working issues instantly."
+  jsonLd={jsonLd}
+>
+  <Hero
+    eyebrow="Windows Camera Diagnostic"
+    title="Test your Windows webcam online"
+    subtitle="Test your integrated laptop camera or USB webcam on Windows 11 and 10. Check resolution, frame rate, and microphone health privately."
+  />
+
+  <Container class="-mt-8 pb-6 md:-mt-12">
+    <WebcamTest focus="full" />
+  </Container>
+
+  <QuickAnswer>
+    To test your camera on Windows 11 or 10, click <strong>Start test</strong> above and select <strong>Allow</strong> in your browser prompt. If the preview displays a black screen or a crossed-out camera icon, open <strong>Windows Settings &gt; Privacy &amp; security &gt; Camera</strong> and make sure both <strong>Camera access</strong> and <strong>Let desktop apps access your camera</strong> are enabled.
+  </QuickAnswer>
+
+  <Container class="py-12 sm:py-16">
+    <div class="mx-auto max-w-3xl">
+      <p class="caption-mono uppercase text-mute">Windows Troubleshooting</p>
+      <h2 class="display-lg mt-3 text-ink">How to fix camera issues on Windows 11 &amp; 10</h2>
+
+      <div class="mt-8 space-y-4">
+        <Card class="p-5">
+          <h3 class="display-sm text-ink">1. Check Physical Camera Shutters &amp; Fn Keys</h3>
+          <p class="body-sm mt-2 text-body">
+            Many modern laptops from Lenovo, HP, Dell, and ASUS feature a physical slider directly over the camera lens. Look closely at the top bezel. Additionally, check for a camera toggle key on your keyboard (often F8, F10, or F9 with a camera icon) and toggle it.
+          </p>
+        </Card>
+
+        <Card class="p-5">
+          <h3 class="display-sm text-ink">2. Enable Windows Privacy Toggles</h3>
+          <p class="body-sm mt-2 text-body">
+            Press <strong>Windows Key + I</strong> to open Settings. Go to <strong>Privacy &amp; security &gt; Camera</strong>. Ensure <em>Camera access</em> is turned ON. Scroll down and make sure your browser (Chrome, Edge, Firefox) is permitted under <em>Let apps access your camera</em>.
+          </p>
+        </Card>
+
+        <Card class="p-5">
+          <h3 class="display-sm text-ink">3. Update Driver in Device Manager</h3>
+          <p class="body-sm mt-2 text-body">
+            Right-click the Start Menu icon and choose <strong>Device Manager</strong>. Expand <strong>Cameras</strong>. Right-click your webcam and select <strong>Uninstall device</strong>, then click <strong>Action &gt; Scan for hardware changes</strong> to reinstall the default Microsoft driver.
+          </p>
+        </Card>
+      </div>
+
+      <!-- FAQ Section -->
+      <div class="mt-14">
+        <h2 class="display-md text-ink">Windows camera questions &amp; answers</h2>
+        <div class="mt-6">
+          <Accordion items={windowsFaqs} />
+        </div>
+      </div>
+    </div>
+  </Container>
+</Layout>
