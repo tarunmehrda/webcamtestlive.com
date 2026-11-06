@@ -53,4 +53,56 @@ export default {
 
     return response;
   },
+
+  /**
+   * Cloudflare Cron Trigger handler.
+   * Runs twice daily (9 a.m. and 6 p.m. IST) on Cloudflare's global edge network,
+   * completely independent of whether any laptop is turned on or off.
+   */
+  async scheduled(controller, env, ctx) {
+    const origin = `https://${HOST}`;
+    console.log(`[SEO Cron] Starting twice-daily automated SEO & availability audit at ${new Date().toISOString()}`);
+
+    const endpoints = [
+      '/',
+      '/embed',
+      '/speaker-test',
+      '/mac',
+      '/windows',
+      '/chromebook',
+      '/zoom',
+      '/sitemap.xml',
+      '/robots.txt',
+      '/llms.txt',
+    ];
+
+    const checks = await Promise.allSettled(
+      endpoints.map(async (path) => {
+        const start = Date.now();
+        const res = await fetch(`${origin}${path}`, {
+          headers: { 'User-Agent': 'WebcamTestLive-Edge-Health/1.0' },
+        });
+        const duration = Date.now() - start;
+        return {
+          path,
+          status: res.status,
+          ok: res.ok,
+          durationMs: duration,
+        };
+      })
+    );
+
+    let passed = 0;
+    for (const check of checks) {
+      if (check.status === 'fulfilled') {
+        const { path, status, ok, durationMs } = check.value;
+        if (ok) passed++;
+        console.log(`[SEO Check] ${path} -> ${status} (${durationMs}ms) ${ok ? 'OK' : 'FAIL'}`);
+      } else {
+        console.error(`[SEO Check Error]`, check.reason);
+      }
+    }
+
+    console.log(`[SEO Cron] Completed: ${passed}/${endpoints.length} endpoints healthy.`);
+  },
 };

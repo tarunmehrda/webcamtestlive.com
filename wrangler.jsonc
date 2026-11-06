@@ -29,6 +29,12 @@
     "html_handling": "drop-trailing-slash"
   },
 
+  // Runs twice daily at 9:00 AM IST (03:30 UTC) and 6:00 PM IST (12:30 UTC)
+  // in Cloudflare's global edge network, even when your laptop is turned off.
+  "triggers": {
+    "crons": ["30 3 * * *", "30 12 * * *"]
+  },
+
   "observability": {
     "enabled": true
   }
