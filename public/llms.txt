@@ -11,6 +11,8 @@ Webcam Test is a static site built on standard browser APIs (getUserMedia and th
 - [Webcam FPS test](https://webcamtestlive.com/fps): Counts the frames the browser actually presents to report a delivered frame rate, with the five usual causes of a low result.
 - [Microphone test](https://webcamtestlive.com/mic-test): Live input level meter for the microphone with instant audio feedback.
 - [Speaker test](https://webcamtestlive.com/speaker-test): Calibrated stereo left and right channel audio test with 120Hz, 440Hz, and 2000Hz frequency tones for headphones and speakers.
+- [Webcam mirror](https://webcamtestlive.com/mirror): Full-screen webcam mirror with horizontal flip toggle to check appearance, lighting, and hair before meetings.
+- [Take photo with webcam](https://webcamtestlive.com/take-photo): One-click HD camera snapshot tool to capture and download clear PNG pictures directly without uploads.
 - [Embeddable webcam widget](https://webcamtestlive.com/embed): Clean iframe widget allowing webmasters, online interview platforms, and schools to embed camera and mic testing directly on their websites.
 
 ## Device & Platform Diagnostics
@@ -19,6 +21,8 @@ Webcam Test is a static site built on standard browser APIs (getUserMedia and th
 - [Webcam test for Windows 11 & 10](https://webcamtestlive.com/windows): Diagnose Windows 11 and 10 camera permissions, physical privacy shutters, and Device Manager driver issues.
 - [Webcam test for Chromebook](https://webcamtestlive.com/chromebook): Test ChromeOS internal and USB cameras with site permission and school admin policy troubleshooting.
 - [Zoom camera test](https://webcamtestlive.com/zoom): Pre-meeting checklist, video framing grid, and microphone level validation before joining Zoom calls.
+- [Google Meet camera test](https://webcamtestlive.com/google-meet): Chrome WebRTC video check, lighting calibration, and microphone testing before Google Meet calls.
+- [Microsoft Teams camera test](https://webcamtestlive.com/teams): Video framing, background blur FPS check, and audio device validation for Microsoft Teams.
 
 ## Guides
 

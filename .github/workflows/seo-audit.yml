@@ -46,6 +46,10 @@ jobs:
               'https://webcamtestlive.com/windows',
               'https://webcamtestlive.com/chromebook',
               'https://webcamtestlive.com/zoom',
+              'https://webcamtestlive.com/mirror',
+              'https://webcamtestlive.com/take-photo',
+              'https://webcamtestlive.com/google-meet',
+              'https://webcamtestlive.com/teams',
               'https://webcamtestlive.com/sitemap.xml',
               'https://webcamtestlive.com/robots.txt',
               'https://webcamtestlive.com/llms.txt'

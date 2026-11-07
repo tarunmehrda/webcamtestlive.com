@@ -1,0 +1,112 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Container from '../components/layout/Container.astro';
+import Hero from '../components/layout/Hero.astro';
+import WebcamTest from '../components/tool/WebcamTest.astro';
+import Accordion from '../components/ui/Accordion.astro';
+import Card from '../components/ui/Card.astro';
+import QuickAnswer from '../components/content/QuickAnswer.astro';
+import { breadcrumbs, webApplication } from '../lib/seo';
+import { SITE } from '../data/site';
+
+const meetFaqs = [
+  {
+    q: 'How do I test my webcam and microphone before Google Meet?',
+    a: 'Click "Start test" above to preview your video stream and test your microphone meter. Google Meet uses the identical standard WebRTC browser camera API, so if your camera and audio function smoothly here, they will work seamlessly in Google Meet.',
+  },
+  {
+    q: 'Why does Google Meet say "Camera failed" or "No camera found"?',
+    a: 'Ensure you have granted camera permissions in Google Chrome by clicking the site settings padlock next to the address bar and setting Camera to "Allow". Also, ensure no other video apps (like Zoom, Teams, or FaceTime) are holding an exclusive hardware lock on your webcam.',
+  },
+  {
+    q: 'What resolution does Google Meet support?',
+    a: 'Google Meet supports 360p (Standard Definition) and 720p (High Definition). In Google Meet Settings > Video, you can set "Send resolution" to High Definition (720p). Testing your resolution above confirms whether your hardware sustains 720p or higher.',
+  },
+  {
+    q: 'Why does my camera lag or stutter during Google Meet calls?',
+    a: 'Camera stutter on Meet is usually caused by heavy browser extensions, CPU overload from too many background tabs, or low room lighting forcing long shutter exposures. Close unused tabs and improve lighting to restore smooth 30 FPS video.',
+  },
+];
+
+const jsonLd = [
+  webApplication({
+    name: 'Google Meet Camera & Mic Test',
+    url: `${SITE.url}/google-meet`,
+    description: 'Free pre-meeting camera, microphone, and speaker test for Google Meet. Check video resolution and audio levels privately.',
+    featureList: [
+      'Pre-meeting camera framing and lighting check',
+      'Microphone level meter for Google Meet audio calibration',
+      'WebRTC compatibility and permission testing',
+      '100% private in-browser test without account sign-in',
+    ],
+  }),
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: meetFaqs.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  },
+  breadcrumbs([{ name: 'Google Meet Test', href: '/google-meet' }]),
+];
+---
+
+<Layout
+  rawTitle="Google Meet Camera Test: Check Webcam & Mic Before Joining"
+  description="Free online Google Meet camera and microphone test. Test your webcam framing, audio meter, resolution, and Chrome permissions before your video call."
+  jsonLd={jsonLd}
+>
+  <Hero
+    eyebrow="Google Meet Pre-Call Check"
+    title="Test your webcam & mic for Google Meet"
+    subtitle="Verify your camera picture, test your microphone audio levels, and fix camera permission issues before your Google Meet call starts."
+  />
+
+  <Container class="-mt-8 pb-6 md:-mt-12">
+    <WebcamTest focus="full" />
+  </Container>
+
+  <QuickAnswer>
+    To test your camera before joining Google Meet, click <strong>Start test</strong> above. Because this tool runs on the exact WebRTC engine used by Google Meet, confirming your video feed, frame rate, and microphone audio level here guarantees that your hardware is properly configured and ready for your meeting.
+  </QuickAnswer>
+
+  <Container class="py-12 sm:py-16">
+    <div class="mx-auto max-w-3xl">
+      <p class="caption-mono uppercase text-mute">Meet Checklist</p>
+      <h2 class="display-lg mt-3 text-ink">Google Meet video &amp; audio readiness</h2>
+
+      <div class="mt-8 space-y-4">
+        <Card class="p-5">
+          <h3 class="display-sm text-ink">1. Check Chrome Camera Permissions</h3>
+          <p class="body-sm mt-2 text-body">
+            In Google Chrome, look at the address bar next to <code>meet.google.com</code>. Click the sliders icon and ensure <strong>Camera</strong> and <strong>Microphone</strong> permissions are toggled <strong>ON</strong>.
+          </p>
+        </Card>
+
+        <Card class="p-5">
+          <h3 class="display-sm text-ink">2. Switch Between Multiple Webcams</h3>
+          <p class="body-sm mt-2 text-body">
+            If you have an external USB webcam connected to a laptop with an internal camera, use the camera dropdown above to select your preferred device. Google Meet remembers your last chosen device.
+          </p>
+        </Card>
+
+        <Card class="p-5">
+          <h3 class="display-sm text-ink">3. Test Microphone Levels</h3>
+          <p class="body-sm mt-2 text-body">
+            Speak at normal conversational volume. Watch the audio volume meter above: healthy levels should easily reach the middle green range without hitting the top red clipping limit.
+          </p>
+        </Card>
+      </div>
+
+      <!-- FAQ Section -->
+      <div class="mt-14">
+        <h2 class="display-md text-ink">Google Meet questions &amp; answers</h2>
+        <div class="mt-6">
+          <Accordion items={meetFaqs} />
+        </div>
+      </div>
+    </div>
+  </Container>
+</Layout>

@@ -1,0 +1,112 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Container from '../components/layout/Container.astro';
+import Hero from '../components/layout/Hero.astro';
+import WebcamTest from '../components/tool/WebcamTest.astro';
+import Accordion from '../components/ui/Accordion.astro';
+import Card from '../components/ui/Card.astro';
+import QuickAnswer from '../components/content/QuickAnswer.astro';
+import { breadcrumbs, webApplication } from '../lib/seo';
+import { SITE } from '../data/site';
+
+const teamsFaqs = [
+  {
+    q: 'How do I test my camera and audio before a Microsoft Teams call?',
+    a: 'Click "Start test" above to preview your camera video and check your microphone meter. Confirming that your camera, resolution, and microphone work in your browser verifies that your hardware drivers and operating system permissions are intact for Teams.',
+  },
+  {
+    q: 'Why does Microsoft Teams say "Your camera isn\'t working"?',
+    a: 'Teams encounters camera errors when another program (like Zoom, Chrome, or Windows Camera app) has exclusive control of the camera, or when Windows Settings > Privacy & security > Camera has disabled "Let desktop apps access your camera".',
+  },
+  {
+    q: 'Does background blur slow down webcam frame rate in Teams?',
+    a: 'Yes. AI background blur and virtual backgrounds consume significant GPU and CPU cycles. If your camera stutters below 15 FPS during Teams calls, switching to "No background effects" typically restores smooth 30 FPS video.',
+  },
+  {
+    q: 'How can I test an external headset or speaker for Teams?',
+    a: 'Use our dedicated speaker test tool to play left and right channel audio tones to ensure your headphones or conference speaker puck are receiving clear sound before joining.',
+  },
+];
+
+const jsonLd = [
+  webApplication({
+    name: 'Microsoft Teams Camera & Mic Test',
+    url: `${SITE.url}/teams`,
+    description: 'Free pre-call camera, microphone, and speaker test for Microsoft Teams meetings. Test video resolution and audio privately online.',
+    featureList: [
+      'Pre-meeting Teams video framing and lighting check',
+      'Microphone volume meter and audio feedback validation',
+      'Windows and Mac permission troubleshooting for Teams',
+      '100% private in-browser testing without downloads',
+    ],
+  }),
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: teamsFaqs.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  },
+  breadcrumbs([{ name: 'Microsoft Teams Test', href: '/teams' }]),
+];
+---
+
+<Layout
+  rawTitle="Microsoft Teams Camera Test: Check Video & Audio Before Calls"
+  description="Free online Microsoft Teams camera and microphone test. Check your video framing, lighting, audio levels, and resolution before your Teams meeting."
+  jsonLd={jsonLd}
+>
+  <Hero
+    eyebrow="Teams Pre-Call Diagnostic"
+    title="Test your webcam & mic for Microsoft Teams"
+    subtitle="Ensure your camera picture is clear, your microphone audio is balanced, and your video framing is professional before your next Teams meeting."
+  />
+
+  <Container class="-mt-8 pb-6 md:-mt-12">
+    <WebcamTest focus="full" />
+  </Container>
+
+  <QuickAnswer>
+    To test your equipment before joining Microsoft Teams, press <strong>Start test</strong> above. Use the live preview to adjust your lighting and position your eyes along the upper third line. Test your microphone by speaking naturally—the audio bars should move into the healthy green range. If your video preview appears normally here, your hardware is fully functioning for Teams.
+  </QuickAnswer>
+
+  <Container class="py-12 sm:py-16">
+    <div class="mx-auto max-w-3xl">
+      <p class="caption-mono uppercase text-mute">Teams Preparation</p>
+      <h2 class="display-lg mt-3 text-ink">Troubleshooting camera issues in Microsoft Teams</h2>
+
+      <div class="mt-8 space-y-4">
+        <Card class="p-5">
+          <h3 class="display-sm text-ink">1. Check Windows Desktop App Permissions</h3>
+          <p class="body-sm mt-2 text-body">
+            On Windows, go to <strong>Start &gt; Settings &gt; Privacy &amp; security &gt; Camera</strong>. Ensure <em>Let desktop apps access your camera</em> is turned ON. Both Microsoft Teams and your web browser rely on this toggle.
+          </p>
+        </Card>
+
+        <Card class="p-5">
+          <h3 class="display-sm text-ink">2. Release Locked Camera Handles</h3>
+          <p class="body-sm mt-2 text-body">
+            If you recently ended a call in Zoom, Google Meet, or Slack, those programs may continue holding the hardware camera lock. Close background video applications and refresh this test.
+          </p>
+        </Card>
+
+        <Card class="p-5">
+          <h3 class="display-sm text-ink">3. Check Hardware Privacy Switches</h3>
+          <p class="body-sm mt-2 text-body">
+            Enterprise laptops often feature a manual slider on top of the webcam lens or a dedicated keyboard function key (e.g. F9, F10) that physically disconnects the camera circuit.
+          </p>
+        </Card>
+      </div>
+
+      <!-- FAQ Section -->
+      <div class="mt-14">
+        <h2 class="display-md text-ink">Microsoft Teams questions &amp; answers</h2>
+        <div class="mt-6">
+          <Accordion items={teamsFaqs} />
+        </div>
+      </div>
+    </div>
+  </Container>
+</Layout>
