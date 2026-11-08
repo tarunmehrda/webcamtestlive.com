@@ -1,0 +1,300 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Container from '../components/layout/Container.astro';
+import Hero from '../components/layout/Hero.astro';
+import Accordion from '../components/ui/Accordion.astro';
+import QuickAnswer from '../components/content/QuickAnswer.astro';
+import { breadcrumbs, webApplication } from '../lib/seo';
+import { SITE } from '../data/site';
+
+const faqs = [
+  {
+    q: 'Is the Webcam Test Live widget free to embed?',
+    a: 'Yes, the widget is 100% free for both personal and commercial websites, blogs, school portals, and web applications. No registration, API key, or payment is required.',
+  },
+  {
+    q: 'Does the widget upload or store any visitor camera or microphone data?',
+    a: 'Never. All camera feeds, microphone levels, resolution benchmarks, and frame rate tests run 100% locally in the visitor’s browser using the native HTML5 WebRTC API. Zero data is ever sent to external servers.',
+  },
+  {
+    q: 'How do I add the webcam test to WordPress, Wix, or Squarespace?',
+    a: 'Copy the generated embed code snippet, open your page editor, add a "Custom HTML" or "Embed Code" block, and paste the iframe snippet into the block. Save and publish your page.',
+  },
+  {
+    q: 'Does the widget work on mobile devices and tablets?',
+    a: 'Yes, the embeddable tester is fully responsive and compatible with modern mobile browsers including Safari on iOS, Chrome on Android, and Samsung Internet.',
+  },
+];
+
+const jsonLd = [
+  webApplication({
+    name: 'Embeddable Webcam & Mic Test Widget Generator',
+    url: `${SITE.url}/widget`,
+    description:
+      'Generate a free, responsive webcam and microphone testing widget for your website, LMS, or telehealth portal. 100% private in-browser testing.',
+    featureList: [
+      'Interactive embed customizer',
+      'One-click responsive iframe code generator',
+      'Real-time live widget preview',
+      'No registration, API keys, or downloads required',
+    ],
+  }),
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  },
+  breadcrumbs([{ name: 'Embed Widget', href: '/widget' }]),
+];
+---
+
+<Layout
+  rawTitle="Webcam Test Widget: Free Embeddable Camera & Mic Tester"
+  description="Generate a free, responsive webcam and microphone testing widget for your website, LMS, or telehealth portal. 100% private in-browser testing."
+  jsonLd={jsonLd}
+>
+  <Hero
+    eyebrow="Webmaster tool"
+    title="Free webcam & mic test widget for your website."
+    subtitle="Embed a fast, 100% private camera and microphone diagnostic tool on your blog, LMS, or customer support portal with a single line of HTML."
+  />
+
+  <Container class="-mt-8 pb-16 md:-mt-12">
+    <!-- Configurator Card -->
+    <div class="rounded-2xl border border-hairline bg-canvas p-6 md:p-8 elev-2">
+      <div class="grid gap-8 lg:grid-cols-12">
+        <!-- Controls Column -->
+        <div class="lg:col-span-5 flex flex-col justify-between">
+          <div>
+            <h2 class="display-sm text-ink mb-2">Configure Your Widget</h2>
+            <p class="body-sm text-mute mb-6">
+              Customize the dimensions below, then copy and paste the code into your HTML editor or CMS.
+            </p>
+
+            <div class="space-y-5">
+              <div>
+                <label for="widget-width" class="block text-xs font-semibold uppercase tracking-wider text-mute mb-2">
+                  Widget Width
+                </label>
+                <select
+                  id="widget-width"
+                  class="w-full rounded-lg border border-hairline bg-subtle px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none"
+                >
+                  <option value="100%">100% (Responsive - Recommended)</option>
+                  <option value="850px">850 px (Desktop Wide)</option>
+                  <option value="720px">720 px (Medium Container)</option>
+                  <option value="600px">600 px (Compact Sidebar)</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="widget-height" class="block text-xs font-semibold uppercase tracking-wider text-mute mb-2">
+                  Widget Height
+                </label>
+                <select
+                  id="widget-height"
+                  class="w-full rounded-lg border border-hairline bg-subtle px-3 py-2 text-sm text-ink focus:border-primary focus:outline-none"
+                >
+                  <option value="580px">580 px (Standard View)</option>
+                  <option value="640px">640 px (Spacious View)</option>
+                  <option value="520px">520 px (Compact View)</option>
+                </select>
+              </div>
+
+              <div class="pt-2">
+                <label class="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    id="widget-attribution"
+                    checked
+                    class="h-4 w-4 rounded border-hairline text-primary focus:ring-primary"
+                  />
+                  <span class="text-xs text-body font-medium">
+                    Include free attribution link ("Powered by WebcamTestLive")
+                  </span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Code Snippet Output Box -->
+          <div class="mt-6 pt-6 border-t border-hairline">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-semibold uppercase tracking-wider text-mute">Embed HTML Code</span>
+              <button
+                id="copy-code-btn"
+                type="button"
+                class="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-on-primary hover:opacity-90 transition-opacity"
+              >
+                <svg id="copy-icon" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                <span id="copy-btn-text">Copy Code</span>
+              </button>
+            </div>
+            <textarea
+              id="embed-code"
+              readonly
+              rows="5"
+              class="w-full rounded-lg border border-hairline bg-subtle p-3 font-mono text-xs text-ink focus:outline-none select-all"
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- Live Preview Column -->
+        <div class="lg:col-span-7 flex flex-col">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider text-mute">Live Preview</span>
+            <span class="inline-flex items-center gap-1.5 text-xs text-emerald-600 font-medium">
+              <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              Interactive Preview
+            </span>
+          </div>
+
+          <div id="preview-outer" class="w-full rounded-xl border border-hairline bg-subtle p-2 md:p-3 overflow-hidden">
+            <iframe
+              id="preview-frame"
+              src="/embed"
+              style="width: 100%; height: 580px; border: 1px solid var(--color-hairline, #e2e8f0); border-radius: 8px; background-color: #fff;"
+              allow="camera; microphone"
+              title="Webcam Test Widget Preview"
+            ></iframe>
+            <div id="preview-attr" class="text-right text-[11px] text-mute pt-2 pr-1">
+              <a href="https://webcamtestlive.com" target="_blank" rel="noopener" class="hover:underline">
+                Powered by WebcamTestLive.com
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Answer -->
+    <QuickAnswer
+      question="Why embed a webcam test widget instead of building your own?"
+      answer="Handling browser camera and microphone permissions, resolution negotiation, FPS calculation, and cross-browser WebRTC quirks across iOS, Android, macOS, and Windows requires hundreds of hours of ongoing maintenance. WebcamTestLive delivers zero-maintenance, private, in-browser testing with zero external dependencies."
+    />
+
+    <!-- Use Cases Grid -->
+    <div class="mt-16">
+      <h2 class="display-sm text-ink text-center mb-8">Popular Use Cases for the Embed Widget</h2>
+      <div class="grid gap-6 md:grid-cols-3">
+        <div class="rounded-xl border border-hairline bg-canvas p-6">
+          <div class="text-2xl mb-3">🎓</div>
+          <h3 class="heading-sm text-ink mb-2">LMS &amp; Online Exams</h3>
+          <p class="body-sm text-mute">
+            Add a pre-exam hardware check on Canvas, Moodle, or Blackboard to ensure students' webcams and microphones work before proctored exams.
+          </p>
+        </div>
+
+        <div class="rounded-xl border border-hairline bg-canvas p-6">
+          <div class="text-2xl mb-3">🩺</div>
+          <h3 class="heading-sm text-ink mb-2">Telehealth Portals</h3>
+          <p class="body-sm text-mute">
+            Provide a waiting room check so patients can test their video feed and microphone volume before connecting to their doctor consultation.
+          </p>
+        </div>
+
+        <div class="rounded-xl border border-hairline bg-canvas p-6">
+          <div class="text-2xl mb-3">💼</div>
+          <h3 class="heading-sm text-ink mb-2">Job Portals &amp; HR</h3>
+          <p class="body-sm text-mute">
+            Embed on interview scheduling confirmation pages so remote applicants can verify their camera framing and audio clarity ahead of time.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Installation Instructions -->
+    <div class="mt-16 rounded-xl border border-hairline bg-subtle p-6 md:p-8">
+      <h2 class="display-sm text-ink mb-4">How to Install in 60 Seconds</h2>
+      <div class="grid gap-6 md:grid-cols-3">
+        <div>
+          <div class="font-mono text-xs font-bold text-primary mb-1">STEP 1</div>
+          <h3 class="heading-xs text-ink mb-1">Choose Dimensions</h3>
+          <p class="body-sm text-mute">Select your container width and height above to fit your website’s layout.</p>
+        </div>
+        <div>
+          <div class="font-mono text-xs font-bold text-primary mb-1">STEP 2</div>
+          <h3 class="heading-xs text-ink mb-1">Copy Snippet</h3>
+          <p class="body-sm text-mute">Click "Copy Code" to grab the self-contained HTML iframe snippet.</p>
+        </div>
+        <div>
+          <div class="font-mono text-xs font-bold text-primary mb-1">STEP 3</div>
+          <h3 class="heading-xs text-ink mb-1">Paste into CMS</h3>
+          <p class="body-sm text-mute">Add a Custom HTML block in WordPress, Wix, Squarespace, or Webflow and save.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAQ -->
+    <div class="mt-16">
+      <h2 class="display-md text-ink text-center">Frequently Asked Questions</h2>
+      <div class="mx-auto mt-6 max-w-3xl">
+        <Accordion items={faqs} />
+      </div>
+    </div>
+  </Container>
+</Layout>
+
+<script>
+  function setupWidgetConfigurator() {
+    const widthSelect = document.getElementById('widget-width') as HTMLSelectElement | null;
+    const heightSelect = document.getElementById('widget-height') as HTMLSelectElement | null;
+    const attrCheck = document.getElementById('widget-attribution') as HTMLInputElement | null;
+    const codeArea = document.getElementById('embed-code') as HTMLTextAreaElement | null;
+    const previewFrame = document.getElementById('preview-frame') as HTMLIFrameElement | null;
+    const previewAttr = document.getElementById('preview-attr') as HTMLElement | null;
+    const copyBtn = document.getElementById('copy-code-btn') as HTMLButtonElement | null;
+    const copyBtnText = document.getElementById('copy-btn-text') as HTMLElement | null;
+
+    if (!widthSelect || !heightSelect || !attrCheck || !codeArea) return;
+
+    function updateCode() {
+      const width = widthSelect?.value || '100%';
+      const height = heightSelect?.value || '580px';
+      const hasAttr = attrCheck?.checked ?? true;
+
+      if (previewFrame) {
+        previewFrame.style.height = height;
+      }
+      if (previewAttr) {
+        previewAttr.style.display = hasAttr ? 'block' : 'none';
+      }
+
+      const attrSnippet = hasAttr
+        ? `\n  <div style="text-align:right;font-size:11px;margin-top:4px;">\n    <a href="https://webcamtestlive.com" target="_blank" rel="noopener" style="color:#64748b;text-decoration:none;">Free Webcam Test by WebcamTestLive.com</a>\n  </div>`
+        : '';
+
+      const snippet = `<!-- WebcamTestLive.com Embedded Diagnostic Widget -->\n<div style="position:relative;width:100%;max-width:${width === '100%' ? '100%' : width};margin:0 auto;">\n  <iframe src="https://webcamtestlive.com/embed" width="100%" height="${parseInt(height, 10)}" style="border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;background:#ffffff;" allow="camera; microphone" title="Webcam and Microphone Test"></iframe>${attrSnippet}\n</div>`;
+
+      codeArea.value = snippet;
+    }
+
+    widthSelect.addEventListener('change', updateCode);
+    heightSelect.addEventListener('change', updateCode);
+    attrCheck.addEventListener('change', updateCode);
+
+    copyBtn?.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(codeArea.value);
+        if (copyBtnText) copyBtnText.textContent = 'Copied! ✨';
+        setTimeout(() => {
+          if (copyBtnText) copyBtnText.textContent = 'Copy Code';
+        }, 2000);
+      } catch {
+        codeArea.select();
+      }
+    });
+
+    updateCode();
+  }
+
+  setupWidgetConfigurator();
+  document.addEventListener('astro:page-load', setupWidgetConfigurator);
+</script>

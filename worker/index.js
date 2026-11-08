@@ -75,6 +75,7 @@ export default {
       '/mirror',
       '/take-photo',
       '/embed',
+      '/widget',
       '/mac',
       '/windows',
       '/chromebook',

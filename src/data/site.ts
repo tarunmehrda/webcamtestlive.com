@@ -41,7 +41,7 @@ export const FOOTER_LINKS: { title: string; items: NavItem[] }[] = [
       { href: '/take-photo', label: 'Take Photo Online' },
       { href: '/resolution', label: 'Resolution Test' },
       { href: '/fps', label: 'FPS Test' },
-      { href: '/embed', label: 'Embed Widget' },
+      { href: '/widget', label: 'Embed Widget Generator' },
     ],
   },
   {

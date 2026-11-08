@@ -18,6 +18,7 @@ Webcam Test is a static site built on standard browser APIs (getUserMedia and th
 - [Speaker test](https://webcamtestlive.com/speaker-test): Calibrated stereo left and right channel audio test with 120Hz, 440Hz, and 2000Hz frequency tones for headphones and speakers.
 - [Webcam mirror](https://webcamtestlive.com/mirror): Full-screen webcam mirror with horizontal flip toggle to check appearance, lighting, and hair before meetings.
 - [Take photo with webcam](https://webcamtestlive.com/take-photo): One-click HD camera snapshot tool to capture and download clear PNG pictures directly without uploads.
+- [Embeddable webcam widget generator](https://webcamtestlive.com/widget): Interactive embed customizer allowing webmasters, online interview platforms, and schools to generate responsive camera and mic testing widgets with zero maintenance.
 - [Embeddable webcam widget](https://webcamtestlive.com/embed): Clean iframe widget allowing webmasters, online interview platforms, and schools to embed camera and mic testing directly on their websites.
 
 ## Device & Platform Diagnostics

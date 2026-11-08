@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "Webcam & Mic Test Live - Audio & Video Diagnostics",
+  "short_name": "WebcamTestLive",
+  "version": "1.0.0",
+  "description": "Instant client-side camera test, microphone & echo check, online video recorder, keyboard tester, and dead pixel screen diagnostic.",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "action": {
+    "default_title": "Webcam & Mic Test Live",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+  "homepage_url": "https://webcamtestlive.com"
+}
