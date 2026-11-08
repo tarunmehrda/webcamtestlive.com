@@ -1,0 +1,92 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Container from '../components/layout/Container.astro';
+import Hero from '../components/layout/Hero.astro';
+import Accordion from '../components/ui/Accordion.astro';
+import QuickAnswer from '../components/content/QuickAnswer.astro';
+import { breadcrumbs, webApplication } from '../lib/seo';
+import { SITE } from '../data/site';
+
+const faqs = [
+  {
+    q: 'How do I record my webcam with audio online?',
+    a: 'Open this page, click "Start Camera", and allow browser access. Press "Start Recording" to capture both high-resolution video and microphone audio. When finished, hit "Stop Recording" and download your MP4 or WebM video file instantly.',
+  },
+  {
+    q: 'Can I record my webcam without a watermark?',
+    a: 'Yes, completely free with zero watermark. Unlike commercial apps, this tool is 100% open and private, encoding video directly in your browser without adding logos or branding.',
+  },
+  {
+    q: 'Is there a time limit on webcam recordings?',
+    a: 'No time limit. You can record short clips or long presentations as long as your device has available storage.',
+  },
+  {
+    q: 'Does this webcam recorder work on Mac and Windows?',
+    a: 'Yes. It works seamlessly on Windows 11, Windows 10, macOS, Chromebooks, Linux, Android, and iOS devices with any modern web browser.',
+  },
+];
+
+const jsonLd = [
+  webApplication({
+    name: 'Free Online Webcam Recorder',
+    url: `${SITE.url}/webcam-recorder`,
+    description:
+      'Record webcam video and audio online for free without watermarks or software installation. Instant browser recording and MP4/WebM download.',
+    featureList: [
+      'Record webcam video and audio online for free',
+      'Zero watermarks, zero branding, zero time limits',
+      'Pause and resume live recording',
+      'Direct MP4 / WebM downloads to device',
+      '100% private client-side recording',
+    ],
+  }),
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  },
+  breadcrumbs([{ name: 'Webcam Recorder', href: '/webcam-recorder' }]),
+];
+---
+
+<Layout
+  rawTitle="Webcam Recorder: Free Online Webcam Video Recorder (No Watermark)"
+  description="Free online webcam recorder. Record video and microphone audio directly in your browser without downloads or watermarks. Save MP4/WebM video files privately."
+  jsonLd={jsonLd}
+>
+  <Hero
+    eyebrow="Webcam recorder"
+    title="Free online webcam recorder with audio."
+    subtitle="Record video and audio straight from your webcam. No watermark, no software installation, and no cloud uploads."
+  />
+
+  <Container class="-mt-8 pb-12 md:-mt-12">
+    <div class="rounded-xl border border-hairline bg-canvas p-6 text-center elev-2">
+      <p class="body-md text-body">
+        Need to record your webcam right now? Use our full-featured in-browser recorder:
+      </p>
+      <a
+        href="/video-recorder"
+        class="mt-4 inline-flex items-center gap-2 rounded-pill bg-primary px-6 py-3 text-on-primary font-medium hover:opacity-90 transition-opacity"
+      >
+        <span>Open Online Video & Webcam Recorder →</span>
+      </a>
+    </div>
+
+    <QuickAnswer
+      question="What is the best way to record a webcam video online for free?"
+      answer="Use an in-browser recorder that utilizes the native MediaRecorder API. It captures full HD camera video and microphone audio directly in memory, leaving zero watermarks and requiring no software download."
+    />
+
+    <div class="mt-12">
+      <h2 class="display-md text-ink text-center">Webcam Recorder FAQ</h2>
+      <div class="mx-auto mt-6 max-w-3xl">
+        <Accordion items={faqs} />
+      </div>
+    </div>
+  </Container>
+</Layout>

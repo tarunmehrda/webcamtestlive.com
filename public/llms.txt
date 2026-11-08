@@ -7,9 +7,14 @@ Webcam Test is a static site built on standard browser APIs (getUserMedia and th
 ## Tools
 
 - [Webcam test](https://webcamtestlive.com/): Start the camera, see the live preview, and get resolution, frame rate, bitrate and lighting readings with automatic health checks and a copyable diagnostics report.
+- [Online video recorder](https://webcamtestlive.com/video-recorder): High-definition in-browser webcam video and microphone audio recorder with pause/resume, zero watermarks, and 1-click WebM/MP4 downloads.
+- [Webcam recorder](https://webcamtestlive.com/webcam-recorder): Free online camera recorder for quick video capture without software downloads.
 - [Webcam resolution test](https://webcamtestlive.com/resolution): Shows the current stream resolution and the maximum the camera supports (360p, 480p, 720p, 1080p, 4K), and explains why the live figure is often lower.
 - [Webcam FPS test](https://webcamtestlive.com/fps): Counts the frames the browser actually presents to report a delivered frame rate, with the five usual causes of a low result.
-- [Microphone test](https://webcamtestlive.com/mic-test): Live input level meter for the microphone with instant audio feedback.
+- [Microphone test & echo playback](https://webcamtestlive.com/mic-test): Live input level meter for the microphone with a 5-second voice recording and playback loop (echo test) to hear how your voice sounds to others.
+- [Keyboard test](https://webcamtestlive.com/keyboard-test): Interactive virtual keyboard tester to diagnose dead keys, test keyboard ghosting, and evaluate N-key rollover (NKRO).
+- [Screen test](https://webcamtestlive.com/screen-test): Fullscreen solid color monitor diagnostic (Black, White, Red, Green, Blue) to detect dead, stuck, and hot pixels with a built-in rapid RGB stuck pixel fixer.
+- [Dead pixel test](https://webcamtestlive.com/dead-pixel-test): Fast monitor inspection tool for checking dead pixels on laptops and desktop displays.
 - [Speaker test](https://webcamtestlive.com/speaker-test): Calibrated stereo left and right channel audio test with 120Hz, 440Hz, and 2000Hz frequency tones for headphones and speakers.
 - [Webcam mirror](https://webcamtestlive.com/mirror): Full-screen webcam mirror with horizontal flip toggle to check appearance, lighting, and hair before meetings.
 - [Take photo with webcam](https://webcamtestlive.com/take-photo): One-click HD camera snapshot tool to capture and download clear PNG pictures directly without uploads.

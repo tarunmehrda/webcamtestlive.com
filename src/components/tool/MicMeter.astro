@@ -56,6 +56,16 @@ const { standalone = true } = Astro.props;
         <span class="body-sm font-medium">Stop</span>
       </button>
 
+      <!-- Record voice test button for instant playback (echo test) -->
+      <button
+        data-mic-record
+        class="inline-flex items-center gap-2 rounded-pill border border-hairline bg-canvas px-4 py-3 sm:py-2.5 text-ink transition-colors hover:bg-canvas-soft-2"
+        title="Record a 5-second voice sample and listen back to hear how you sound"
+      >
+        <span class="size-2.5 rounded-full bg-error" data-rec-indicator></span>
+        <span class="body-sm font-medium" data-rec-btn-text>Record voice sample (hear yourself)</span>
+      </button>
+
       <label class="ml-auto flex items-center gap-2">
         <span class="caption-mono uppercase text-mute">Mic</span>
         <select
@@ -65,6 +75,34 @@ const { standalone = true } = Astro.props;
           <option value="">Default microphone</option>
         </select>
       </label>
+    </div>
+
+    <!-- Voice Playback Card (Echo Test) -->
+    <div data-voice-playback class="mt-6 hidden rounded-lg border border-hairline bg-canvas-soft p-4">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h3 class="body-md-strong font-semibold text-ink">Recorded Voice Playback</h3>
+          <p class="caption mt-0.5 text-mute">Played back locally through your speakers/headphones. Audio never leaves your device.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button
+            data-voice-download
+            class="caption-mono inline-flex items-center gap-1.5 rounded-pill border border-hairline bg-canvas px-3 py-1.5 text-ink hover:bg-canvas-soft-2"
+          >
+            Download voice sample
+          </button>
+          <button
+            data-voice-close
+            class="caption-mono rounded-full p-1.5 text-mute hover:text-ink"
+            aria-label="Close playback card"
+          >
+            ✕
+          </button>
+        </div>
+      </div>
+      <div class="mt-3">
+        <audio data-voice-audio controls class="w-full h-10 rounded"></audio>
+      </div>
     </div>
 
     <p data-mic-error class="body-sm mt-4 hidden text-error"></p>
@@ -81,10 +119,16 @@ const { standalone = true } = Astro.props;
   if (root) init(root);
 
   function init(root: HTMLElement) {
-    // Serialised by the component: client scripts cannot reach the dictionary.
     const S = JSON.parse(root.dataset.strings || '{}') as Record<string, string>;
     const startBtn = $<HTMLButtonElement>('[data-mic-start]', root)!;
     const stopBtn = $<HTMLButtonElement>('[data-mic-stop]', root)!;
+    const recordBtn = $<HTMLButtonElement>('[data-mic-record]', root)!;
+    const recBtnText = $('[data-rec-btn-text]', root)!;
+    const recIndicator = $('[data-rec-indicator]', root)!;
+    const playbackCard = $('[data-voice-playback]', root)!;
+    const voiceAudio = $<HTMLAudioElement>('[data-voice-audio]', root)!;
+    const voiceDownload = $<HTMLButtonElement>('[data-voice-download]', root)!;
+    const voiceClose = $<HTMLButtonElement>('[data-voice-close]', root)!;
     const levelEl = $<HTMLElement>('[data-mic-level]', root)!;
     const statusEl = $('[data-mic-status]', root)!;
     const select = $<HTMLSelectElement>('[data-mic-select]', root)!;
@@ -92,6 +136,10 @@ const { standalone = true } = Astro.props;
 
     let mic: MicSession | null = null;
     let stopMeter: (() => void) | null = null;
+    let mediaRecorder: MediaRecorder | null = null;
+    let recordedChunks: Blob[] = [];
+    let audioBlobUrl: string | null = null;
+    let countdownInterval: number | undefined;
 
     async function populate() {
       const mics = await listDevices('audioinput');
@@ -110,10 +158,10 @@ const { standalone = true } = Astro.props;
       if (current) select.value = current;
     }
 
-    async function start() {
-      teardown();
-      errorEl.classList.add('hidden');
+    async function ensureMicRunning(): Promise<boolean> {
+      if (mic) return true;
       try {
+        errorEl.classList.add('hidden');
         mic = await startMic(select.value || undefined);
         await populate();
         setText(statusEl, S.listening);
@@ -126,11 +174,18 @@ const { standalone = true } = Astro.props;
         stopMeter = mic.meter((level) => {
           levelEl.style.width = `${Math.round(level * 100)}%`;
         });
+        return true;
       } catch (e) {
         const err = e as MediaError;
         errorEl.textContent = err.message;
         errorEl.classList.remove('hidden');
+        return false;
       }
+    }
+
+    async function start() {
+      teardown();
+      await ensureMicRunning();
     }
 
     function teardown() {
@@ -138,6 +193,12 @@ const { standalone = true } = Astro.props;
       stopMeter = null;
       mic?.stop();
       mic = null;
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+      }
+      window.clearInterval(countdownInterval);
+      recIndicator.classList.remove('animate-ping');
+      setText(recBtnText, 'Record voice sample (hear yourself)');
     }
 
     function stop() {
@@ -152,6 +213,79 @@ const { standalone = true } = Astro.props;
       startBtn.classList.add('inline-flex');
     }
 
+    async function startVoiceRecording() {
+      if (mediaRecorder && mediaRecorder.state === 'recording') {
+        mediaRecorder.stop();
+        return;
+      }
+
+      const ok = await ensureMicRunning();
+      if (!ok || !mic) return;
+
+      recordedChunks = [];
+      try {
+        const mimeType = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4'].find((t) =>
+          typeof MediaRecorder !== 'undefined' && MediaRecorder.isTypeSupported(t)
+        ) || '';
+
+        mediaRecorder = mimeType
+          ? new MediaRecorder(mic.stream, { mimeType })
+          : new MediaRecorder(mic.stream);
+
+        mediaRecorder.ondataavailable = (e) => {
+          if (e.data && e.data.size > 0) recordedChunks.push(e.data);
+        };
+
+        mediaRecorder.onstop = () => {
+          window.clearInterval(countdownInterval);
+          recIndicator.classList.remove('animate-ping');
+          setText(recBtnText, 'Record voice sample (hear yourself)');
+
+          if (recordedChunks.length === 0) return;
+          const blob = new Blob(recordedChunks, { type: mediaRecorder?.mimeType || 'audio/webm' });
+          if (audioBlobUrl) URL.revokeObjectURL(audioBlobUrl);
+          audioBlobUrl = URL.createObjectURL(blob);
+          voiceAudio.src = audioBlobUrl;
+          playbackCard.classList.remove('hidden');
+          voiceAudio.play().catch(() => {});
+        };
+
+        mediaRecorder.start();
+        recIndicator.classList.add('animate-ping');
+
+        let remaining = 5;
+        setText(recBtnText, `Recording: speak now (${remaining}s)`);
+        countdownInterval = window.setInterval(() => {
+          remaining -= 1;
+          if (remaining <= 0) {
+            window.clearInterval(countdownInterval);
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+              mediaRecorder.stop();
+            }
+          } else {
+            setText(recBtnText, `Recording: speak now (${remaining}s)`);
+          }
+        }, 1000);
+      } catch (err) {
+        errorEl.textContent = 'Voice recording is not supported in this browser.';
+        errorEl.classList.remove('hidden');
+      }
+    }
+
+    voiceClose.addEventListener('click', () => {
+      playbackCard.classList.add('hidden');
+      voiceAudio.pause();
+    });
+
+    voiceDownload.addEventListener('click', () => {
+      if (!audioBlobUrl) return;
+      const a = document.createElement('a');
+      a.href = audioBlobUrl;
+      a.download = `mic-test-${Date.now()}.webm`;
+      a.click();
+    });
+
+    recordBtn.addEventListener('click', startVoiceRecording);
     startBtn.addEventListener('click', start);
     stopBtn.addEventListener('click', stop);
     select.addEventListener('change', () => {

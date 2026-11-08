@@ -1,0 +1,255 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Container from '../components/layout/Container.astro';
+import Hero from '../components/layout/Hero.astro';
+import Accordion from '../components/ui/Accordion.astro';
+import QuickAnswer from '../components/content/QuickAnswer.astro';
+import { breadcrumbs, webApplication } from '../lib/seo';
+import { SITE } from '../data/site';
+
+const faqs = [
+  {
+    q: 'How does an online dead pixel test work?',
+    a: 'Click "Start Fullscreen Screen Test" below to turn your entire display into solid colors (black, white, red, green, blue). Clean your display with a microfiber cloth first, then inspect your screen closely. Any pixel that stays permanently black on a bright color or stays lit on pure black is defective.',
+  },
+  {
+    q: 'What is the difference between a dead pixel and a stuck pixel?',
+    a: 'A dead pixel is completely unpowered and remains permanently black against white or colored backgrounds. A stuck pixel has one or more sub-pixels (red, green, or blue) stuck on, appearing as a colored dot on black backgrounds. Stuck pixels can often be revived, whereas dead pixels are hardware defects.',
+  },
+  {
+    q: 'Can stuck pixels be fixed online?',
+    a: 'Yes, many stuck pixels can be unstuck! Use our built-in "Stuck Pixel Fixer" tool below, which flashes rapid RGB color cycles over the affected area to stimulate the liquid crystals into releasing.',
+  },
+  {
+    q: 'How do I exit fullscreen mode during the test?',
+    a: 'Press the Escape key (Esc) on your keyboard at any time, or click the small "Exit" button in the corner of your screen.',
+  },
+];
+
+const jsonLd = [
+  webApplication({
+    name: 'Online Screen & Dead Pixel Test',
+    url: `${SITE.url}/screen-test`,
+    description:
+      'Free online screen test and dead pixel checker. Test your monitor, laptop, or phone screen with fullscreen solid colors and fix stuck pixels with an RGB flasher.',
+    featureList: [
+      'Fullscreen solid color inspection (Black, White, Red, Green, Blue)',
+      'Dead, stuck, and hot pixel detection',
+      'Built-in rapid RGB stuck pixel revival flasher',
+      'Works on PC monitors, MacBooks, tablets, and smartphones',
+      '100% free and in-browser with zero downloads',
+    ],
+  }),
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  },
+  breadcrumbs([{ name: 'Screen Test', href: '/screen-test' }]),
+];
+---
+
+<Layout
+  rawTitle="Screen Test: Free Online Dead Pixel & Monitor Color Checker"
+  description="Free online screen test and dead pixel checker. Test monitors and laptop screens with fullscreen colors to find dead or stuck pixels. Free pixel fixer."
+  jsonLd={jsonLd}
+>
+  <Hero
+    eyebrow="Monitor & display diagnostic"
+    title="Test your screen for dead pixels and color accuracy."
+    subtitle="Inspect your display with pure fullscreen colors to catch dead or stuck pixels on monitors, laptops, and mobile screens. Includes a free stuck pixel fixer."
+  />
+
+  <Container class="-mt-8 pb-12 md:-mt-12">
+    <div class="rounded-xl border border-hairline bg-canvas p-6 elev-3 sm:p-8 text-center" data-screen-tool>
+      <div class="mx-auto max-w-lg">
+        <div class="flex justify-center gap-2 mb-6">
+          <span class="size-8 rounded-full bg-black border border-hairline shadow-sm"></span>
+          <span class="size-8 rounded-full bg-white border border-hairline shadow-sm"></span>
+          <span class="size-8 rounded-full bg-red-600 shadow-sm"></span>
+          <span class="size-8 rounded-full bg-green-500 shadow-sm"></span>
+          <span class="size-8 rounded-full bg-blue-600 shadow-sm"></span>
+        </div>
+
+        <h2 class="display-sm text-ink">Fullscreen Dead Pixel Inspection</h2>
+        <p class="body-sm mt-2 text-body">
+          Before starting, gently wipe your screen to remove dust particles that look like dead pixels. Once fullscreen, click anywhere or press <kbd class="code-font rounded border px-1.5 py-0.5 text-xs">Space</kbd> to cycle colors.
+        </p>
+
+        <button
+          data-btn-start-screen
+          class="mt-6 inline-flex items-center gap-2 rounded-pill bg-primary px-8 py-3.5 text-on-primary font-medium hover:opacity-90 transition-opacity"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
+          </svg>
+          <span class="body-md-strong">Start Fullscreen Test</span>
+        </button>
+      </div>
+
+      <!-- Stuck Pixel Flasher Utility -->
+      <div class="mt-12 border-t border-hairline pt-8 text-left">
+        <h3 class="display-sm text-ink">Stuck Pixel Fixer (RGB Rapid Flasher)</h3>
+        <p class="body-sm mt-1 text-body">
+          Found a pixel stuck on red, green, or blue? Drag this flashing square directly over the stuck pixel and leave it running for 10–20 minutes to exercise the liquid crystal.
+        </p>
+
+        <div class="mt-4 flex flex-wrap items-center gap-4">
+          <button
+            data-btn-flasher-toggle
+            class="rounded-pill border border-hairline bg-canvas px-4 py-2 body-sm text-ink hover:bg-canvas-soft-2 transition-colors font-medium"
+          >
+            Start Rapid Flasher
+          </button>
+          <span class="caption text-mute">Warning: Contains rapid flashing colors. Avoid if sensitive to flashing lights.</span>
+        </div>
+
+        <div data-flasher-box class="mt-4 hidden size-40 rounded-lg border-2 border-dashed border-hairline overflow-hidden shadow-lg cursor-move" style="background-color: #000;">
+          <div data-flasher-surface class="size-full"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fullscreen Overlay Canvas -->
+    <div data-fullscreen-stage class="fixed inset-0 z-[9999] hidden select-none cursor-pointer">
+      <div class="absolute top-4 right-4 flex items-center gap-3">
+        <span class="rounded-full bg-black/60 px-3 py-1 caption-mono text-white backdrop-blur-sm" data-color-name>Black</span>
+        <button
+          data-btn-exit-screen
+          class="rounded-full bg-black/60 px-3 py-1 caption-mono text-white hover:bg-black/90 backdrop-blur-sm"
+        >
+          Exit (Esc)
+        </button>
+      </div>
+      <div class="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-black/60 px-4 py-1.5 caption text-white/80 backdrop-blur-sm">
+        Click or press Space / Arrow keys to cycle colors · Press Esc to exit
+      </div>
+    </div>
+
+    <QuickAnswer
+      question="What colors are best for detecting dead and stuck monitor pixels?"
+      answer="Pure black reveals stuck or hot pixels that stay illuminated. Pure white reveals dead pixels that cannot light up. Red, green, and blue test individual sub-pixels."
+    />
+
+    <div class="mt-12">
+      <h2 class="display-md text-ink text-center">Frequently asked questions</h2>
+      <div class="mx-auto mt-6 max-w-3xl">
+        <Accordion items={faqs} />
+      </div>
+    </div>
+  </Container>
+</Layout>
+
+<script>
+  import { $ } from '../lib/dom';
+
+  const root = document.querySelector<HTMLElement>('[data-screen-tool]');
+  if (root) init(root);
+
+  function init(root: HTMLElement) {
+    const startBtn = $<HTMLButtonElement>('[data-btn-start-screen]', root)!;
+    const stage = document.querySelector<HTMLElement>('[data-fullscreen-stage]')!;
+    const exitBtn = $<HTMLButtonElement>('[data-btn-exit-screen]', stage)!;
+    const colorName = $('[data-color-name]', stage)!;
+
+    const flasherToggle = $<HTMLButtonElement>('[data-btn-flasher-toggle]', root)!;
+    const flasherBox = $('[data-flasher-box]', root)!;
+    const flasherSurface = $('[data-flasher-surface]', root)!;
+
+    const colors = [
+      { name: 'Black (finds stuck pixels)', hex: '#000000' },
+      { name: 'White (finds dead pixels)', hex: '#ffffff' },
+      { name: 'Pure Red (R sub-pixel)', hex: '#ff0000' },
+      { name: 'Pure Green (G sub-pixel)', hex: '#00ff00' },
+      { name: 'Pure Blue (B sub-pixel)', hex: '#0000ff' },
+      { name: 'Yellow', hex: '#ffff00' },
+      { name: 'Cyan', hex: '#00ffff' },
+      { name: 'Magenta', hex: '#ff00ff' },
+    ];
+    let currentIndex = 0;
+
+    function applyColor(idx: number) {
+      const c = colors[idx];
+      stage.style.backgroundColor = c.hex;
+      colorName.textContent = c.name;
+    }
+
+    function nextColor() {
+      currentIndex = (currentIndex + 1) % colors.length;
+      applyColor(currentIndex);
+    }
+
+    function prevColor() {
+      currentIndex = (currentIndex - 1 + colors.length) % colors.length;
+      applyColor(currentIndex);
+    }
+
+    function openFullscreen() {
+      currentIndex = 0;
+      applyColor(0);
+      stage.classList.remove('hidden');
+      if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      }
+    }
+
+    function closeFullscreen() {
+      stage.classList.add('hidden');
+      if (document.fullscreenElement) {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    startBtn.addEventListener('click', openFullscreen);
+    exitBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      closeFullscreen();
+    });
+
+    stage.addEventListener('click', nextColor);
+
+    window.addEventListener('keydown', (e) => {
+      if (stage.classList.contains('hidden')) return;
+      if (e.key === 'Escape') {
+        closeFullscreen();
+      } else if (e.key === ' ' || e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        nextColor();
+      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        prevColor();
+      }
+    });
+
+    document.addEventListener('fullscreenchange', () => {
+      if (!document.fullscreenElement) {
+        stage.classList.add('hidden');
+      }
+    });
+
+    // Stuck pixel rapid flasher
+    let flasherInterval: number | undefined;
+    const flashColors = ['#ff0000', '#00ff00', '#0000ff', '#ffffff', '#000000', '#ffff00'];
+    let flashIdx = 0;
+
+    flasherToggle.addEventListener('click', () => {
+      if (flasherInterval) {
+        window.clearInterval(flasherInterval);
+        flasherInterval = undefined;
+        flasherToggle.textContent = 'Start Rapid Flasher';
+        flasherBox.classList.add('hidden');
+      } else {
+        flasherBox.classList.remove('hidden');
+        flasherToggle.textContent = 'Stop Rapid Flasher';
+        flasherInterval = window.setInterval(() => {
+          flashIdx = (flashIdx + 1) % flashColors.length;
+          flasherSurface.style.backgroundColor = flashColors[flashIdx];
+        }, 35); // ~30Hz rapid excitation
+      }
+    });
+  }
+</script>

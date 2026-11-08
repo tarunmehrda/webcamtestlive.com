@@ -1,8 +1,9 @@
 ---
-import { LOCALES, localePath, localeFromPath, pathWithoutLocale, t } from '../../i18n';
+import { LOCALES, localePath, localeFromPath, pathWithoutLocale, isTranslatedRoute, t } from '../../i18n';
 
 const current = localeFromPath(Astro.url.pathname);
 const routeKey = pathWithoutLocale(Astro.url.pathname);
+const translated = isTranslatedRoute(routeKey);
 const copy = t(current);
 const currentMeta = LOCALES.find((l) => l.code === current)!;
 ---
@@ -28,27 +29,30 @@ const currentMeta = LOCALES.find((l) => l.code === current)!;
 
   <ul class="elev-4 absolute right-0 top-[calc(100%+8px)] z-50 w-52 rounded-md border border-hairline bg-canvas p-1">
     {
-      LOCALES.map((l) => (
-        <li>
-          <a
-            href={localePath(l.code, routeKey)}
-            hreflang={l.hreflang}
-            lang={l.hreflang}
-            class:list={[
-              'body-sm flex items-center justify-between gap-2 rounded-sm px-3 py-3',
-              l.code === current ? 'bg-canvas-soft-2 text-ink' : 'text-body hover:text-ink',
-            ]}
-            aria-current={l.code === current ? 'true' : undefined}
-          >
-            {l.label}
-            {l.code === current && (
-              <svg class="size-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M20 6 9 17l-5-5" />
-              </svg>
-            )}
-          </a>
-        </li>
-      ))
+      LOCALES.map((l) => {
+        const targetHref = localePath(l.code, translated ? routeKey : '/');
+        return (
+          <li>
+            <a
+              href={targetHref}
+              hreflang={translated ? l.hreflang : undefined}
+              lang={translated ? l.hreflang : undefined}
+              class:list={[
+                'body-sm flex items-center justify-between gap-2 rounded-sm px-3 py-3',
+                l.code === current ? 'bg-canvas-soft-2 text-ink' : 'text-body hover:text-ink',
+              ]}
+              aria-current={l.code === current ? 'true' : undefined}
+            >
+              {l.label}
+              {l.code === current && (
+                <svg class="size-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 6 9 17l-5-5" />
+                </svg>
+              )}
+            </a>
+          </li>
+        );
+      })
     }
   </ul>
 </details>

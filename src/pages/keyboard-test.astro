@@ -1,0 +1,389 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Container from '../components/layout/Container.astro';
+import Hero from '../components/layout/Hero.astro';
+import Accordion from '../components/ui/Accordion.astro';
+import QuickAnswer from '../components/content/QuickAnswer.astro';
+import { breadcrumbs, webApplication } from '../lib/seo';
+import { SITE } from '../data/site';
+
+const faqs = [
+  {
+    q: 'How does this online keyboard test work?',
+    a: 'Simply press any key on your physical keyboard. The corresponding key on the virtual keyboard will light up blue while pressed, and turn green once released to confirm that it registers correctly. You can test every key on your laptop or desktop keyboard.',
+  },
+  {
+    q: 'What is keyboard ghosting and how do I test for it?',
+    a: 'Keyboard ghosting occurs when pressing multiple keys simultaneously causes some key presses to be missed or unrecognized. Press multiple keys at once (like W, A, S, D, and Space) and look at the "Simultaneous Keys" counter. A gaming keyboard with N-Key Rollover (NKRO) registers all keys together without ghosting.',
+  },
+  {
+    q: 'Why does my F-key or Windows key not light up?',
+    a: 'On many laptops, function keys (F1–F12) require holding the Fn key. Check whether your keyboard has Fn Lock enabled. Also, the Windows key or Mac Command key may be locked by a gaming switch on your keyboard.',
+  },
+  {
+    q: 'Does this test store or transmit my keystrokes?',
+    a: 'No. The test runs 100% locally in your web browser. Keystrokes are processed solely in client-side memory to update the virtual keyboard graphics and are never recorded, logged, or sent to any server.',
+  },
+  {
+    q: 'Can I test external mechanical keyboards and Bluetooth keyboards?',
+    a: 'Yes. Any USB, wireless, Bluetooth, or built-in laptop keyboard is fully compatible.',
+  },
+];
+
+const jsonLd = [
+  webApplication({
+    name: 'Online Keyboard Tester',
+    url: `${SITE.url}/keyboard-test`,
+    description:
+      'Free online keyboard test and key checker. Test every key on your keyboard, detect ghosting, check N-key rollover, and diagnose stuck keys instantly in your browser.',
+    featureList: [
+      'Interactive visual 104-key virtual keyboard',
+      'Real-time key press and release tracking',
+      'Tested key history indicator',
+      'Ghosting and N-key rollover (NKRO) counter',
+      'Mechanical click audio feedback synthesized locally',
+      '100% private client-side diagnostic with zero keystroke logging',
+    ],
+  }),
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  },
+  breadcrumbs([{ name: 'Keyboard Test', href: '/keyboard-test' }]),
+];
+---
+
+<Layout
+  rawTitle="Keyboard Test: Free Online Key Tester & Ghosting Checker"
+  description="Free online keyboard test. Check if all your keyboard keys work, detect ghosting and stuck keys, and test N-key rollover (NKRO) directly in your browser. 100% private."
+  jsonLd={jsonLd}
+>
+  <Hero
+    eyebrow="Keyboard diagnostic tool"
+    title="Is every key on your keyboard working?"
+    subtitle="Press any key on your keyboard to test responsiveness, detect dead or stuck keys, and check for ghosting. 100% client-side with zero keystroke logging."
+  />
+
+  <Container class="-mt-8 pb-12 md:-mt-12">
+    <div class="rounded-xl border border-hairline bg-canvas p-4 elev-3 sm:p-6" data-keyboard-tool>
+      <!-- Stats Toolbar -->
+      <div class="flex flex-wrap items-center justify-between gap-4 border-b border-hairline pb-4">
+        <div class="flex flex-wrap items-center gap-4">
+          <div>
+            <span class="caption-mono uppercase text-mute">Keys Tested</span>
+            <p class="display-sm text-ink"><span data-stat-tested>0</span> / <span data-stat-total>86</span></p>
+          </div>
+          <div class="h-8 w-px bg-hairline hidden sm:block"></div>
+          <div>
+            <span class="caption-mono uppercase text-mute">Last Key Pressed</span>
+            <p class="display-sm text-primary font-mono" data-stat-last>None</p>
+          </div>
+          <div class="h-8 w-px bg-hairline hidden sm:block"></div>
+          <div>
+            <span class="caption-mono uppercase text-mute">Simultaneous Keys (Rollover)</span>
+            <p class="display-sm text-ink"><span data-stat-simultaneous>0</span> max</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" data-chk-sound checked class="rounded border-hairline text-primary focus:ring-primary" />
+            <span class="body-sm text-body">Click sound</span>
+          </label>
+          <button
+            data-btn-reset-kb
+            class="rounded-pill border border-hairline bg-canvas px-4 py-2 body-sm text-body hover:text-ink hover:bg-canvas-soft-2 transition-colors"
+          >
+            Reset Test
+          </button>
+        </div>
+      </div>
+
+      <!-- Virtual Keyboard Stage (Responsive horizontal scroll on small screens) -->
+      <div class="mt-6 overflow-x-auto pb-4">
+        <div class="min-w-[800px] select-none space-y-2 rounded-lg bg-canvas-soft-2 p-4" data-kb-stage>
+          <!-- Function row -->
+          <div class="flex gap-1.5">
+            <div data-key="Escape" class="kb-key w-12">Esc</div>
+            <div class="w-6"></div>
+            <div data-key="F1" class="kb-key">F1</div>
+            <div data-key="F2" class="kb-key">F2</div>
+            <div data-key="F3" class="kb-key">F3</div>
+            <div data-key="F4" class="kb-key">F4</div>
+            <div class="w-4"></div>
+            <div data-key="F5" class="kb-key">F5</div>
+            <div data-key="F6" class="kb-key">F6</div>
+            <div data-key="F7" class="kb-key">F7</div>
+            <div data-key="F8" class="kb-key">F8</div>
+            <div class="w-4"></div>
+            <div data-key="F9" class="kb-key">F9</div>
+            <div data-key="F10" class="kb-key">F10</div>
+            <div data-key="F11" class="kb-key">F11</div>
+            <div data-key="F12" class="kb-key">F12</div>
+            <div class="w-6"></div>
+            <div data-key="PrintScreen" class="kb-key text-[10px]">PrtSc</div>
+            <div data-key="ScrollLock" class="kb-key text-[10px]">ScrLk</div>
+            <div data-key="Pause" class="kb-key text-[10px]">Pause</div>
+          </div>
+
+          <!-- Number row -->
+          <div class="flex gap-1.5">
+            <div data-key="Backquote" class="kb-key">`</div>
+            <div data-key="Digit1" class="kb-key">1</div>
+            <div data-key="Digit2" class="kb-key">2</div>
+            <div data-key="Digit3" class="kb-key">3</div>
+            <div data-key="Digit4" class="kb-key">4</div>
+            <div data-key="Digit5" class="kb-key">5</div>
+            <div data-key="Digit6" class="kb-key">6</div>
+            <div data-key="Digit7" class="kb-key">7</div>
+            <div data-key="Digit8" class="kb-key">8</div>
+            <div data-key="Digit9" class="kb-key">9</div>
+            <div data-key="Digit0" class="kb-key">0</div>
+            <div data-key="Minus" class="kb-key">-</div>
+            <div data-key="Equal" class="kb-key">=</div>
+            <div data-key="Backspace" class="kb-key w-20">Backspace</div>
+            <div class="w-6"></div>
+            <div data-key="Insert" class="kb-key text-[10px]">Ins</div>
+            <div data-key="Home" class="kb-key text-[10px]">Home</div>
+            <div data-key="PageUp" class="kb-key text-[10px]">PgUp</div>
+          </div>
+
+          <!-- QWERTY row -->
+          <div class="flex gap-1.5">
+            <div data-key="Tab" class="kb-key w-16">Tab</div>
+            <div data-key="KeyQ" class="kb-key">Q</div>
+            <div data-key="KeyW" class="kb-key">W</div>
+            <div data-key="KeyE" class="kb-key">E</div>
+            <div data-key="KeyR" class="kb-key">R</div>
+            <div data-key="KeyT" class="kb-key">T</div>
+            <div data-key="KeyY" class="kb-key">Y</div>
+            <div data-key="KeyU" class="kb-key">U</div>
+            <div data-key="KeyI" class="kb-key">I</div>
+            <div data-key="KeyO" class="kb-key">O</div>
+            <div data-key="KeyP" class="kb-key">P</div>
+            <div data-key="BracketLeft" class="kb-key">[</div>
+            <div data-key="BracketRight" class="kb-key">]</div>
+            <div data-key="Backslash" class="kb-key w-16">\</div>
+            <div class="w-6"></div>
+            <div data-key="Delete" class="kb-key text-[10px]">Del</div>
+            <div data-key="End" class="kb-key text-[10px]">End</div>
+            <div data-key="PageDown" class="kb-key text-[10px]">PgDn</div>
+          </div>
+
+          <!-- ASDF row -->
+          <div class="flex gap-1.5">
+            <div data-key="CapsLock" class="kb-key w-20">Caps</div>
+            <div data-key="KeyA" class="kb-key">A</div>
+            <div data-key="KeyS" class="kb-key">S</div>
+            <div data-key="KeyD" class="kb-key">D</div>
+            <div data-key="KeyF" class="kb-key">F</div>
+            <div data-key="KeyG" class="kb-key">G</div>
+            <div data-key="KeyH" class="kb-key">H</div>
+            <div data-key="KeyJ" class="kb-key">J</div>
+            <div data-key="KeyK" class="kb-key">K</div>
+            <div data-key="KeyL" class="kb-key">L</div>
+            <div data-key="Semicolon" class="kb-key">;</div>
+            <div data-key="Quote" class="kb-key">'</div>
+            <div data-key="Enter" class="kb-key w-24 bg-primary/10">Enter</div>
+            <div class="w-[124px]"></div>
+          </div>
+
+          <!-- ZXCV row -->
+          <div class="flex gap-1.5">
+            <div data-key="ShiftLeft" class="kb-key w-24">Shift</div>
+            <div data-key="KeyZ" class="kb-key">Z</div>
+            <div data-key="KeyX" class="kb-key">X</div>
+            <div data-key="KeyC" class="kb-key">C</div>
+            <div data-key="KeyV" class="kb-key">V</div>
+            <div data-key="KeyB" class="kb-key">B</div>
+            <div data-key="KeyN" class="kb-key">N</div>
+            <div data-key="KeyM" class="kb-key">M</div>
+            <div data-key="Comma" class="kb-key">,</div>
+            <div data-key="Period" class="kb-key">.</div>
+            <div data-key="Slash" class="kb-key">/</div>
+            <div data-key="ShiftRight" class="kb-key w-28">Shift</div>
+            <div class="w-[30px]"></div>
+            <div data-key="ArrowUp" class="kb-key">▲</div>
+            <div class="w-10"></div>
+          </div>
+
+          <!-- Bottom row -->
+          <div class="flex gap-1.5">
+            <div data-key="ControlLeft" class="kb-key w-14">Ctrl</div>
+            <div data-key="MetaLeft" class="kb-key w-12">Win</div>
+            <div data-key="AltLeft" class="kb-key w-12">Alt</div>
+            <div data-key="Space" class="kb-key flex-1">Space</div>
+            <div data-key="AltRight" class="kb-key w-12">Alt</div>
+            <div data-key="MetaRight" class="kb-key w-12">Win</div>
+            <div data-key="ContextMenu" class="kb-key w-12">Menu</div>
+            <div data-key="ControlRight" class="kb-key w-14">Ctrl</div>
+            <div class="w-6"></div>
+            <div data-key="ArrowLeft" class="kb-key">◄</div>
+            <div data-key="ArrowDown" class="kb-key">▼</div>
+            <div data-key="ArrowRight" class="kb-key">►</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Helper Instructions -->
+      <div class="mt-4 flex flex-wrap items-center justify-between gap-3 text-mute caption">
+        <div class="flex items-center gap-4">
+          <span class="inline-flex items-center gap-1.5"><span class="size-2.5 rounded-full bg-canvas border border-hairline"></span> Untested</span>
+          <span class="inline-flex items-center gap-1.5"><span class="size-2.5 rounded-full bg-primary"></span> Currently Pressed</span>
+          <span class="inline-flex items-center gap-1.5"><span class="size-2.5 rounded-full bg-success"></span> Tested &amp; Working</span>
+        </div>
+        <p>Tip: Click anywhere on this page and start typing.</p>
+      </div>
+    </div>
+
+    <QuickAnswer
+      question="How can I tell if my keyboard has ghosting or stuck keys?"
+      answer="Press multiple keys at once on this online keyboard test. If keys light up in green, they register properly. If certain simultaneous key combinations fail to light up, your keyboard suffers from ghosting or lacks full N-key rollover."
+    />
+
+    <div class="mt-12">
+      <h2 class="display-md text-ink text-center">Frequently asked questions</h2>
+      <div class="mx-auto mt-6 max-w-3xl">
+        <Accordion items={faqs} />
+      </div>
+    </div>
+  </Container>
+</Layout>
+
+<style>
+  .kb-key {
+    height: 44px;
+    min-width: 40px;
+    display: grid;
+    place-items: center;
+    border-radius: 6px;
+    border: 1px solid var(--color-hairline, rgba(0, 0, 0, 0.12));
+    background-color: var(--color-canvas, #ffffff);
+    color: var(--color-ink, #0a0a0a);
+    font-size: 12px;
+    font-weight: 500;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    transition: background-color 0.1s ease, transform 0.05s ease, border-color 0.1s ease;
+  }
+  .kb-key.is-pressed {
+    background-color: var(--color-primary, #2563eb) !important;
+    color: #ffffff !important;
+    transform: translateY(2px);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+    border-color: transparent !important;
+  }
+  .kb-key.is-tested {
+    background-color: #dcfce7 !important;
+    color: #166534 !important;
+    border-color: #86efac !important;
+  }
+  :global(.dark) .kb-key.is-tested {
+    background-color: rgba(34, 197, 94, 0.2) !important;
+    color: #86efac !important;
+    border-color: rgba(34, 197, 94, 0.4) !important;
+  }
+</style>
+
+<script>
+  import { $ } from '../lib/dom';
+
+  const root = document.querySelector<HTMLElement>('[data-keyboard-tool]');
+  if (root) init(root);
+
+  function init(root: HTMLElement) {
+    const testedStat = $('[data-stat-tested]', root)!;
+    const totalStat = $('[data-stat-total]', root)!;
+    const lastStat = $('[data-stat-last]', root)!;
+    const simStat = $('[data-stat-simultaneous]', root)!;
+    const soundChk = $<HTMLInputElement>('[data-chk-sound]', root)!;
+    const resetBtn = $<HTMLButtonElement>('[data-btn-reset-kb]', root)!;
+
+    const allKeys = root.querySelectorAll<HTMLElement>('[data-key]');
+    totalStat.textContent = String(allKeys.length);
+
+    const testedKeys = new Set<string>();
+    const currentlyPressed = new Set<string>();
+    let maxSimultaneous = 0;
+
+    // Web Audio synthesizer for tactile mechanical click
+    let audioCtx: AudioContext | null = null;
+    function playClick() {
+      if (!soundChk.checked) return;
+      try {
+        const AC = window.AudioContext || (window as any).webkitAudioContext;
+        if (!audioCtx) audioCtx = new AC();
+        if (audioCtx.state === 'suspended') void audioCtx.resume();
+
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.03);
+
+        gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.03);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.03);
+      } catch (e) {}
+    }
+
+    function handleKeyDown(e: KeyboardEvent) {
+      // Prevent browser default actions that disrupt the test
+      if (['F1', 'F3', 'F5', 'F6', 'F7', 'Tab', 'AltLeft', 'AltRight', 'ContextMenu'].includes(e.code)) {
+        e.preventDefault();
+      }
+
+      currentlyPressed.add(e.code);
+      if (currentlyPressed.size > maxSimultaneous) {
+        maxSimultaneous = currentlyPressed.size;
+        simStat.textContent = String(maxSimultaneous);
+      }
+
+      lastStat.textContent = e.key === ' ' ? 'Space' : e.key;
+      playClick();
+
+      const el = root.querySelector<HTMLElement>(`[data-key="${e.code}"]`);
+      if (el) {
+        el.classList.add('is-pressed');
+        el.classList.remove('is-tested');
+      }
+    }
+
+    function handleKeyUp(e: KeyboardEvent) {
+      currentlyPressed.delete(e.code);
+
+      const el = root.querySelector<HTMLElement>(`[data-key="${e.code}"]`);
+      if (el) {
+        el.classList.remove('is-pressed');
+        el.classList.add('is-tested');
+        testedKeys.add(e.code);
+        testedStat.textContent = String(testedKeys.size);
+      }
+    }
+
+    function resetTest() {
+      testedKeys.clear();
+      currentlyPressed.clear();
+      maxSimultaneous = 0;
+      testedStat.textContent = '0';
+      lastStat.textContent = 'None';
+      simStat.textContent = '0';
+
+      allKeys.forEach((keyEl) => {
+        keyEl.classList.remove('is-pressed', 'is-tested');
+      });
+    }
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+    resetBtn.addEventListener('click', resetTest);
+  }
+</script>

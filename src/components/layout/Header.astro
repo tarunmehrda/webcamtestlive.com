@@ -12,12 +12,12 @@ const copy = t(locale);
 // active locale's prefix so navigation never drops the visitor back to English.
 const NAV = [
   { key: '/', label: copy.nav.home },
-  { key: '/resolution', label: copy.nav.resolution },
-  { key: '/fps', label: copy.nav.fps },
+  { key: '/video-recorder', label: 'Video Recorder' },
   { key: '/mic-test', label: copy.nav.micTest },
+  { key: '/keyboard-test', label: 'Keyboard Test' },
+  { key: '/screen-test', label: 'Screen Test' },
+  { key: '/speaker-test', label: 'Speaker Test' },
   { key: '/troubleshooting', label: copy.nav.troubleshooting },
-  { key: '/faq', label: copy.nav.faq },
-  { key: '/about', label: copy.nav.about },
 ].map((item) => ({ ...item, href: localePath(locale, item.key) }));
 
 const routeKey = pathWithoutLocale(path);
@@ -41,7 +41,7 @@ const isActive = (key: string) => (key === '/' ? routeKey === '/' : routeKey.sta
                 class:list={[
                   'body-sm rounded-full px-3 py-2 transition-colors',
                   isActive(item.key)
-                    ? 'text-ink'
+                    ? 'text-ink font-semibold'
                     : 'text-body hover:text-ink hover:bg-canvas-soft-2',
                 ]}
                 aria-current={isActive(item.key) ? 'page' : undefined}
@@ -98,7 +98,7 @@ const isActive = (key: string) => (key === '/' ? routeKey === '/' : routeKey.sta
                   href={item.href}
                   class:list={[
                     'body-sm block rounded-sm px-3 py-3',
-                    isActive(item.key) ? 'bg-canvas-soft-2 text-ink' : 'text-body',
+                    isActive(item.key) ? 'bg-canvas-soft-2 text-ink font-semibold' : 'text-body',
                   ]}
                 >
                   {item.label}

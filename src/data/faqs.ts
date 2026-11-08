@@ -123,11 +123,11 @@ export const MIC_FAQS: Faq[] = [
   },
   {
     q: 'Can I hear myself during the test?',
-    a: 'This test shows your level visually rather than playing your voice back, which avoids the feedback squeal that happens when a microphone picks up its own output through your speakers. Watch the meter instead, it tells you what a caller would hear.',
+    a: 'Yes! Click the "Record voice sample (hear yourself)" button to record a 5-second voice snippet. When recording stops, it automatically plays back through your speakers or headphones so you can evaluate voice clarity, background noise, and distortion without speaker feedback.',
   },
   {
-    q: 'Does the microphone test record my voice?',
-    a: 'No. Audio is measured moment by moment to draw the meter and is discarded immediately. Nothing is buffered, saved, or transmitted, and there is no server to send it to.',
+    q: 'Does the microphone test record or store my voice online?',
+    a: 'No. When you record a voice sample, it exists entirely in your browser memory (RAM) and is played back locally on your device. Audio is never uploaded to any remote server or stored anywhere online.',
   },
 ];
 

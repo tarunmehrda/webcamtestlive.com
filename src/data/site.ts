@@ -17,25 +17,30 @@ export interface NavItem {
 
 export const NAV: NavItem[] = [
   { href: '/', label: 'Webcam Test' },
-  { href: '/resolution', label: 'Resolution' },
-  { href: '/fps', label: 'FPS' },
+  { href: '/video-recorder', label: 'Video Recorder' },
   { href: '/mic-test', label: 'Mic Test' },
+  { href: '/keyboard-test', label: 'Keyboard Test' },
+  { href: '/screen-test', label: 'Screen Test' },
+  { href: '/speaker-test', label: 'Speaker Test' },
   { href: '/troubleshooting', label: 'Fix Issues' },
-  { href: '/faq', label: 'FAQ' },
-  { href: '/about', label: 'About' },
 ];
 
 export const FOOTER_LINKS: { title: string; items: NavItem[] }[] = [
   {
-    title: 'Tools',
+    title: 'Tools & Utilities',
     items: [
       { href: '/', label: 'Webcam Test' },
-      { href: '/resolution', label: 'Resolution Test' },
-      { href: '/fps', label: 'FPS Test' },
+      { href: '/video-recorder', label: 'Online Video Recorder' },
+      { href: '/webcam-recorder', label: 'Webcam Recorder' },
+      { href: '/mic-test', label: 'Microphone & Echo Test' },
+      { href: '/keyboard-test', label: 'Keyboard Key Tester' },
+      { href: '/screen-test', label: 'Screen & Color Test' },
+      { href: '/dead-pixel-test', label: 'Dead Pixel Checker' },
+      { href: '/speaker-test', label: 'Speaker Sound Test' },
       { href: '/mirror', label: 'Webcam Mirror' },
       { href: '/take-photo', label: 'Take Photo Online' },
-      { href: '/mic-test', label: 'Microphone Test' },
-      { href: '/speaker-test', label: 'Speaker Test' },
+      { href: '/resolution', label: 'Resolution Test' },
+      { href: '/fps', label: 'FPS Test' },
       { href: '/embed', label: 'Embed Widget' },
     ],
   },

@@ -23,7 +23,7 @@ const steps = [
   },
   {
     name: 'Speak at your normal call volume',
-    text: 'Say a couple of sentences at the volume and distance you would use on a real call. Watch the meter rather than listening for playback.',
+    text: 'Say a couple of sentences at your normal distance. Watch the live level meter move with your voice, or click "Record voice sample" to hear your audio played back instantly.',
   },
   {
     name: 'Read the level',
@@ -59,12 +59,13 @@ const jsonLd = [
     name: 'Microphone Test',
     url: `${SITE.url}/mic-test`,
     description:
-      'Test a microphone in your browser with a live input level meter, and your speakers or headphones with left, right and stereo test tones. Nothing is recorded or uploaded.',
+      'Test your microphone online with a live input level meter and instant voice playback (echo test). Test speakers and headphones with stereo tones. Runs privately in your browser.',
     featureList: [
       'Live microphone input level meter',
+      'Instant voice recording & playback loop (hear yourself)',
       'Input device selection',
       'Left, right and stereo speaker test tones at three frequencies',
-      'Runs entirely in the browser; audio is never recorded or uploaded',
+      'Runs entirely on your device with zero server uploads',
     ],
     browserRequirements:
       'Requires a modern browser with microphone access (Chrome, Edge, Firefox, Safari).',
@@ -78,19 +79,19 @@ const jsonLd = [
       acceptedAnswer: { '@type': 'Answer', text: f.a },
     })),
   },
-  breadcrumbs([{ name: 'Mic and Webcam Test', href: '/mic-test' }]),
+  breadcrumbs([{ name: 'Mic Test', href: '/mic-test' }]),
 ];
 ---
 
 <Layout
-  rawTitle="Mic and Webcam Test: Free Online Microphone Test"
-  description="Free online mic and webcam test. Check your microphone with a live level meter and your speakers with a test tone. No download, nothing uploaded."
+  rawTitle="Mic Test: Free Online Microphone Test with Playback (Hear Yourself)"
+  description="Free online mic test with instant playback. Check your microphone input levels, record a voice sample to hear how you sound, and test stereo speakers privately."
   jsonLd={jsonLd}
 >
   <Hero
     eyebrow="Microphone test"
     title="Is your microphone working?"
-    subtitle="Allow access and speak, the level meter moves with your voice. Audio is analysed on your device only and is never recorded or uploaded."
+    subtitle="Allow access and speak — check your live volume level or record a 5-second sample to hear how you sound to others. Audio is processed locally and never uploaded."
   />
 
   <Container class="-mt-8 pb-6 md:-mt-12">

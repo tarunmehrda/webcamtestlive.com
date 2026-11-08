@@ -1,0 +1,475 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Container from '../components/layout/Container.astro';
+import Hero from '../components/layout/Hero.astro';
+import Accordion from '../components/ui/Accordion.astro';
+import Card from '../components/ui/Card.astro';
+import QuickAnswer from '../components/content/QuickAnswer.astro';
+import { breadcrumbs, webApplication } from '../lib/seo';
+import { SITE } from '../data/site';
+
+const faqs = [
+  {
+    q: 'How do I record a video using my webcam online?',
+    a: 'Click "Start Camera" above and allow camera and microphone access. When your video appears, click "Start Recording". You can pause, resume, and stop whenever you are ready. Once stopped, your video plays back instantly and you can download it to your device with one click.',
+  },
+  {
+    q: 'Are my video recordings uploaded to any server?',
+    a: 'No. The recording engine uses the HTML5 MediaRecorder API and runs 100% client-side in your browser. Video and audio data are encoded in your device memory (RAM) and saved directly to your Downloads folder. Nothing is ever uploaded to a remote server or stored in the cloud.',
+  },
+  {
+    q: 'Is there any watermark on the downloaded video?',
+    a: 'No. There are zero watermarks, zero brand logos, and zero time restrictions. Your video is captured directly from your webcam sensor at native resolution.',
+  },
+  {
+    q: 'What format are recorded videos saved in?',
+    a: 'Your recordings are exported in WebM (VP9/VP8) or MP4 depending on your browser support. These formats play natively on Windows, Mac, iPhone, Android, and are ready to upload to YouTube, Google Drive, or Slack.',
+  },
+  {
+    q: 'Can I choose which camera and microphone to record with?',
+    a: 'Yes. Use the dropdown selectors below the video preview to switch between built-in webcams, USB cameras, external microphones, and wireless headsets.',
+  },
+];
+
+const jsonLd = [
+  webApplication({
+    name: 'Online Video Recorder',
+    url: `${SITE.url}/video-recorder`,
+    description:
+      'Free online webcam video recorder. Record high-definition video and audio in your browser without downloads or watermarks. Save MP4 and WebM files locally.',
+    featureList: [
+      'In-browser HD webcam video recording with audio',
+      'No watermark and zero recording limits',
+      'Pause, resume, and instant review player',
+      '1-click WebM & MP4 local downloads',
+      '100% private client-side recording without server uploads',
+    ],
+  }),
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  },
+  breadcrumbs([{ name: 'Video Recorder', href: '/video-recorder' }]),
+];
+---
+
+<Layout
+  rawTitle="Online Video Recorder: Free Webcam Video Recorder (No Watermark)"
+  description="Free online video recorder. Record video and audio from your webcam directly in your browser with zero downloads, no watermarks, and 100% privacy. Download MP4/WebM."
+  jsonLd={jsonLd}
+>
+  <Hero
+    eyebrow="Webcam video recorder"
+    title="Record video from your webcam online."
+    subtitle="Capture high-definition video with crystal-clear audio directly in your browser. No watermark, no sign-up, and zero server uploads."
+  />
+
+  <Container class="-mt-8 pb-12 md:-mt-12">
+    <div class="rounded-xl border border-hairline bg-canvas p-4 elev-3 sm:p-6" data-recorder-tool>
+      <!-- Video Stage -->
+      <div class="relative aspect-video w-full overflow-hidden rounded-lg bg-stage" data-rec-stage>
+        <video
+          data-live-video
+          class="size-full object-cover [transform:scaleX(-1)]"
+          autoplay
+          muted
+          playsinline
+        ></video>
+
+        <!-- Idle Overlay -->
+        <div data-rec-idle class="absolute inset-0 grid place-items-center bg-stage text-center p-6">
+          <div class="max-w-md">
+            <div class="mx-auto grid size-16 place-items-center rounded-full bg-white/10 text-white">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m22 8-6 4 6 4V8Z" /><rect width="14" height="12" x="2" y="6" rx="2" ry="2" />
+              </svg>
+            </div>
+            <h2 class="display-sm mt-4 text-white">Webcam Video Recorder</h2>
+            <p class="body-sm mt-2 text-white/70">Click Start Camera to preview your video and begin recording with your microphone.</p>
+          </div>
+        </div>
+
+        <!-- Recording Badge & Timer -->
+        <div data-rec-active-badge class="absolute top-4 left-4 hidden items-center gap-2 rounded-full bg-black/75 px-3 py-1.5 backdrop-blur-sm">
+          <span class="size-3 rounded-full bg-error animate-pulse"></span>
+          <span data-rec-timer class="caption-mono font-bold text-white">00:00</span>
+        </div>
+
+        <!-- Mirror Indicator -->
+        <button
+          data-btn-mirror
+          class="absolute top-4 right-4 rounded-full bg-black/60 p-2 text-white/90 hover:bg-black/90 transition-colors"
+          title="Toggle mirror view"
+          aria-label="Toggle mirror reflection"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 3H5a2 2 0 0 0-2 2v14c0 1.1.9 2 2 2h3" /><path d="M16 3h3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-3" /><path d="M12 3v18" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Live Mic Level Bar -->
+      <div class="mt-4">
+        <div class="flex items-center justify-between text-mute caption-mono mb-1">
+          <span>Audio Input Level</span>
+          <span data-mic-db-text>Ready</span>
+        </div>
+        <div class="h-2 w-full overflow-hidden rounded-full bg-canvas-soft-2">
+          <div data-mic-rec-level class="h-full w-0 rounded-full bg-gradient-to-r from-success via-warning to-error transition-[width] duration-75"></div>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="mt-6 flex flex-wrap items-center gap-3">
+        <button
+          data-btn-start-camera
+          class="inline-flex items-center gap-2 rounded-pill bg-primary px-5 py-3 sm:py-2.5 text-on-primary transition-opacity hover:opacity-90"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m22 8-6 4 6 4V8Z" /><rect width="14" height="12" x="2" y="6" rx="2" ry="2" />
+          </svg>
+          <span class="body-sm font-medium">Start Camera</span>
+        </button>
+
+        <button
+          data-btn-record
+          disabled
+          class="hidden items-center gap-2 rounded-pill bg-error px-5 py-3 sm:py-2.5 text-white transition-opacity hover:opacity-90 disabled:opacity-40"
+        >
+          <span class="size-2.5 rounded-full bg-white"></span>
+          <span class="body-sm font-medium" data-btn-record-text>Start Recording</span>
+        </button>
+
+        <button
+          data-btn-pause
+          class="hidden items-center gap-2 rounded-pill border border-hairline bg-canvas px-4 py-3 sm:py-2.5 text-ink transition-colors hover:bg-canvas-soft-2"
+        >
+          <span class="body-sm font-medium" data-btn-pause-text>Pause</span>
+        </button>
+
+        <button
+          data-btn-stop-camera
+          class="hidden items-center gap-2 rounded-pill border border-hairline bg-canvas px-4 py-3 sm:py-2.5 text-ink transition-colors hover:bg-canvas-soft-2"
+        >
+          <span class="body-sm font-medium">Turn Off Camera</span>
+        </button>
+
+        <!-- Device Selectors -->
+        <div class="ml-auto flex flex-wrap items-center gap-3">
+          <label class="flex items-center gap-1.5">
+            <span class="caption-mono uppercase text-mute">Camera</span>
+            <select data-camera-select class="body-sm h-10 rounded border border-hairline bg-canvas px-2 text-ink">
+              <option value="">Default camera</option>
+            </select>
+          </label>
+          <label class="flex items-center gap-1.5">
+            <span class="caption-mono uppercase text-mute">Mic</span>
+            <select data-mic-select class="body-sm h-10 rounded border border-hairline bg-canvas px-2 text-ink">
+              <option value="">Default microphone</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <p data-rec-error class="body-sm mt-4 hidden text-error"></p>
+
+      <!-- Review & Download Player Modal / Area -->
+      <div data-review-panel class="mt-6 hidden rounded-xl border border-hairline bg-canvas-soft p-4 sm:p-5">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h3 class="display-sm text-ink">Your Recorded Video</h3>
+            <p class="caption mt-0.5 text-mute">Saved in browser memory. Ready to download without watermarks.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button
+              data-btn-download
+              class="inline-flex items-center gap-2 rounded-pill bg-primary px-5 py-2.5 text-on-primary hover:opacity-90"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" x2="12" y1="15" y2="3" />
+              </svg>
+              <span class="body-sm font-medium">Download Video</span>
+            </button>
+            <button
+              data-btn-discard
+              class="rounded-pill border border-hairline bg-canvas px-4 py-2.5 body-sm text-body hover:text-ink"
+            >
+              Discard & Record Again
+            </button>
+          </div>
+        </div>
+        <video data-review-video controls playsinline class="mt-4 aspect-video w-full rounded-lg bg-black"></video>
+      </div>
+    </div>
+
+    <!-- Quick Answer Callout -->
+    <QuickAnswer
+      question="Can I record videos online without installing any software or app?"
+      answer="Yes. This free online video recorder captures video from your webcam and audio from your microphone directly within your browser. Once finished, click Download to save the MP4 or WebM file straight to your computer with zero watermarks and 100% privacy."
+    />
+
+    <!-- FAQ Accordion -->
+    <div class="mt-12">
+      <h2 class="display-md text-ink text-center">Frequently asked questions</h2>
+      <div class="mx-auto mt-6 max-w-3xl">
+        <Accordion items={faqs} />
+      </div>
+    </div>
+  </Container>
+</Layout>
+
+<script>
+  import { startWebcam, type WebcamSession } from '../lib/webcam';
+  import { startMic, type MicSession } from '../lib/mic';
+  import { listDevices, onDeviceChange } from '../lib/devices';
+  import { $ } from '../lib/dom';
+
+  const root = document.querySelector<HTMLElement>('[data-recorder-tool]');
+  if (root) init(root);
+
+  function init(root: HTMLElement) {
+    const liveVideo = $<HTMLVideoElement>('[data-live-video]', root)!;
+    const idleOverlay = $('[data-rec-idle]', root)!;
+    const activeBadge = $('[data-rec-active-badge]', root)!;
+    const timerEl = $('[data-rec-timer]', root)!;
+    const mirrorBtn = $<HTMLButtonElement>('[data-btn-mirror]', root)!;
+    const startCamBtn = $<HTMLButtonElement>('[data-btn-start-camera]', root)!;
+    const stopCamBtn = $<HTMLButtonElement>('[data-btn-stop-camera]', root)!;
+    const recordBtn = $<HTMLButtonElement>('[data-btn-record]', root)!;
+    const recordBtnText = $('[data-btn-record-text]', root)!;
+    const pauseBtn = $<HTMLButtonElement>('[data-btn-pause]', root)!;
+    const pauseBtnText = $('[data-btn-pause-text]', root)!;
+    const cameraSelect = $<HTMLSelectElement>('[data-camera-select]', root)!;
+    const micSelect = $<HTMLSelectElement>('[data-mic-select]', root)!;
+    const micLevelEl = $<HTMLElement>('[data-mic-rec-level]', root)!;
+    const micTextEl = $('[data-mic-db-text]', root)!;
+    const errorEl = $('[data-rec-error]', root)!;
+    const reviewPanel = $('[data-review-panel]', root)!;
+    const reviewVideo = $<HTMLVideoElement>('[data-review-video]', root)!;
+    const downloadBtn = $<HTMLButtonElement>('[data-btn-download]', root)!;
+    const discardBtn = $<HTMLButtonElement>('[data-btn-discard]', root)!;
+
+    let camSession: WebcamSession | null = null;
+    let micSession: MicSession | null = null;
+    let stopMicMeter: (() => void) | null = null;
+    let mediaRecorder: MediaRecorder | null = null;
+    let recordedBlobs: Blob[] = [];
+    let combinedStream: MediaStream | null = null;
+    let isMirrored = true;
+    let recordStartTime = 0;
+    let elapsedBeforePause = 0;
+    let timerInterval: number | undefined;
+    let clipUrl: string | null = null;
+
+    async function populateDevices() {
+      const videoDevices = await listDevices('videoinput');
+      const audioDevices = await listDevices('audioinput');
+
+      cameraSelect.innerHTML = videoDevices.length
+        ? videoDevices.map((d) => `<option value="${d.deviceId}">${d.label || 'Camera'}</option>`).join('')
+        : '<option value="">Default camera</option>';
+
+      micSelect.innerHTML = audioDevices.length
+        ? audioDevices.map((d) => `<option value="${d.deviceId}">${d.label || 'Microphone'}</option>`).join('')
+        : '<option value="">Default microphone</option>';
+    }
+
+    async function startCamera() {
+      errorEl.classList.add('hidden');
+      try {
+        camSession = await startWebcam({ deviceId: cameraSelect.value || undefined });
+        micSession = await startMic(micSelect.value || undefined);
+
+        await populateDevices();
+
+        liveVideo.srcObject = camSession.stream;
+        idleOverlay.classList.add('hidden');
+        startCamBtn.classList.add('hidden');
+        stopCamBtn.classList.remove('hidden');
+        stopCamBtn.classList.add('inline-flex');
+        recordBtn.classList.remove('hidden');
+        recordBtn.classList.add('inline-flex');
+        recordBtn.disabled = false;
+
+        stopMicMeter = micSession.meter((level) => {
+          micLevelEl.style.width = `${Math.round(level * 100)}%`;
+          micTextEl.textContent = level > 0.05 ? 'Receiving Audio' : 'Silence';
+        });
+
+        // Combine video and audio tracks
+        const tracks = [
+          ...camSession.stream.getVideoTracks(),
+          ...micSession.stream.getAudioTracks(),
+        ];
+        combinedStream = new MediaStream(tracks);
+      } catch (err: any) {
+        errorEl.textContent = err.message || 'Could not access camera or microphone.';
+        errorEl.classList.remove('hidden');
+      }
+    }
+
+    function stopCamera() {
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        stopRecording();
+      }
+      stopMicMeter?.();
+      stopMicMeter = null;
+      camSession?.stop();
+      camSession = null;
+      micSession?.stop();
+      micSession = null;
+      combinedStream = null;
+
+      liveVideo.srcObject = null;
+      idleOverlay.classList.remove('hidden');
+      startCamBtn.classList.remove('hidden');
+      stopCamBtn.classList.add('hidden');
+      recordBtn.classList.add('hidden');
+      pauseBtn.classList.add('hidden');
+      activeBadge.classList.add('hidden');
+      micLevelEl.style.width = '0%';
+      micTextEl.textContent = 'Ready';
+    }
+
+    function formatTime(ms: number) {
+      const totalSec = Math.floor(ms / 1000);
+      const mins = Math.floor(totalSec / 60);
+      const secs = totalSec % 60;
+      return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    }
+
+    function startRecording() {
+      if (!combinedStream) return;
+      recordedBlobs = [];
+      reviewPanel.classList.add('hidden');
+
+      const mimeType = [
+        'video/webm;codecs=vp9,opus',
+        'video/webm;codecs=vp8,opus',
+        'video/webm',
+        'video/mp4',
+      ].find((t) => typeof MediaRecorder !== 'undefined' && MediaRecorder.isTypeSupported(t)) || '';
+
+      try {
+        mediaRecorder = mimeType
+          ? new MediaRecorder(combinedStream, { mimeType })
+          : new MediaRecorder(combinedStream);
+      } catch (e: any) {
+        errorEl.textContent = 'Recording format unsupported on this browser.';
+        errorEl.classList.remove('hidden');
+        return;
+      }
+
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data && e.data.size > 0) recordedBlobs.push(e.data);
+      };
+
+      mediaRecorder.onstop = () => {
+        window.clearInterval(timerInterval);
+        activeBadge.classList.add('hidden');
+        pauseBtn.classList.add('hidden');
+        recordBtnText.textContent = 'Start Recording';
+        recordBtn.classList.remove('bg-black');
+        recordBtn.classList.add('bg-error');
+
+        const blob = new Blob(recordedBlobs, { type: mediaRecorder?.mimeType || 'video/webm' });
+        if (clipUrl) URL.revokeObjectURL(clipUrl);
+        clipUrl = URL.createObjectURL(blob);
+        reviewVideo.src = clipUrl;
+        reviewPanel.classList.remove('hidden');
+        reviewPanel.scrollIntoView({ behavior: 'smooth' });
+      };
+
+      recordStartTime = performance.now();
+      elapsedBeforePause = 0;
+      mediaRecorder.start(250);
+
+      activeBadge.classList.remove('hidden');
+      activeBadge.classList.add('flex');
+      pauseBtn.classList.remove('hidden');
+      pauseBtn.classList.add('inline-flex');
+      pauseBtnText.textContent = 'Pause';
+      recordBtnText.textContent = 'Stop Recording';
+      recordBtn.classList.remove('bg-error');
+      recordBtn.classList.add('bg-black');
+
+      timerInterval = window.setInterval(() => {
+        const elapsed = elapsedBeforePause + (performance.now() - recordStartTime);
+        timerEl.textContent = formatTime(elapsed);
+      }, 250);
+    }
+
+    function pauseRecording() {
+      if (!mediaRecorder) return;
+      if (mediaRecorder.state === 'recording') {
+        mediaRecorder.pause();
+        elapsedBeforePause += performance.now() - recordStartTime;
+        window.clearInterval(timerInterval);
+        pauseBtnText.textContent = 'Resume';
+      } else if (mediaRecorder.state === 'paused') {
+        mediaRecorder.resume();
+        recordStartTime = performance.now();
+        pauseBtnText.textContent = 'Pause';
+        timerInterval = window.setInterval(() => {
+          const elapsed = elapsedBeforePause + (performance.now() - recordStartTime);
+          timerEl.textContent = formatTime(elapsed);
+        }, 250);
+      }
+    }
+
+    function stopRecording() {
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+      }
+    }
+
+    mirrorBtn.addEventListener('click', () => {
+      isMirrored = !isMirrored;
+      liveVideo.style.transform = isMirrored ? 'scaleX(-1)' : 'none';
+    });
+
+    startCamBtn.addEventListener('click', startCamera);
+    stopCamBtn.addEventListener('click', stopCamera);
+
+    recordBtn.addEventListener('click', () => {
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        stopRecording();
+      } else {
+        startRecording();
+      }
+    });
+
+    pauseBtn.addEventListener('click', pauseRecording);
+
+    downloadBtn.addEventListener('click', () => {
+      if (!clipUrl) return;
+      const a = document.createElement('a');
+      a.href = clipUrl;
+      const ext = mediaRecorder?.mimeType.includes('mp4') ? 'mp4' : 'webm';
+      a.download = `video-recording-${Date.now()}.${ext}`;
+      a.click();
+    });
+
+    discardBtn.addEventListener('click', () => {
+      if (clipUrl) URL.revokeObjectURL(clipUrl);
+      clipUrl = null;
+      reviewVideo.removeAttribute('src');
+      reviewPanel.classList.add('hidden');
+    });
+
+    cameraSelect.addEventListener('change', () => {
+      if (camSession) startCamera();
+    });
+    micSelect.addEventListener('change', () => {
+      if (micSession) startCamera();
+    });
+
+    onDeviceChange(populateDevices);
+    populateDevices();
+  }
+</script>
