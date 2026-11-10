@@ -7,9 +7,9 @@ export const en = {
   },
 
   meta: {
-    homeTitle: 'Webcam Test: Free Online Webcam & Mic Test (No Download)',
+    homeTitle: 'Webcam Test Online - Free Camera & Mic Check (Instant)',
     homeDescription:
-      'Free online webcam test. Check your camera and mic in your browser, resolution, FPS, bitrate and image quality. No download, no sign-up, nothing uploaded.',
+      'Free online webcam test. Check your camera, microphone, resolution, and FPS instantly in your browser. 100% private, no downloads, nothing uploaded.',
   },
 
   nav: {
@@ -31,9 +31,9 @@ export const en = {
 
   hero: {
     eyebrow: '100% private · runs in your browser',
-    title: 'Webcam test, done in seconds.',
+    title: 'Webcam Test Online',
     subtitle:
-      'Preview your camera, measure resolution and frame rate, and run instant health checks before your next call. Nothing ever leaves your device.',
+      'Check your camera, microphone, resolution and FPS instantly in your browser before your next call. 100% private — nothing is uploaded.',
     trust: {
       noDownloads: 'No downloads',
       noSignup: 'No sign-up',

@@ -79,15 +79,25 @@ const iconBtn =
             full-size overlay content (156px) was clipped. Below 400px everything steps
             down a size so it still fits inside the frame.
           -->
-          <div data-idle class="absolute inset-0 grid place-items-center bg-stage text-center">
+          <div data-idle class="group absolute inset-0 grid cursor-pointer place-items-center bg-stage text-center transition-colors hover:bg-stage/95" title="Click to start webcam test">
             <div class="px-4 sm:px-6">
-              <div class="mx-auto grid size-14 place-items-center rounded-full bg-white/10 text-white max-[400px]:size-10">
-                <svg class="size-[26px] max-[400px]:size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <div class="mx-auto grid size-12 place-items-center rounded-full bg-white/10 text-white transition-all group-hover:scale-110 group-hover:bg-primary max-[400px]:size-9">
+                <svg class="size-6 max-[400px]:size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="m22 8-6 4 6 4V8Z" /><rect width="14" height="12" x="2" y="6" rx="2" ry="2" />
                 </svg>
               </div>
-              <p class="body-md mt-4 font-medium text-white max-[400px]:body-sm max-[400px]:mt-2">{T.idleTitle}</p>
-              <p class="caption mt-1 text-white/60">{T.idleNote}</p>
+              <p class="body-md mt-2.5 font-semibold text-white max-[400px]:body-sm max-[400px]:mt-1.5">{T.idleTitle}</p>
+              <button
+                type="button"
+                data-idle-start
+                class="mt-2.5 inline-flex items-center gap-2 rounded-pill bg-primary px-5 py-2 text-sm font-semibold text-on-primary shadow-lg transition-transform group-hover:scale-105"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                  <polygon points="6 3 20 12 6 21 6 3" />
+                </svg>
+                {T.startTest}
+              </button>
+              <p class="caption mt-1.5 text-white/60">{T.idleNote}</p>
             </div>
           </div>
 
@@ -795,6 +805,9 @@ const iconBtn =
 
     // ---- events --------------------------------------------------------------
     startBtn.addEventListener('click', () => start(cameraSelect.value || undefined));
+    idle.addEventListener('click', () => {
+      if (!session) start(cameraSelect.value || undefined);
+    });
     stopBtn.addEventListener('click', stop);
 
     cameraSelect.addEventListener('change', () => {
@@ -875,10 +888,8 @@ const iconBtn =
     populateDevices();
     onDeviceChange(populateDevices);
 
-    if (focus !== 'full') {
-      queryPermission('camera').then((p: PermissionState) => {
-        if (p === 'granted') start();
-      });
-    }
+    queryPermission('camera').then((p: PermissionState) => {
+      if (p === 'granted') start(cameraSelect.value || undefined);
+    });
   }
 </script>
